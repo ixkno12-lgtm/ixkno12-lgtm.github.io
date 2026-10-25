@@ -330,6 +330,8 @@
   } catch { document.documentElement.dataset.theme = "dark"; }
 </script>
 <script src="analysis.js"></script>
+<script src="analysis-cc.js"></script>
+<script src="cc-tracks.js"></script>
 </head>
 <body>
 
@@ -341,6 +343,7 @@
     <a class="nav-link" href="#/charts" data-nav="charts"><span class="ic">📈</span>Чарты</a>
     <a class="nav-link" href="#/wrapped" data-nav="wrapped"><span class="ic">✨</span>Мои итоги</a>
     <a class="nav-link" href="#/upload" data-nav="upload"><span class="ic">⤒</span>Загрузить трек</a>
+    <a class="nav-link" href="#/licenses" data-nav="licenses"><span class="ic">©</span>Авторы музыки</a>
     <h4>Моя медиатека <button data-new-playlist title="Создать плейлист" aria-label="Создать плейлист">+</button></h4>
     <div id="side-lib"></div>
     <div class="side-foot">
@@ -426,7 +429,7 @@
   // КАТАЛОГ
   // =====================================================================
   const MOODS = { energy: ["⚡", "Бодрое"], calm: ["🌿", "Спокойное"], sad: ["🌧", "Грустное"], happy: ["☀️", "Весёлое"] };
-  const GENRE_COLORS = { "Lo-fi": "#b05cc9", "Synthwave": "#d4307a", "Ambient": "#3a4a6b", "Chiptune": "#3e9e4f", "Piano": "#5d8aa8", "House": "#e0542e", "Folk": "#b8742a", "Trap": "#5b1d82", "Acoustic": "#4c8f63", "Другое": "#666" };
+  const GENRE_COLORS = { "Lo-fi": "#b05cc9", "Synthwave": "#d4307a", "Ambient": "#3a4a6b", "Chiptune": "#3e9e4f", "Piano": "#5d8aa8", "House": "#e0542e", "Folk": "#b8742a", "Trap": "#5b1d82", "Acoustic": "#4c8f63", "Pop": "#e8a020", "Cinematic": "#8a2c3b", "Jazz": "#2f6f8f", "Hip-hop": "#c2410c", "Electronic": "#0e7490", "Классика": "#6b5b3e", "Другое": "#666" };
 
   const ARTISTS = [
     { id: "dina",   name: "Dina Beats",     genre: "Lo-fi",     listeners: 48210, bio: "Битмейкер из Алматы. Lo-fi и хип-хоп с домброй и звуками города." },
@@ -457,6 +460,11 @@
   ];
   TRACKS.forEach(t => { t.src = `audio/${t.id}.mp3`; t.cover = `covers/${t.id}.jpg`; });
 
+  // Настоящая музыка со свободной лицензией (Creative Commons и общественное достояние)
+  (window.CC_ARTISTS || []).forEach(a => ARTISTS.push({ ...a, real: true, listeners: 0 }));
+  const CC_TRACKS = (window.CC_TRACKS || []).map(t => ({ ...t, real: true, src: `audio/cc/${t.file}.mp3`, cover: `covers/${t.id}.jpg`, plays: 0, trend: "new" }));
+  TRACKS.push(...CC_TRACKS);
+
   const BASE_COMMENTS = {
     koktem: [[6, "Асель", "домбра вступает — мурашки"], [14, "Ерлан", "это под учёбу идеально"], [24, "Мадина", "бабушка бы одобрила 😄"]],
     alfarabi: [[4, "Арман", "проезжаю Аль-Фараби ночью под это"], [16, "Жания", "вот этот арпеджио 🔥"]],
@@ -473,6 +481,13 @@
     { id: "energy", name: "Заряд энергии",  desc: "Для спортзала, уборки и пятничного вечера.", tracks: ["zhurek", "tun", "neon", "steppe", "dala"] },
     { id: "qazaq",  name: "Казахский вайб", desc: "Домбра, степь и горы в современном звучании.", tracks: ["dala", "koktem", "steppe", "tau", "medeu"] },
   ];
+  if (CC_TRACKS.length) {
+    EDITORIAL.unshift({ id: "free", name: "Настоящая музыка", desc: "Реальные треки музыкантов под свободной лицензией.", tracks: CC_TRACKS.map(t => t.id) });
+    EDITORIAL.find(p => p.id === "focus").tracks.push("cc-winter", "cc-windswept", "cc-sonata28", "cc-cattails");
+    EDITORIAL.find(p => p.id === "energy").tracks.push("cc-hitman", "cc-beton", "cc-lifelike", "cc-chase");
+  }
+  // В подборках остаются только треки, которые реально есть в каталоге
+  EDITORIAL.forEach(p => p.tracks = p.tracks.filter(id => TRACKS.some(t => t.id === id)));
 
   // =====================================================================
   // СОСТОЯНИЕ
@@ -645,6 +660,10 @@
           <button class="mood${player.wave === "all" ? " on" : ""}" data-wave="all">🎲 Любое</button></div>
       </div>
 
+      ${CC_TRACKS.length ? `<div class="section"><div class="section-head"><h2>Настоящая музыка</h2><a href="#/playlist/free">Все ${CC_TRACKS.length} треков</a></div>
+        <p class="small muted" style="margin:-8px 0 14px">Реальные треки музыкантов, которые разрешили свободно делиться своей музыкой. <a href="#/licenses" style="text-decoration:underline">Авторы и лицензии</a></p>
+        <div class="shelf">${CC_TRACKS.slice(0, 6).map(trackTile).join("")}</div></div>` : ""}
+
       ${recent.length ? `<div class="section"><div class="section-head"><h2>Недавно слушали</h2><a href="#/library/history">Вся история</a></div><div class="shelf">${recent.map(trackTile).join("")}</div></div>` : ""}
 
       <div class="section"><div class="section-head"><h2>Чарт недели</h2><a href="#/charts">Весь чарт</a></div>${trackRows(chart, "chart", { chart: true })}</div>
@@ -722,6 +741,7 @@
         ${t.mine ? `<button class="icon" data-del-upload="${id}" title="Удалить трек" aria-label="Удалить трек">🗑</button>` : ""}
       </div>
       ${t.desc ? `<p class="muted" style="max-width:700px;margin-bottom:10px">${esc(t.desc)}</p>` : ""}
+      ${t.real ? `<p class="small muted" style="margin-bottom:10px">Лицензия: <b>${esc(t.license)}</b> · Автор записи: ${esc(t.author || artistName(t))} · <a href="${esc(t.source)}" target="_blank" rel="noopener" style="text-decoration:underline">источник</a></p>` : ""}
       <div class="wave-wrap"><canvas id="track-wave" data-track="${id}" aria-label="Волна трека, нажмите для перемотки"></canvas>
         <div class="markers">${comments.map(c => `<span class="marker" style="left:${Math.min(100, c.at / (durOf(t) || 1) * 100)}%;background:${avaColor(c.name)}" data-seek-to="${c.at}" data-track-id="${id}" data-tip="${esc(c.name)}: ${esc(c.text)}">${esc(c.name[0])}</span>`).join("")}</div></div>
       <div class="section"><div class="section-head"><h2>Комментарии к моментам трека (${comments.length})</h2></div>
@@ -739,7 +759,7 @@
     setGlow(tracks[0]?.color);
     const followed = S.follows[id];
     return `<div class="hero artist"><div class="art"><img src="covers/a-${id}.jpg" alt=""></div>
-        <div><div class="kind">✓ Артист</div><h1>${esc(a.name)}</h1><div class="meta"><b>${(a.listeners + (followed ? 1 : 0)).toLocaleString("ru-RU")}</b> слушателей в месяц · ${esc(a.genre)}</div></div></div>
+        <div><div class="kind">✓ Артист</div><h1>${esc(a.name)}</h1><div class="meta">${a.real ? "Музыка под свободной лицензией" : `<b>${(a.listeners + (followed ? 1 : 0)).toLocaleString("ru-RU")}</b> слушателей в месяц`} · ${esc(a.genre)}</div></div></div>
       <div class="actions">
         <button class="big-play" data-play-artist="${id}" aria-label="Слушать">▶</button>
         <button class="pill ${followed ? "" : "ghost"}" data-follow="${id}">${followed ? "Вы подписаны" : "Подписаться"}</button>
@@ -795,11 +815,21 @@
       <div class="actions" style="margin-top:20px"><button class="pill accent" data-copy="${esc(shareText)}">↗ Поделиться итогами</button></div>`;
   }
 
+  function pageLicenses() {
+    setGlow("var(--accent)");
+    return `<h1 class="greet">© Авторы музыки</h1>
+      <p class="muted" style="margin:-10px 0 22px;max-width:700px">Треки в разделе «Настоящая музыка» — это реальные записи музыкантов, опубликованные под свободными лицензиями (Creative Commons) или находящиеся в общественном достоянии. Мы указываем авторов и ссылки на источники, как требуют лицензии. Остальные треки каталога сгенерированы специально для демо.</p>
+      <div class="tracks">${CC_TRACKS.map(t => `<div class="row" style="grid-template-columns:42px minmax(0,3fr) minmax(0,2fr) 120px"><img src="${esc(t.cover)}" alt="" style="width:42px;height:42px;border-radius:6px">
+        <span class="t"><div><b>${esc(t.title)}</b><span class="small">${esc(t.artistName)}</span></div></span>
+        <span class="small">${esc(t.author || t.artistName)} · ${esc(t.license)}</span>
+        <a class="small" href="${esc(t.source)}" target="_blank" rel="noopener" style="text-decoration:underline;color:var(--text)">Источник ↗</a></div>`).join("")}</div>`;
+  }
+
   let pendingUpload = null;
   function pageUpload() {
     setGlow("var(--accent)");
     return `<h1 class="greet">⤒ Загрузить трек</h1>
-      <p class="muted" style="margin:-10px 0 22px;max-width:640px">Выкладывайте свою музыку открыто — её смогут слушать все. Треки сохраняются в вашем браузере (это демо), с волной, визуализацией и комментариями.</p>
+      <p class="muted" style="margin:-10px 0 22px;max-width:640px">Добавьте свои треки — с волной, визуализацией и комментариями. Загруженные файлы хранятся <b>только в вашем браузере</b> и никуда не отправляются, поэтому сюда можно добавить и свою коллекцию для личного прослушивания.</p>
       <div style="max-width:760px">
         <label class="drop" id="drop" for="u-file"><div class="big">🎵</div><b id="drop-text">${pendingUpload ? esc(pendingUpload.file.name) : "Перетащите аудиофайл сюда или нажмите, чтобы выбрать"}</b><div class="small muted">MP3, WAV, OGG, M4A · до 50 МБ</div></label>
         <input type="file" id="u-file" accept="audio/*" hidden>
@@ -813,7 +843,7 @@
             <div><label>Обложка</label><div class="cover-pick"><img id="u-cover-prev" alt=""><div><input type="file" id="u-cover" accept="image/*" style="max-width:220px"><div class="small muted">Не выбрали — сгенерируем красивую</div></div></div></div>
             <div class="span2"><label for="u-desc">Описание</label><textarea id="u-desc" maxlength="400" placeholder="История трека, с кем записывали, о чём он"></textarea></div>
           </div>
-          <label class="check"><input type="checkbox" required> Я подтверждаю, что это моя музыка и у меня есть права на её публикацию. Чужие треки выкладывать нельзя.</label>
+          <label class="check"><input type="checkbox" required> Понимаю: трек сохранится только у меня в браузере. Публиковать чужую музыку для других людей нельзя без разрешения автора.</label>
           <button class="pill accent" style="margin-top:20px;padding:13px 26px" id="u-submit">Опубликовать</button>
         </form>
       </div>`;
@@ -832,7 +862,7 @@
   function render() {
     const [page, arg] = location.hash.replace(/^#\/?/, "").split("/");
     const views = { "": pageHome, search: () => pageSearch(arg), playlist: () => pagePlaylist(arg), track: () => pageTrack(arg), artist: () => pageArtist(arg),
-      charts: pageCharts, library: () => pageLibrary(arg), wrapped: pageWrapped, upload: pageUpload };
+      charts: pageCharts, library: () => pageLibrary(arg), wrapped: pageWrapped, upload: pageUpload, licenses: pageLicenses };
     $("page").innerHTML = (views[page] || pageHome)();
     document.querySelectorAll("[data-nav]").forEach(l => l.classList.toggle("on", l.dataset.nav === (page || "")));
     renderSide();
