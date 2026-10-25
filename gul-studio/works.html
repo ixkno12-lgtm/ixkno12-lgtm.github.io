@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Работы и отзывы — Гүл Studio</title>
+<meta name="description" content="Букеты, которые собрали флористы Гүл Studio, и отзывы наших клиентов.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Prata&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .page-hero { padding: 80px 0 40px; }
+  .page-hero h1 { font-size: clamp(48px, 8vw, 104px); margin-bottom: 18px; }
+  .page-hero p { color: var(--muted); font-size: 19px; max-width: 560px; }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 30px; }
+
+  /* Галерея «кирпичиками» */
+  .gallery { columns: 3 280px; column-gap: 18px; }
+  .shot { break-inside: avoid; margin-bottom: 18px; position: relative; border-radius: var(--radius); overflow: hidden; cursor: zoom-in; background: var(--card); }
+  .shot img { width: 100%; height: auto; transition: transform .9s ease; }
+  .shot:hover img { transform: scale(1.05); }
+  .shot figcaption { position: absolute; inset: auto 0 0 0; padding: 50px 20px 18px; background: linear-gradient(transparent, rgba(10,14,12,.85)); transform: translateY(10px); opacity: 0; transition: opacity .35s, transform .35s; }
+  .shot:hover figcaption, .shot:focus-visible figcaption { opacity: 1; transform: none; }
+  .shot figcaption b { display: block; font-family: "Prata", serif; font-weight: 400; font-size: 20px; }
+  .shot figcaption span { color: var(--muted); font-size: 14px; }
+  .shot.hide { display: none; }
+  @media (hover: none) { .shot figcaption { opacity: 1; transform: none; } }
+
+  /* Просмотр фото на весь экран */
+  .lightbox { position: fixed; inset: 0; z-index: 100; background: rgba(8,10,9,.94); display: none; align-items: center; justify-content: center; padding: 30px; }
+  .lightbox.open { display: flex; animation: fade .3s; }
+  @keyframes fade { from { opacity: 0; } }
+  .lightbox figure { max-width: 1000px; width: 100%; text-align: center; }
+  .lightbox img { max-height: 78vh; width: auto; margin: 0 auto; border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+  .lightbox figcaption { margin-top: 16px; }
+  .lightbox figcaption b { font-family: "Prata", serif; font-weight: 400; font-size: 24px; display: block; }
+  .lightbox figcaption span { color: var(--muted); }
+  .lb-btn { position: absolute; width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--line); background: rgba(255,255,255,.06); color: var(--cream); font-size: 24px; cursor: pointer; }
+  .lb-btn:hover { background: rgba(255,255,255,.14); }
+  .lb-prev { left: 20px; top: 50%; } .lb-next { right: 20px; top: 50%; } .lb-close { right: 20px; top: 20px; }
+
+  /* Отзывы */
+  #reviews { background: var(--bg-2); }
+  .reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .review { background: var(--card); border-radius: var(--radius); padding: 30px; display: flex; flex-direction: column; gap: 16px; }
+  .stars { color: var(--gold); letter-spacing: 3px; }
+  .review p { font-size: 17px; flex: 1; }
+  .who { display: flex; align-items: center; gap: 12px; }
+  .ava { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; color: #1b1214; }
+  .who b { display: block; }
+  .who span { color: var(--muted); font-size: 14px; }
+  .rating { display: flex; align-items: center; gap: 24px; margin-bottom: 40px; flex-wrap: wrap; }
+  .rating b { font-family: "Prata", serif; font-weight: 400; font-size: 72px; line-height: 1; }
+  .rating span { color: var(--muted); }
+
+  .cta { text-align: center; }
+  .cta h2 { font-size: clamp(36px, 5vw, 60px); margin-bottom: 26px; }
+
+  .credits summary { cursor: pointer; color: var(--muted); }
+  .credits ul { list-style: none; margin-top: 14px; columns: 2 320px; font-size: 13px; color: var(--muted); }
+  .credits li { margin-bottom: 6px; break-inside: avoid; }
+
+  @media (max-width: 900px) { .reviews { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="index.html" class="logo">Гүл<span>.</span></a>
+    <ul>
+      <li><a href="index.html#catalog">Букеты</a></li>
+      <li><a href="index.html#builder">Собрать свой</a></li>
+      <li><a href="works.html" class="current">Работы и отзывы</a></li>
+      <li><a href="index.html#contacts">Контакты</a></li>
+    </ul>
+    <a href="index.html#builder" class="btn btn-main btn-sm">Собрать букет</a>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="wrap">
+    <span class="eyebrow">Портфолио мастерской</span>
+    <h1>Наши <em>работы</em></h1>
+    <p>Каждый букет мы собираем вручную под человека и повод. Вот немного того, что уже уехало к получателям.</p>
+  </div>
+</section>
+
+<section style="padding-top: 0">
+  <div class="wrap">
+    <div class="filters" id="filters"></div>
+    <div class="gallery" id="gallery"></div>
+  </div>
+</section>
+
+<section id="reviews">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Отзывы</span>
+      <h2>Что говорят клиенты</h2>
+      <p>Примеры отзывов для демо-сайта.</p>
+    </div>
+    <div class="rating reveal">
+      <b>4.9</b>
+      <div><div class="stars">★★★★★</div><span>средняя оценка по 300+ отзывам в 2ГИС и Instagram</span></div>
+    </div>
+    <div class="reviews" id="reviews-list"></div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap reveal">
+    <span class="eyebrow">Ваша очередь</span>
+    <h2>Соберите букет, о котором <em>будут рассказывать</em></h2>
+    <a href="index.html#builder" class="btn btn-main">Открыть конструктор</a>
+  </div>
+</section>
+
+<footer id="credits">
+  <div class="wrap" style="display: block">
+    <details class="credits">
+      <summary>Авторы фотографий (Wikimedia Commons)</summary>
+      <ul id="credits-list"></ul>
+    </details>
+    <p style="margin-top: 20px">© 2026 Гүл Studio · Алматы <span class="demo-note">· Демо-сайт</span></p>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фото">
+  <button class="lb-btn lb-close" data-lb="close" aria-label="Закрыть">✕</button>
+  <button class="lb-btn lb-prev" data-lb="prev" aria-label="Предыдущее">←</button>
+  <figure><img id="lb-img" alt=""><figcaption><b id="lb-title"></b><span id="lb-sub"></span></figcaption></figure>
+  <button class="lb-btn lb-next" data-lb="next" aria-label="Следующее">→</button>
+</div>
+
+<a class="wa" href="https://wa.me/77000000000" target="_blank" rel="noopener">WhatsApp</a>
+
+<script>
+  document.documentElement.classList.add("js");
+  const $ = id => document.getElementById(id);
+
+  const WORKS = [
+    { img: "w31", cat: "peony", title: "Пионы «Утро»",          sub: "Пионы в стеклянной вазе" },
+    { img: "w34", cat: "tulip", title: "Тюльпаны в корзине",    sub: "Подарок на 8 марта" },
+    { img: "w04", cat: "rose",  title: "Розовое облако",        sub: "51 роза, пудровые оттенки" },
+    { img: "w17", cat: "work",  title: "Сборка букета",         sub: "Так рождается каждый заказ" },
+    { img: "w28", cat: "peony", title: "Пионовое облако",       sub: "Хит сезона" },
+    { img: "w33", cat: "tulip", title: "Весенний микс",         sub: "Тюльпаны пяти цветов" },
+    { img: "w08", cat: "rose",  title: "Огненные розы",         sub: "Кустовые розы на юбилей" },
+    { img: "w36", cat: "tulip", title: "Оранжевое настроение",  sub: "Тюльпаны без упаковки" },
+    { img: "w16", cat: "rose",  title: "На выписку",            sub: "Герберы, розы, гипсофила" },
+    { img: "w20", cat: "work",  title: "Подрезаем стебли",      sub: "Чтобы букет стоял дольше" },
+    { img: "w39", cat: "tulip", title: "Тюльпаны для любимой",  sub: "С запиской внутри" },
+  ];
+  const CATS = [["all", "Все"], ["peony", "Пионы"], ["rose", "Розы"], ["tulip", "Тюльпаны"], ["work", "Процесс"]];
+
+  const REVIEWS = [
+    { name: "Айгерим", c: "#e9a6b8", order: "Пионовое облако", text: "Собрала букет маме в конструкторе прямо с телефона. Привезли через полтора часа, и он был даже красивее, чем на экране!" },
+    { name: "Данияр",  c: "#c9a46a", order: "Классика, 15 роз", text: "Заказывал девушке на годовщину. Прислали фото перед отправкой — очень удобно, не переживал. Розы стояли больше недели." },
+    { name: "Мадина",  c: "#a7c4a0", order: "Свой букет",       text: "Люблю, что можно выбрать каждый цветок и ленту. Получилось ровно то, что я хотела. Теперь заказываю только здесь." },
+    { name: "Ерлан",   c: "#9fb8d9", order: "Весна",            text: "Срочно нужен был букет коллеге. Оформил за две минуты, оплатил в WhatsApp, всё доставили вовремя. Спасибо!" },
+    { name: "Алина",   c: "#d9a3d0", order: "В коробке",        text: "Шляпная коробка — просто восторг. Подруга сказала, что это самый красивый подарок за год." },
+    { name: "Тимур",   c: "#e8c07a", order: "Свой букет",       text: "Понравился сервис: помогли с текстом открытки и подсказали, какие цветы лучше сочетаются." },
+  ];
+
+  const CREDITS = [
+    ["Букет пионов (главная)", "Kor!An (Андрей Корзун)", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Bouquet_of_peonies_12.JPG"],
+    ["Розовые розы", "Jebulon", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Bouquet_de_roses_roses.jpg"],
+    ["Букет роз", "Gerda Arendt", "CC0", "https://commons.wikimedia.org/wiki/File:Rose_bouquet,_D%C3%B6hren.jpg"],
+    ["Букет на выписку", "M&A", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Flower_bouquet_for_a_newborn_in_Christmas.jpg"],
+    ["Пионы", "Kor!An (Андрей Корзун)", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Bouquet_of_peonies_11.JPG"],
+    ["Пионы в вазе", "Kor!An (Андрей Корзун)", "CC BY-SA 3.0", "https://commons.wikimedia.org/wiki/File:Bouquet_of_peonies_03.JPG"],
+    ["Букет тюльпанов", "Gábor Juhász", "CC0", "https://commons.wikimedia.org/wiki/File:Tulip-bouquet-vienna_(Unsplash).jpg"],
+    ["Тюльпаны в корзине", "George E. Koronaios", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:A_bouquet_of_red_tulips_in_a_basket.jpg"],
+    ["Оранжевые тюльпаны", "George E. Koronaios", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:A_bouquet_of_orange_tulips_on_a_table.jpg"],
+    ["Тюльпаны", "Brigitte Tohm", "CC0", "https://commons.wikimedia.org/wiki/File:Tulips_from_a_lover_(Unsplash).jpg"],
+    ["Флорист за работой", "direct2Florist", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Florist_working_on_a_bouquet_of_flowers.jpg"],
+    ["Подрезка стеблей", "direct2Florist", "CC BY 2.0", "https://commons.wikimedia.org/wiki/File:Florist_cutting_flower_stems.jpg"],
+    ["Красная роза (конструктор)", "Petro Stelte", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Red-Rose-Sitia-Crete-3.jpg"],
+    ["Белая роза (конструктор)", "Petro Stelte", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:White-Rose-Sitia-Crete.jpg"],
+    ["Пион (конструктор)", "Jebulon", "CC0", "https://commons.wikimedia.org/wiki/File:Paeonia_suffruticosa_Yatsuka_JdP.jpg"],
+    ["Тюльпан (конструктор)", "Екатерина Борисова", "CC BY-SA 4.0", "https://commons.wikimedia.org/wiki/File:Tulip_festival_2025_on_Yelagin_Island_21.jpg"],
+    ["Хризантема (конструктор)", "Masaki Ikeda", "Public domain", "https://commons.wikimedia.org/wiki/File:Chrysanthemum_morifolium_08NOV.jpg"],
+    ["Гипсофила (конструктор)", "Ochirnima Nimaev", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Gypsophila_davurica.jpg"],
+    ["Зелень (конструктор)", "Юрий Д.К.", "CC BY 4.0", "https://commons.wikimedia.org/wiki/File:Moscow_-_2026_-_White_rose,_near_the_Bolshoi_Theatre.jpg"],
+  ];
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+  // ---------- Галерея ----------
+  $("filters").innerHTML = CATS.map(([id, name], i) => `<button class="chip${i ? "" : " active"}" data-cat="${id}">${name}</button>`).join("");
+  $("gallery").innerHTML = WORKS.map((w, i) => `
+    <figure class="shot reveal" data-i="${i}" data-cat="${w.cat}" tabindex="0">
+      <img src="img/works/${w.img}.jpg" alt="${w.title}" loading="lazy">
+      <figcaption><b>${w.title}</b><span>${w.sub}</span></figcaption>
+    </figure>`).join("");
+
+  $("filters").addEventListener("click", e => {
+    const cat = e.target.dataset.cat;
+    if (!cat) return;
+    document.querySelectorAll("#filters .chip").forEach(b => b.classList.toggle("active", b === e.target));
+    document.querySelectorAll(".shot").forEach(s => s.classList.toggle("hide", cat !== "all" && s.dataset.cat !== cat));
+  });
+
+  // ---------- Просмотр на весь экран ----------
+  let current = 0;
+  const visible = () => [...document.querySelectorAll(".shot:not(.hide)")].map(s => +s.dataset.i);
+  function show(i) {
+    current = i;
+    const w = WORKS[i];
+    $("lb-img").src = `img/works/${w.img}.jpg`;
+    $("lb-img").alt = w.title;
+    $("lb-title").textContent = w.title;
+    $("lb-sub").textContent = w.sub;
+    $("lightbox").classList.add("open");
+  }
+  function step(d) {
+    const v = visible(), k = v.indexOf(current);
+    show(v[(k + d + v.length) % v.length]);
+  }
+  const close = () => $("lightbox").classList.remove("open");
+  $("gallery").addEventListener("click", e => { const s = e.target.closest(".shot"); if (s) show(+s.dataset.i); });
+  $("gallery").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.classList.contains("shot")) show(+e.target.dataset.i); });
+  $("lightbox").addEventListener("click", e => {
+    const a = e.target.dataset.lb;
+    if (a === "close" || e.target.id === "lightbox") close();
+    if (a === "prev") step(-1);
+    if (a === "next") step(1);
+  });
+  document.addEventListener("keydown", e => {
+    if (!$("lightbox").classList.contains("open")) return;
+    if (e.key === "Escape") close();
+    if (e.key === "ArrowLeft") step(-1);
+    if (e.key === "ArrowRight") step(1);
+  });
+
+  // ---------- Отзывы и авторы ----------
+  $("reviews-list").innerHTML = REVIEWS.map(r => `
+    <div class="review reveal">
+      <div class="stars">★★★★★</div>
+      <p>«${r.text}»</p>
+      <div class="who"><span class="ava" style="background:${r.c}">${r.name[0]}</span><div><b>${r.name}</b><span>Заказ: ${r.order}</span></div></div>
+    </div>`).join("");
+  $("credits-list").innerHTML = CREDITS.map(([what, who, lic, url]) =>
+    `<li>${esc(what)} — <a href="${url}" target="_blank" rel="noopener">${esc(who)}</a>, ${lic}</li>`).join("");
+
+  // ---------- Появление при прокрутке ----------
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add("in");
+    io.unobserve(e.target);
+    setTimeout(() => e.target.classList.remove("reveal", "in"), 900);
+  }), { threshold: .1 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+</script>
+</body>
+</html>

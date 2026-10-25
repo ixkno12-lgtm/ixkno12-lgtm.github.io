@@ -1,0 +1,1505 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Толқын — музыка независимых артистов</title>
+<meta name="description" content="Музыкальный стриминг для независимых артистов из Казахстана. Слушайте, создавайте плейлисты и выкладывайте свои треки.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rubik:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Тёмная тема (по умолчанию) */
+  :root {
+    --bg: #0d0e12;
+    --panel: #15171d;
+    --card: #1b1e26;
+    --hover: #252933;
+    --text: #f1f2f5;
+    --muted: #9aa0ad;
+    --line: #2a2e38;
+    --accent: #5ee3c1;
+    --accent-2: #8b7cff;
+    --on-accent: #08201a;
+    --shadow: 0 16px 40px rgba(0,0,0,.45);
+    --r: 14px;
+  }
+  /* Светлая тема */
+  :root[data-theme="light"] {
+    --bg: #eef0f4;
+    --panel: #ffffff;
+    --card: #ffffff;
+    --hover: #eceef3;
+    --text: #15171c;
+    --muted: #646b78;
+    --line: #e0e3ea;
+    --accent: #0f9e7e;
+    --accent-2: #6c5ce7;
+    --on-accent: #ffffff;
+    --shadow: 0 16px 40px rgba(30,40,60,.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font-family: "Inter", system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.5; overflow: hidden; }
+  h1, h2, h3, .logo { font-family: "Rubik", sans-serif; line-height: 1.15; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  img { display: block; max-width: 100%; }
+  input, select, textarea { font: inherit; color: var(--text); background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 11px 14px; width: 100%; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  textarea { resize: vertical; min-height: 80px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 13px; }
+
+  /* Каркас: боковая панель + контент + плеер */
+  .app { display: grid; grid-template-columns: 250px 1fr; gap: 8px; height: calc(100vh - 96px); padding: 8px 8px 0; }
+  .side { background: var(--panel); border-radius: var(--r); padding: 18px 12px; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; }
+  .logo { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; padding: 0 10px 16px; }
+  .logo svg { width: 34px; height: 34px; }
+  .nav-link { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 10px; color: var(--muted); font-weight: 600; transition: color .15s, background .15s; }
+  .nav-link:hover { color: var(--text); background: var(--hover); }
+  .nav-link.on { color: var(--text); background: var(--hover); }
+  .nav-link .ic { width: 22px; text-align: center; font-size: 17px; }
+  .side h4 { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); padding: 18px 12px 8px; display: flex; justify-content: space-between; align-items: center; }
+  .side h4 button { font-size: 20px; color: var(--muted); line-height: 1; }
+  .side h4 button:hover { color: var(--text); }
+  .lib-item { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 10px; }
+  .lib-item:hover, .lib-item.on { background: var(--hover); }
+  .lib-item .mini { width: 40px; height: 40px; border-radius: 8px; flex: none; overflow: hidden; }
+  .lib-item b { display: block; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lib-item span { font-size: 12px; color: var(--muted); }
+  .side-foot { margin-top: auto; padding: 14px 6px 0; display: flex; gap: 8px; }
+
+  .main { background: var(--panel); border-radius: var(--r); overflow-y: auto; position: relative; }
+  .page { padding: 0 28px 40px; }
+  .top-glow { position: absolute; inset: 0 0 auto 0; height: 340px; pointer-events: none; opacity: .55; transition: background .6s; }
+  .topbar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; padding: 14px 28px; }
+  .topbar.scrolled { background: color-mix(in srgb, var(--panel) 88%, transparent); backdrop-filter: blur(12px); }
+  .round { width: 38px; height: 38px; border-radius: 50%; background: color-mix(in srgb, var(--bg) 70%, transparent); display: grid; place-items: center; font-size: 16px; flex: none; }
+  .round:hover { background: var(--hover); }
+  .topbar .grow { flex: 1; }
+  .pill { padding: 9px 16px; border-radius: 99px; font-weight: 600; font-size: 14px; background: var(--text); color: var(--bg); }
+  .pill.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+  .pill.accent { background: var(--accent); color: var(--on-accent); }
+  .pill:hover { transform: scale(1.03); }
+  .rel { position: relative; }
+
+  /* Секции главной */
+  .greet { font-size: 32px; font-weight: 800; margin: 6px 0 20px; }
+  .quick { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; margin-bottom: 30px; }
+  .quick a { display: flex; align-items: center; gap: 12px; background: color-mix(in srgb, var(--text) 7%, transparent); border-radius: 8px; overflow: hidden; font-weight: 700; font-size: 14px; padding-right: 10px; transition: background .2s; }
+  .quick a:hover { background: color-mix(in srgb, var(--text) 13%, transparent); }
+  .quick .mini { width: 56px; height: 56px; flex: none; }
+  .section { margin-bottom: 34px; }
+  .section-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; gap: 10px; }
+  .section-head h2 { font-size: 22px; }
+  .section-head a { color: var(--muted); font-size: 13px; font-weight: 600; }
+  .section-head a:hover { color: var(--text); text-decoration: underline; }
+  .shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; }
+  .tile { padding: 12px; border-radius: 12px; transition: background .2s; position: relative; cursor: pointer; }
+  .tile:hover { background: var(--hover); }
+  .tile .art { aspect-ratio: 1; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,.35); margin-bottom: 12px; position: relative; }
+  .tile .art img { width: 100%; height: 100%; object-fit: cover; }
+  .tile.round-art .art { border-radius: 50%; }
+  .tile b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tile span { font-size: 13px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .fab { position: absolute; right: 8px; bottom: 8px; width: 48px; height: 48px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 18px; display: grid; place-items: center; box-shadow: 0 8px 20px rgba(0,0,0,.4); opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; }
+  .tile:hover .fab, .tile .fab.on { opacity: 1; transform: none; }
+  .collage { display: grid; grid-template-columns: 1fr 1fr; width: 100%; height: 100%; }
+  .collage img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Моя волна */
+  .wave-card { position: relative; overflow: hidden; border-radius: 18px; padding: 30px; margin-bottom: 34px; background: linear-gradient(120deg, color-mix(in srgb, var(--accent-2) 70%, #000), color-mix(in srgb, var(--accent) 55%, #000)); color: #fff; }
+  .wave-card h2 { font-size: 30px; font-weight: 800; margin-bottom: 6px; }
+  .wave-card p { opacity: .85; max-width: 440px; margin-bottom: 18px; }
+  .moods { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+  .mood { padding: 10px 16px; border-radius: 99px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); color: #fff; font-weight: 600; backdrop-filter: blur(6px); transition: background .2s, transform .1s; }
+  .mood:hover { background: rgba(255,255,255,.26); }
+  .mood:active { transform: scale(.96); }
+  .mood.on { background: #fff; color: #1a1a2a; }
+  .waves { position: absolute; right: -40px; bottom: -30px; width: 460px; height: 200px; opacity: .55; }
+  .waves path { animation: wave 6s ease-in-out infinite alternate; transform-origin: center; }
+  .waves path:nth-child(2) { animation-duration: 8s; animation-delay: -2s; }
+  .waves path:nth-child(3) { animation-duration: 10s; animation-delay: -4s; }
+  @keyframes wave { from { transform: translateX(-30px) scaleY(.9); } to { transform: translateX(30px) scaleY(1.1); } }
+
+  /* Шапка страницы (плейлист, трек, артист) */
+  .hero { display: flex; align-items: flex-end; gap: 26px; padding: 20px 0 26px; position: relative; flex-wrap: wrap; }
+  .hero .art { width: 220px; height: 220px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); flex: none; }
+  .hero .art img { width: 100%; height: 100%; object-fit: cover; }
+  .hero.artist .art { border-radius: 50%; }
+  .hero .kind { font-size: 13px; font-weight: 600; }
+  .hero h1 { font-size: clamp(32px, 5.5vw, 72px); font-weight: 800; margin: 6px 0 12px; letter-spacing: -.02em; word-break: break-word; }
+  .hero .meta { font-size: 14px; color: var(--muted); }
+  .hero .meta b { color: var(--text); }
+  .actions { display: flex; align-items: center; gap: 18px; padding: 8px 0 22px; flex-wrap: wrap; }
+  .big-play { width: 58px; height: 58px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-size: 22px; display: grid; place-items: center; box-shadow: 0 8px 22px rgba(0,0,0,.35); transition: transform .1s; }
+  .big-play:hover { transform: scale(1.06); }
+  .icon { font-size: 24px; color: var(--muted); transition: color .15s, transform .1s; }
+  .icon:hover { color: var(--text); transform: scale(1.08); }
+  .icon.on { color: var(--accent); }
+
+  /* Список треков */
+  .tracks { display: grid; }
+  .row { display: grid; grid-template-columns: 34px minmax(0, 4fr) minmax(0, 2fr) 60px 70px; gap: 14px; align-items: center; padding: 7px 12px; border-radius: 8px; color: var(--muted); }
+  .row:hover { background: var(--hover); }
+  .row.head { border-bottom: 1px solid var(--line); border-radius: 0; margin-bottom: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+  .row.head:hover { background: none; }
+  .row .num { text-align: center; font-variant-numeric: tabular-nums; }
+  .row .num .pb { display: none; font-size: 14px; color: var(--text); }
+  .row:hover .num .n { display: none; }
+  .row:hover .num .pb { display: inline; }
+  .row.cur .num .n, .row.cur .t b { color: var(--accent); }
+  .row .t { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .row .t img { width: 42px; height: 42px; border-radius: 6px; object-fit: cover; flex: none; }
+  .row .t div { min-width: 0; }
+  .row .t b { display: block; color: var(--text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .t a:hover { text-decoration: underline; color: var(--text); }
+  .row .end { display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
+  .row .heart { opacity: 0; font-size: 16px; }
+  .row:hover .heart, .row .heart.on { opacity: 1; }
+  .heart.on { color: var(--accent); }
+  .row .more { opacity: 0; font-size: 18px; letter-spacing: 1px; }
+  .row:hover .more { opacity: 1; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: var(--accent-2); color: #fff; margin-left: 6px; vertical-align: middle; }
+  .eq { display: inline-flex; gap: 2px; align-items: flex-end; height: 14px; }
+  .eq i { width: 3px; background: var(--accent); animation: eq .9s ease-in-out infinite; }
+  .eq i:nth-child(2) { animation-delay: -.3s; } .eq i:nth-child(3) { animation-delay: -.6s; }
+  @keyframes eq { 0%, 100% { height: 3px; } 50% { height: 14px; } }
+  .paused .eq i { animation-play-state: paused; }
+
+  /* Волна трека с комментариями */
+  .wave-wrap { position: relative; margin: 10px 0 40px; background: var(--card); border-radius: var(--r); padding: 22px 22px 36px; }
+  .wave-wrap canvas { width: 100%; height: 110px; display: block; cursor: pointer; }
+  .markers { position: absolute; left: 22px; right: 22px; bottom: 8px; height: 24px; }
+  .marker { position: absolute; transform: translateX(-50%); width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--card); font-size: 10px; font-weight: 700; display: grid; place-items: center; color: #1a1a1a; cursor: pointer; }
+  .marker:hover::after { content: attr(data-tip); position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 6px 10px; border-radius: 8px; font-size: 12px; font-weight: 500; white-space: nowrap; max-width: 280px; overflow: hidden; text-overflow: ellipsis; z-index: 3; }
+  .c-form { display: flex; gap: 10px; margin-bottom: 18px; }
+  .c-form .at { flex: none; align-self: center; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .comment { display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+  .ava { width: 36px; height: 36px; border-radius: 50%; flex: none; display: grid; place-items: center; font-weight: 700; color: #1a1a1a; font-size: 14px; }
+  .comment b { font-size: 14px; }
+  .comment .ts { color: var(--accent); font-size: 12px; font-weight: 600; margin-left: 6px; cursor: pointer; }
+  .comment p { margin-top: 2px; overflow-wrap: anywhere; }
+
+  /* Поиск */
+  .search-box { position: relative; max-width: 420px; flex: 1; }
+  .search-box input { border-radius: 99px; padding-left: 42px; background: var(--card); }
+  .search-box::before { content: "⌕"; position: absolute; left: 16px; top: 50%; transform: translateY(-52%); font-size: 20px; color: var(--muted); }
+  .genres { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+  .genre { aspect-ratio: 16 / 10; border-radius: 12px; padding: 16px; font-family: "Rubik", sans-serif; font-weight: 800; font-size: 22px; color: #fff; position: relative; overflow: hidden; transition: transform .15s; }
+  .genre:hover { transform: scale(1.03); }
+  .genre img { position: absolute; width: 90px; height: 90px; right: -12px; bottom: -6px; transform: rotate(22deg); border-radius: 8px; box-shadow: 0 6px 18px rgba(0,0,0,.4); }
+
+  /* Чарт */
+  .chart-row .num { font-family: "Rubik", sans-serif; font-weight: 800; font-size: 18px; color: var(--text); }
+  .trend { font-size: 11px; font-weight: 700; display: block; }
+  .trend.up { color: #3ccf7a; } .trend.down { color: #ef5f6b; } .trend.new { color: var(--accent-2); }
+
+  /* Итоги */
+  .stories { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .story { border-radius: 18px; padding: 26px; min-height: 260px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .story h3 { font-size: 16px; opacity: .85; font-weight: 700; }
+  .story .big { font-family: "Rubik", sans-serif; font-size: 52px; font-weight: 800; line-height: 1; }
+  .story img { width: 110px; height: 110px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+  .story ol { padding-left: 20px; font-weight: 600; }
+  .story li { margin: 4px 0; }
+
+  /* Загрузка */
+  .drop { border: 2px dashed var(--line); border-radius: 18px; padding: 40px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
+  .drop:hover, .drop.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+  .drop .big { font-size: 46px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+  .form-grid .span2 { grid-column: 1 / -1; }
+  label { display: block; font-weight: 600; font-size: 14px; margin: 16px 0 6px; }
+  .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; font-size: 14px; margin-top: 18px; }
+  .check input { width: auto; margin-top: 3px; accent-color: var(--accent); }
+  .cover-pick { display: flex; gap: 14px; align-items: center; }
+  .cover-pick img { width: 84px; height: 84px; border-radius: 10px; object-fit: cover; background: var(--card); }
+  .progress { height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; margin-top: 14px; }
+  .progress i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+
+  /* Плеер */
+  .player { position: fixed; left: 0; right: 0; bottom: 0; height: 96px; display: grid; grid-template-columns: minmax(200px, 1fr) minmax(320px, 2fr) minmax(200px, 1fr); align-items: center; gap: 20px; padding: 0 18px; background: var(--bg); z-index: 20; }
+  .now { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .now .cover { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; flex: none; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.3); background: var(--card); }
+  .now .info { min-width: 0; }
+  .now b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+  .now a:hover { text-decoration: underline; }
+  .now .sub { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .mini-viz { display: flex; gap: 3px; align-items: flex-end; height: 22px; flex: none; }
+  .mini-viz i { width: 3px; height: 3px; border-radius: 2px; background: var(--accent); transition: height .08s; }
+  .center { display: grid; gap: 4px; justify-items: center; }
+  .ctrl { display: flex; align-items: center; gap: 16px; }
+  .ctrl button { font-size: 17px; color: var(--muted); width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; position: relative; }
+  .ctrl button:hover { color: var(--text); }
+  .ctrl button.on { color: var(--accent); }
+  .ctrl button.on::after { content: ""; position: absolute; bottom: 0; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+  .ctrl .play { width: 40px; height: 40px; background: var(--text); color: var(--bg); font-size: 15px; }
+  .ctrl .play:hover { color: var(--bg); transform: scale(1.06); }
+  .seek { display: flex; align-items: center; gap: 10px; width: 100%; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .seek canvas { flex: 1; height: 34px; cursor: pointer; min-width: 0; }
+  .right { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
+  .right button { font-size: 16px; color: var(--muted); padding: 6px; border-radius: 8px; position: relative; }
+  .right button:hover { color: var(--text); }
+  .right button.on { color: var(--accent); }
+  .speed { font-size: 12px !important; font-weight: 700; border: 1px solid var(--line) !important; padding: 4px 8px !important; white-space: nowrap; }
+  input[type=range] { -webkit-appearance: none; appearance: none; height: 4px; padding: 0; border: 0; border-radius: 99px; background: linear-gradient(to right, var(--text) var(--p, 70%), var(--line) var(--p, 70%)); width: 100px; cursor: pointer; }
+  input[type=range]:hover { background: linear-gradient(to right, var(--accent) var(--p, 70%), var(--line) var(--p, 70%)); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; background: var(--text); }
+  input[type=range]::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--text); }
+  .timer-left { position: absolute; top: -6px; right: -8px; font-size: 9px; background: var(--accent); color: var(--on-accent); border-radius: 6px; padding: 0 4px; font-weight: 700; }
+
+  /* Всплывающие комментарии во время трека */
+  .bubble { position: fixed; left: 50%; bottom: 112px; transform: translateX(-50%) translateY(20px); opacity: 0; z-index: 30; display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 99px; padding: 6px 16px 6px 6px; box-shadow: var(--shadow); transition: opacity .3s, transform .3s; max-width: calc(100% - 40px); pointer-events: none; }
+  .bubble.show { opacity: 1; transform: translateX(-50%); }
+  .bubble .ava { width: 30px; height: 30px; font-size: 12px; }
+  .bubble span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+
+  /* Полноэкранный режим */
+  .full { position: fixed; inset: 0; z-index: 60; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 30px; color: #fff; overflow: hidden; background: #0b0b10; isolation: isolate; }
+  .full.open { display: flex; animation: fadeIn .35s; }
+  @keyframes fadeIn { from { opacity: 0; transform: scale(1.03); } }
+  .full .bg { position: absolute; inset: -60px; background-size: cover; background-position: center; filter: blur(60px) brightness(.5) saturate(1.4); z-index: -1; transform: scale(1.2); }
+  .full .close { position: absolute; top: 20px; right: 24px; font-size: 26px; color: #fff; opacity: .8; }
+  .full .big-cover { width: min(42vh, 80vw); height: min(42vh, 80vw); border-radius: 16px; object-fit: cover; box-shadow: 0 30px 80px rgba(0,0,0,.55); transition: transform .08s; }
+  .full h2 { font-size: clamp(26px, 4vw, 42px); font-weight: 800; text-align: center; }
+  .full .who { opacity: .75; text-align: center; margin-top: -14px; }
+  .full .seek { max-width: 640px; color: rgba(255,255,255,.75); }
+  .full .ctrl button { color: rgba(255,255,255,.8); font-size: 22px; width: 46px; height: 46px; }
+  .full .ctrl .play { width: 64px; height: 64px; background: #fff; color: #111; font-size: 22px; }
+  .full canvas.viz { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 180px; z-index: -1; opacity: .65; }
+
+  /* Меню, окна, уведомления */
+  .menu { position: fixed; z-index: 80; min-width: 220px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 6px; display: none; }
+  .menu.open { display: block; animation: pop .15s; }
+  @keyframes pop { from { opacity: 0; transform: scale(.96); } }
+  .menu button, .menu a { display: flex; gap: 10px; align-items: center; width: 100%; text-align: left; padding: 9px 12px; border-radius: 8px; font-size: 14px; }
+  .menu button:hover, .menu a:hover { background: var(--hover); }
+  .menu hr { border: 0; border-top: 1px solid var(--line); margin: 4px 0; }
+  .menu .label { padding: 6px 12px; font-size: 12px; color: var(--muted); }
+  .modal { position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,.6); display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal.open { display: flex; animation: fadeIn .2s; }
+  .modal .box { background: var(--panel); border-radius: 18px; padding: 26px; width: 100%; max-width: 440px; box-shadow: var(--shadow); max-height: 90vh; overflow: auto; }
+  .box h2 { font-size: 22px; margin-bottom: 6px; }
+  .box .row-btns { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+  .seg { display: inline-flex; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 3px; gap: 2px; }
+  .seg button { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; color: var(--muted); }
+  .seg button.on { background: var(--hover); color: var(--text); }
+  .switch { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 10px 0; font-size: 14px; }
+  .switch input { width: auto; accent-color: var(--accent); transform: scale(1.3); }
+  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-90px); background: var(--text); color: var(--bg); padding: 11px 20px; border-radius: 99px; font-weight: 600; font-size: 14px; z-index: 100; transition: transform .3s; box-shadow: var(--shadow); max-width: calc(100% - 40px); text-align: center; }
+  .toast.show { transform: translateX(-50%); }
+  .empty { text-align: center; color: var(--muted); padding: 50px 20px; }
+  .empty .big { font-size: 46px; margin-bottom: 10px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .tabs button { padding: 8px 16px; border-radius: 99px; background: var(--card); font-weight: 600; font-size: 14px; }
+  .tabs button.on { background: var(--text); color: var(--bg); }
+  .note { font-size: 13px; color: var(--muted); background: var(--card); border-radius: 12px; padding: 12px 16px; margin-top: 18px; }
+  .mobile-nav { display: none; }
+
+  @media (max-width: 900px) {
+    body { overflow: auto; }
+    .app { grid-template-columns: 1fr; height: auto; padding: 0; gap: 0; }
+    .side { display: none; }
+    .main { border-radius: 0; min-height: 100vh; padding-bottom: 170px; overflow: visible; }
+    .page, .topbar { padding-left: 16px; padding-right: 16px; }
+    .player { bottom: 58px; height: 68px; grid-template-columns: 1fr auto; gap: 10px; padding: 0 12px; background: var(--card); margin: 0 8px; border-radius: 12px; left: 0; right: 0; }
+    .player .seek, .player .right, .ctrl .side-btn { display: none; }
+    .player .center { justify-items: end; }
+    .now .cover { width: 46px; height: 46px; }
+    .mini-viz { display: none; }
+    .mobile-nav { display: grid; grid-template-columns: repeat(5, 1fr); position: fixed; left: 0; right: 0; bottom: 0; height: 58px; background: var(--bg); z-index: 21; border-top: 1px solid var(--line); }
+    .mobile-nav a { display: grid; place-items: center; font-size: 11px; color: var(--muted); padding-top: 6px; }
+    .mobile-nav a.on { color: var(--text); }
+    .mobile-nav a span { font-size: 19px; line-height: 1; }
+    .row { grid-template-columns: 26px minmax(0, 1fr) 60px; }
+    .row .alb, .row .dur, .row.head { display: none; }
+    .hero .art { width: 150px; height: 150px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .bubble { bottom: 140px; }
+    .fab { opacity: 1; transform: none; }
+  }
+</style>
+<script>
+  // Тема выставляется до отрисовки, чтобы страница не мигала
+  try {
+    const t = (JSON.parse(localStorage.getItem("tolqyn") || "{}").settings || {}).theme || "dark";
+    document.documentElement.dataset.theme = t === "auto" ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark") : t;
+  } catch { document.documentElement.dataset.theme = "dark"; }
+</script>
+<script src="analysis.js"></script>
+</head>
+<body>
+
+<div class="app">
+  <aside class="side">
+    <a href="#/" class="logo"><svg viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent-2)"/></linearGradient></defs><circle cx="20" cy="20" r="19" fill="url(#lg)"/><path d="M8 22c3-6 6-6 8 0s5 6 8 0 5-6 8 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>Толқын</a>
+    <a class="nav-link" href="#/" data-nav=""><span class="ic">⌂</span>Главная</a>
+    <a class="nav-link" href="#/search" data-nav="search"><span class="ic">⌕</span>Поиск</a>
+    <a class="nav-link" href="#/charts" data-nav="charts"><span class="ic">📈</span>Чарты</a>
+    <a class="nav-link" href="#/wrapped" data-nav="wrapped"><span class="ic">✨</span>Мои итоги</a>
+    <a class="nav-link" href="#/upload" data-nav="upload"><span class="ic">⤒</span>Загрузить трек</a>
+    <h4>Моя медиатека <button data-new-playlist title="Создать плейлист" aria-label="Создать плейлист">+</button></h4>
+    <div id="side-lib"></div>
+    <div class="side-foot">
+      <button class="round" data-theme-toggle title="Сменить тему" aria-label="Сменить тему" id="theme-btn">☀️</button>
+      <button class="round" data-settings title="Настройки" aria-label="Настройки">⚙</button>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="top-glow" id="glow"></div>
+    <div class="topbar" id="topbar">
+      <button class="round" onclick="history.back()" aria-label="Назад">‹</button>
+      <button class="round" onclick="history.forward()" aria-label="Вперёд">›</button>
+      <div class="grow" id="topbar-slot"></div>
+      <a class="pill ghost" href="#/upload">⤒ Загрузить</a>
+      <button class="round" data-settings aria-label="Настройки" id="me-btn">⚙</button>
+    </div>
+    <div class="page" id="page"></div>
+  </main>
+</div>
+
+<nav class="mobile-nav">
+  <a href="#/" data-nav=""><span>⌂</span>Главная</a>
+  <a href="#/search" data-nav="search"><span>⌕</span>Поиск</a>
+  <a href="#/library" data-nav="library"><span>♫</span>Медиатека</a>
+  <a href="#/upload" data-nav="upload"><span>⤒</span>Загрузить</a>
+  <a href="#/wrapped" data-nav="wrapped"><span>✨</span>Итоги</a>
+</nav>
+
+<!-- Плеер -->
+<div class="player" id="player">
+  <div class="now">
+    <img class="cover" id="p-cover" alt="" data-fullscreen>
+    <div class="info"><a id="p-title-link"><b id="p-title">Выберите трек</b></a><a class="sub" id="p-artist">Толқын</a></div>
+    <button class="heart" id="p-like" data-like-current aria-label="В любимое" style="font-size:18px">♡</button>
+    <div class="mini-viz" id="mini-viz" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+  <div class="center">
+    <div class="ctrl">
+      <button class="side-btn" data-pl="shuffle" title="Перемешать" aria-label="Перемешать">⤮</button>
+      <button class="side-btn" data-pl="prev" title="Предыдущий" aria-label="Предыдущий">⏮</button>
+      <button class="play" data-pl="toggle" id="p-play" aria-label="Играть">▶</button>
+      <button data-pl="next" title="Следующий" aria-label="Следующий">⏭</button>
+      <button class="side-btn" data-pl="repeat" title="Повтор" aria-label="Повтор">↻</button>
+    </div>
+    <div class="seek"><span id="p-cur">0:00</span><canvas id="p-wave" role="slider" tabindex="0" aria-label="Перемотка"></canvas><span id="p-dur">0:00</span></div>
+  </div>
+  <div class="right">
+    <button class="speed" data-speed title="Скорость: Slowed / Обычная / Speed up" id="p-speed">1×</button>
+    <button data-sleep title="Таймер сна" aria-label="Таймер сна" id="p-sleep">☾</button>
+    <button data-queue title="Очередь" aria-label="Очередь">☰</button>
+    <button data-fullscreen title="Полный экран (F)" aria-label="Полный экран">⤢</button>
+    <span aria-hidden="true">🔊</span><input type="range" id="p-vol" min="0" max="100" aria-label="Громкость">
+  </div>
+</div>
+
+<!-- Полноэкранный режим -->
+<div class="full" id="full">
+  <div class="bg" id="f-bg"></div>
+  <button class="close" data-close-full aria-label="Закрыть">✕</button>
+  <img class="big-cover" id="f-cover" alt="">
+  <div><h2 id="f-title"></h2></div>
+  <div class="who" id="f-artist"></div>
+  <div class="seek"><span id="f-cur">0:00</span><canvas id="f-wave" aria-label="Перемотка"></canvas><span id="f-dur">0:00</span></div>
+  <div class="ctrl">
+    <button data-pl="shuffle" aria-label="Перемешать">⤮</button>
+    <button data-pl="prev" aria-label="Предыдущий">⏮</button>
+    <button class="play" data-pl="toggle" id="f-play" aria-label="Играть">▶</button>
+    <button data-pl="next" aria-label="Следующий">⏭</button>
+    <button data-pl="repeat" aria-label="Повтор">↻</button>
+  </div>
+  <canvas class="viz" id="f-viz"></canvas>
+</div>
+
+<div class="bubble" id="bubble"></div>
+<div class="menu" id="menu"></div>
+<div class="modal" id="modal"><div class="box" id="box"></div></div>
+<div class="toast" id="toast"></div>
+<audio id="audio" preload="auto"></audio>
+
+<script>
+  // =====================================================================
+  // КАТАЛОГ
+  // =====================================================================
+  const MOODS = { energy: ["⚡", "Бодрое"], calm: ["🌿", "Спокойное"], sad: ["🌧", "Грустное"], happy: ["☀️", "Весёлое"] };
+  const GENRE_COLORS = { "Lo-fi": "#b05cc9", "Synthwave": "#d4307a", "Ambient": "#3a4a6b", "Chiptune": "#3e9e4f", "Piano": "#5d8aa8", "House": "#e0542e", "Folk": "#b8742a", "Trap": "#5b1d82", "Acoustic": "#4c8f63", "Другое": "#666" };
+
+  const ARTISTS = [
+    { id: "dina",   name: "Dina Beats",     genre: "Lo-fi",     listeners: 48210, bio: "Битмейкер из Алматы. Lo-fi и хип-хоп с домброй и звуками города." },
+    { id: "timur",  name: "Тимур Synth",    genre: "Synthwave", listeners: 23140, bio: "Synthwave и ретро-электроника. Альбом «Ночной Алматы» в работе." },
+    { id: "kara",   name: "Kara Sound",     genre: "Ambient",   listeners: 9870,  bio: "Тёмный эмбиент и саундтреки к инди-хоррорам." },
+    { id: "bakhyt", name: "pixel_bakhyt",   genre: "Chiptune",  listeners: 7340,  bio: "8-битная музыка для пиксельной RPG «Степной волк»." },
+    { id: "ainur",  name: "Ainur Keys",     genre: "Piano",     listeners: 31520, bio: "Пианистка. Медленные мелодии о горах и тишине." },
+    { id: "arman",  name: "DJ Arman",       genre: "House",     listeners: 56900, bio: "Резидент алматинских клубов. House для пятничного вечера." },
+    { id: "folk",   name: "Qazaq Folk Lab", genre: "Folk",      listeners: 18760, bio: "Домбра, кобыз и современный бит — новая народная музыка." },
+    { id: "bek",    name: "Bek808",         genre: "Trap",      listeners: 64300, bio: "Тёмный трэп с колокольчиками и тяжёлыми 808." },
+    { id: "sayan",  name: "Sayan Strings",  genre: "Acoustic",  listeners: 12450, bio: "Акустическая гитара, утро и кофе." },
+    { id: "orbita", name: "Orbita",         genre: "Ambient",   listeners: 15890, bio: "Космический эмбиент для сна и концентрации." },
+  ];
+
+  const TRACKS = [
+    { id: "koktem",   title: "Көктем",           artist: "dina",   genre: "Lo-fi",     mood: "calm",   color: "#c06aa8", plays: 182400, trend: 2,  desc: "Весенний бит с живой домброй, записанной у бабушки на даче." },
+    { id: "zhanbyr",  title: "Жаңбыр",           artist: "dina",   genre: "Lo-fi",     mood: "sad",    color: "#3d6385", plays: 96300,  trend: -1, desc: "Дождь по стеклу, пианино и тёплые аккорды." },
+    { id: "alfarabi", title: "Аль-Фараби, 2:00", artist: "timur",  genre: "Synthwave", mood: "sad",    color: "#a3245e", plays: 128900, trend: 1,  desc: "Пустой проспект, неон и дождь. Первый трек альбома «Ночной Алматы»." },
+    { id: "neon",     title: "Неон Абай",        artist: "timur",  genre: "Synthwave", mood: "energy", color: "#4b2bd1", plays: 74100,  trend: 5,  desc: "Ночная гонка по Абая на скорости 118 BPM." },
+    { id: "medeu",    title: "Тени Медеу",       artist: "kara",   genre: "Ambient",   mood: "sad",    color: "#3a4a42", plays: 41200,  trend: 0,  desc: "Главная тема инди-хоррора про заброшенный каток." },
+    { id: "steppe",   title: "Степной ветер",    artist: "bakhyt", genre: "Chiptune",  mood: "happy",  color: "#3f9a3f", plays: 38700,  trend: 3,  desc: "Саундтрек первой главы пиксельной RPG." },
+    { id: "tau",      title: "Тау самалы",       artist: "ainur",  genre: "Piano",     mood: "calm",   color: "#5f8fa6", plays: 143800, trend: -2, desc: "Горный ветер, медленное пианино и много воздуха." },
+    { id: "zhurek",   title: "Жүрек",            artist: "arman",  genre: "House",     mood: "energy", color: "#e0542e", plays: 211700, trend: 1,  desc: "Пятничный house. Громче!" },
+    { id: "dala",     title: "Дала жолы",        artist: "folk",   genre: "Folk",      mood: "happy",  color: "#b8742a", plays: 87600,  trend: 7,  desc: "Дорога через степь под звон домбры." },
+    { id: "tun",      title: "Түн",              artist: "bek",    genre: "Trap",      mood: "energy", color: "#6a1b9a", plays: 245300, trend: 0,  desc: "Ночной трэп: колокольчики, 808 и хай-хэт роллы." },
+    { id: "tan",      title: "Таң",              artist: "sayan",  genre: "Acoustic",  mood: "happy",  color: "#4f9a66", plays: 52800,  trend: 4,  desc: "Утренняя гитара. Хорошо идёт с первым кофе." },
+    { id: "garysh",   title: "Ғарыш",            artist: "orbita", genre: "Ambient",   mood: "calm",   color: "#26348f", plays: 67400,  trend: -3, desc: "Медленные пэды и колокольчики. Для сна и фокуса." },
+  ];
+  TRACKS.forEach(t => { t.src = `audio/${t.id}.mp3`; t.cover = `covers/${t.id}.jpg`; });
+
+  const BASE_COMMENTS = {
+    koktem: [[6, "Асель", "домбра вступает — мурашки"], [14, "Ерлан", "это под учёбу идеально"], [24, "Мадина", "бабушка бы одобрила 😄"]],
+    alfarabi: [[4, "Арман", "проезжаю Аль-Фараби ночью под это"], [16, "Жания", "вот этот арпеджио 🔥"]],
+    tun: [[3, "Нурлан", "808 качает"], [12, "Данияр", "хай-хэты 🔥🔥"], [21, "Бекзат", "на повторе всю ночь"]],
+    zhurek: [[8, "Айгерим", "сейчас будет дроп"], [15, "Тимур", "пятница началась"]],
+    medeu: [[9, "Kara Sound", "здесь в игре появляется Она 👻"], [20, "Ерлан", "сердце стучит в такт"]],
+    tau: [[10, "Сабина", "как будто стою на Шымбулаке"]],
+    dala: [[12, "Арман", "вот это вайб"], [22, "Асель", "хочу в степь"]],
+  };
+
+  const EDITORIAL = [
+    { id: "night",  name: "Алматы ночью",   desc: "Неон, пустые проспекты и мысли в 2 часа ночи.", tracks: ["alfarabi", "neon", "tun", "zhanbyr", "garysh"] },
+    { id: "focus",  name: "Фокус и учёба",  desc: "Спокойные биты и пианино, чтобы сосредоточиться.", tracks: ["tau", "koktem", "garysh", "tan", "zhanbyr"] },
+    { id: "energy", name: "Заряд энергии",  desc: "Для спортзала, уборки и пятничного вечера.", tracks: ["zhurek", "tun", "neon", "steppe", "dala"] },
+    { id: "qazaq",  name: "Казахский вайб", desc: "Домбра, степь и горы в современном звучании.", tracks: ["dala", "koktem", "steppe", "tau", "medeu"] },
+  ];
+
+  // =====================================================================
+  // СОСТОЯНИЕ
+  // =====================================================================
+  const KEY = "tolqyn";
+  const DEFAULTS = { name: "", liked: {}, playlists: [], history: [], plays: {}, listened: {}, comments: {}, follows: {},
+    settings: { theme: "dark", bubbles: true, crossfade: false }, volume: 80 };
+  const saved = (() => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } })();
+  const S = { ...structuredClone(DEFAULTS), ...saved, settings: { ...DEFAULTS.settings, ...(saved.settings || {}) } };
+  let saveTimer;
+  function save(now) {
+    clearTimeout(saveTimer);
+    const write = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+    now ? write() : (saveTimer = setTimeout(write, 300));
+  }
+
+  // Загруженные треки лежат в IndexedDB браузера: туда помещаются большие файлы
+  let UPLOADS = [];
+  const DB = {
+    open() {
+      return new Promise((res, rej) => {
+        const r = indexedDB.open("tolqyn", 1);
+        r.onupgradeneeded = () => r.result.createObjectStore("uploads", { keyPath: "id" });
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => rej(r.error);
+      });
+    },
+    async tx(mode, fn) {
+      const db = await this.open();
+      return new Promise((res, rej) => {
+        const t = db.transaction("uploads", mode);
+        const out = fn(t.objectStore("uploads"));
+        t.oncomplete = () => res(out?.result);
+        t.onerror = () => rej(t.error);
+      });
+    },
+    all() { return this.tx("readonly", s => s.getAll()); },
+    put(v) { return this.tx("readwrite", s => s.put(v)); },
+    del(id) { return this.tx("readwrite", s => s.delete(id)); },
+  };
+  async function loadUploads() {
+    try {
+      const rows = await DB.all();
+      UPLOADS = rows.sort((a, b) => b.date.localeCompare(a.date)).map(r => ({
+        ...r, mine: true, src: URL.createObjectURL(r.audio), cover: URL.createObjectURL(r.coverBlob), plays: r.plays || 0, trend: "new",
+      }));
+    } catch { UPLOADS = []; }
+  }
+
+  // =====================================================================
+  // ПОМОЩНИКИ
+  // =====================================================================
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const fmt = s => !isFinite(s) ? "0:00" : `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  const num = n => n >= 1e6 ? (n / 1e6).toFixed(1).replace(".0", "") + " млн" : n >= 1e3 ? Math.round(n / 1e3) + " тыс." : String(n);
+  const uid = () => Math.random().toString(36).slice(2, 10);
+  const allTracks = () => [...UPLOADS, ...TRACKS];
+  const track = id => allTracks().find(t => t.id === id);
+  const artist = id => ARTISTS.find(a => a.id === id);
+  const artistName = t => t.mine ? t.artistName : artist(t.artist)?.name || "";
+  const artistLink = t => t.mine ? `#/search/${encodeURIComponent(t.artistName)}` : `#/artist/${t.artist}`;
+  const plays = t => (t.plays || 0) + (S.plays[t.id] || 0);
+  const B36 = "0123456789abcdefghijklmnopqrstuvwxyz";
+  const analysisOf = t => t.mine ? t.analysis : window.ANALYSIS?.[t.id];
+  const durOf = t => analysisOf(t)?.d || 0;
+  const peaksOf = t => [...(analysisOf(t)?.p || "")].map(c => B36.indexOf(c) / 35);
+  const avaColor = name => `hsl(${[...name].reduce((h, c) => h + c.charCodeAt(0), 0) % 360} 60% 72%)`;
+  const ava = (name, size) => `<span class="ava" style="background:${avaColor(name)}${size ? `;width:${size}px;height:${size}px` : ""}">${esc(name[0] || "?")}</span>`;
+  const cssVar = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  function toast(msg) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toast.t);
+    toast.t = setTimeout(() => t.classList.remove("show"), 2400);
+  }
+
+  // Спектр трека: 16 полос, 12 кадров в секунду
+  const frameCache = {};
+  function framesOf(t) {
+    if (frameCache[t.id]) return frameCache[t.id];
+    const f = analysisOf(t)?.f || "";
+    const arr = new Float32Array(f.length);
+    for (let i = 0; i < f.length; i++) arr[i] = B36.indexOf(f[i]) / 35;
+    return frameCache[t.id] = arr;
+  }
+  function bandsAt(t, time) {
+    const fr = framesOf(t), n = fr.length / 16;
+    if (!n) return new Array(16).fill(0);
+    const x = Math.min(n - 1.001, Math.max(0, time * 12)), i = Math.floor(x), k = x - i;
+    return Array.from({ length: 16 }, (_, b) => fr[i * 16 + b] * (1 - k) + (fr[Math.min(n - 1, i + 1) * 16 + b] || 0) * k);
+  }
+
+  // =====================================================================
+  // ОБЩИЕ БЛОКИ
+  // =====================================================================
+  function coverOf(item, cls = "") {
+    if (item.tracks) {
+      const covers = item.tracks.map(id => track(id)?.cover).filter(Boolean);
+      if (item.id === "liked") return `<div class="${cls}" style="background:linear-gradient(135deg,var(--accent-2),var(--accent));display:grid;place-items:center;color:#fff;font-size:26px;width:100%;height:100%">♥</div>`;
+      if (covers.length >= 4) return `<div class="collage ${cls}">${covers.slice(0, 4).map(c => `<img src="${esc(c)}" alt="">`).join("")}</div>`;
+      if (covers.length) return `<img class="${cls}" src="${esc(covers[0])}" alt="">`;
+      return `<div class="${cls}" style="background:var(--hover);display:grid;place-items:center;font-size:26px;width:100%;height:100%">♫</div>`;
+    }
+    return `<img class="${cls}" src="${esc(item.cover)}" alt="" loading="lazy">`;
+  }
+  const likedPlaylist = () => ({ id: "liked", name: "Любимые треки", desc: "Треки, которые вы отметили ♥", tracks: Object.keys(S.liked).filter(id => S.liked[id] && track(id)).reverse() });
+  const playlistOf = id => id === "liked" ? likedPlaylist() : EDITORIAL.find(p => p.id === id) || S.playlists.find(p => p.id === id);
+
+  function trackTile(t) {
+    return `<div class="tile" data-open="#/track/${t.id}">
+      <div class="art">${coverOf(t)}<button class="fab" data-play="${t.id}" data-ctx="tile" aria-label="Слушать ${esc(t.title)}">▶</button></div>
+      <b>${esc(t.title)}</b><span>${esc(artistName(t))}</span></div>`;
+  }
+  function playlistTile(p) {
+    return `<div class="tile" data-open="#/playlist/${p.id}">
+      <div class="art">${coverOf(p)}<button class="fab" data-play-list="${p.id}" aria-label="Слушать плейлист">▶</button></div>
+      <b>${esc(p.name)}</b><span>${esc(p.desc || `${p.tracks.length} треков`)}</span></div>`;
+  }
+  function artistTile(a) {
+    return `<div class="tile round-art" data-open="#/artist/${a.id}">
+      <div class="art"><img src="covers/a-${a.id}.jpg" alt=""></div>
+      <b>${esc(a.name)}</b><span>Артист · ${esc(a.genre)}</span></div>`;
+  }
+
+  // Строки треков. list — id треков, ctx — откуда играет очередь
+  function trackRows(ids, ctx, { chart = false, removable = false } = {}) {
+    const cur = currentTrack();
+    return `<div class="tracks">
+      <div class="row head"><span class="num">#</span><span>Название</span><span class="alb">${chart ? "Прослушивания" : "Жанр"}</span><span class="dur">⏱</span><span></span></div>
+      ${ids.map((id, i) => {
+        const t = track(id);
+        if (!t) return "";
+        const isCur = cur && cur.id === id;
+        const trend = chart ? (t.trend === "new" ? `<span class="trend new">NEW</span>` : t.trend > 0 ? `<span class="trend up">▲${t.trend}</span>` : t.trend < 0 ? `<span class="trend down">▼${-t.trend}</span>` : `<span class="trend">—</span>`) : "";
+        return `<div class="row${chart ? " chart-row" : ""}${isCur ? " cur" : ""}" data-row="${id}" data-ctx="${ctx}">
+          <span class="num">${isCur && !audio.paused ? `<span class="n"><span class="eq"><i></i><i></i><i></i></span></span>` : `<span class="n">${i + 1}</span>`}<button class="pb" data-play="${id}" data-ctx="${ctx}" aria-label="Играть">${isCur && !audio.paused ? "⏸" : "▶"}</button>${trend}</span>
+          <span class="t"><img src="${esc(t.cover)}" alt=""><div><a href="#/track/${t.id}"><b>${esc(t.title)}${t.mine ? `<span class="badge">ВАШ</span>` : ""}</b></a><a class="small" href="${artistLink(t)}">${esc(artistName(t))}</a></div></span>
+          <span class="alb small">${chart ? num(plays(t)) : esc(t.genre)}</span>
+          <span class="dur small">${fmt(durOf(t))}</span>
+          <span class="end"><button class="heart${S.liked[id] ? " on" : ""}" data-like="${id}" aria-label="В любимое">${S.liked[id] ? "♥" : "♡"}</button><button class="more" data-more="${id}" ${removable ? `data-from="${ctx}"` : ""} aria-label="Ещё">⋯</button></span>
+        </div>`;
+      }).join("")}</div>`;
+  }
+
+  function setGlow(color) {
+    $("glow").style.background = `linear-gradient(180deg, ${color || "var(--accent-2)"} 0%, transparent 100%)`;
+  }
+
+  // =====================================================================
+  // СТРАНИЦЫ
+  // =====================================================================
+  function pageHome() {
+    setGlow("var(--accent-2)");
+    const h = new Date().getHours();
+    const greet = h < 5 ? "Доброй ночи" : h < 12 ? "Доброе утро" : h < 18 ? "Добрый день" : "Добрый вечер";
+    const recent = [...new Set(S.history)].slice(0, 6).map(track).filter(Boolean);
+    const chart = [...allTracks()].sort((a, b) => plays(b) - plays(a)).slice(0, 5).map(t => t.id);
+    const quick = [likedPlaylist(), ...S.playlists.slice(0, 2), ...EDITORIAL].slice(0, 6);
+    return `<h1 class="greet">${greet}${S.name ? `, ${esc(S.name)}` : ""}</h1>
+      <div class="quick">${quick.map(p => `<a href="#/playlist/${p.id}"><div class="mini">${coverOf(p)}</div>${esc(p.name)}</a>`).join("")}</div>
+
+      <div class="wave-card">
+        <svg class="waves" viewBox="0 0 460 200" aria-hidden="true"><path d="M0 120 Q60 70 120 120 T240 120 T360 120 T480 120" stroke="#fff" stroke-width="3" fill="none"/><path d="M0 140 Q60 100 120 140 T240 140 T360 140 T480 140" stroke="#fff" stroke-width="2" fill="none" opacity=".6"/><path d="M0 160 Q60 130 120 160 T240 160 T360 160 T480 160" stroke="#fff" stroke-width="2" fill="none" opacity=".35"/></svg>
+        <h2>🌊 Моя волна</h2>
+        <p>Бесконечный поток музыки под ваше настроение. Чем больше лайков — тем точнее подбор.</p>
+        <div class="moods">${Object.entries(MOODS).map(([k, [ic, n]]) => `<button class="mood${player.wave === k ? " on" : ""}" data-wave="${k}">${ic} ${n}</button>`).join("")}
+          <button class="mood${player.wave === "all" ? " on" : ""}" data-wave="all">🎲 Любое</button></div>
+      </div>
+
+      ${recent.length ? `<div class="section"><div class="section-head"><h2>Недавно слушали</h2><a href="#/library/history">Вся история</a></div><div class="shelf">${recent.map(trackTile).join("")}</div></div>` : ""}
+
+      <div class="section"><div class="section-head"><h2>Чарт недели</h2><a href="#/charts">Весь чарт</a></div>${trackRows(chart, "chart", { chart: true })}</div>
+
+      <div class="section"><div class="section-head"><h2>Подборки Толқын</h2></div><div class="shelf">${EDITORIAL.map(playlistTile).join("")}</div></div>
+
+      <div class="section"><div class="section-head"><h2>Новые релизы</h2></div><div class="shelf">${TRACKS.slice(0, 6).map(trackTile).join("")}</div></div>
+
+      <div class="section"><div class="section-head"><h2>От слушателей</h2><a href="#/upload">Загрузить свой трек</a></div>
+        ${UPLOADS.length ? `<div class="shelf">${UPLOADS.slice(0, 6).map(trackTile).join("")}</div>`
+          : `<div class="note" style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap"><span>Здесь появятся треки, которые загрузите вы. Каждый может выложить свою музыку.</span><a class="pill accent" href="#/upload">⤒ Загрузить трек</a></div>`}</div>
+
+      <div class="section"><div class="section-head"><h2>Популярные артисты</h2></div><div class="shelf">${[...ARTISTS].sort((a, b) => b.listeners - a.listeners).slice(0, 6).map(artistTile).join("")}</div></div>`;
+  }
+
+  let searchQuery = "";
+  function pageSearch(q) {
+    setGlow("var(--accent)");
+    if (q !== undefined) searchQuery = decodeURIComponent(q);
+    return `<div style="display:flex;gap:12px;margin:4px 0 26px"><div class="search-box"><input id="search" placeholder="Что хотите послушать?" value="${esc(searchQuery)}" autocomplete="off"></div></div>
+      <div id="search-results">${searchResults()}</div>`;
+  }
+  function searchResults() {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) {
+      const genres = [...new Set(allTracks().map(t => t.genre))];
+      return `<h2 style="font-size:22px;margin-bottom:14px">Жанры и настроения</h2>
+        <div class="genres">${Object.entries(MOODS).map(([k, [ic, n]]) => `<button class="genre" style="background:linear-gradient(135deg,var(--accent-2),var(--accent))" data-wave="${k}">${ic} ${n}</button>`).join("")}
+        ${genres.map(g => { const t = allTracks().find(t => t.genre === g); return `<a class="genre" href="#/search/${encodeURIComponent(g)}" style="background:${GENRE_COLORS[g] || "#666"}">${esc(g)}${t ? `<img src="${esc(t.cover)}" alt="">` : ""}</a>`; }).join("")}</div>`;
+    }
+    const tr = allTracks().filter(t => [t.title, artistName(t), t.genre, MOODS[t.mood]?.[1]].join(" ").toLowerCase().includes(q));
+    const ar = ARTISTS.filter(a => (a.name + " " + a.genre).toLowerCase().includes(q));
+    const pl = [...EDITORIAL, ...S.playlists].filter(p => p.name.toLowerCase().includes(q));
+    if (!tr.length && !ar.length && !pl.length) return `<div class="empty"><div class="big">🔍</div>Ничего не нашлось по запросу «${esc(searchQuery)}»</div>`;
+    return `${tr.length ? `<div class="section"><div class="section-head"><h2>Треки</h2></div>${trackRows(tr.map(t => t.id), "search")}</div>` : ""}
+      ${ar.length ? `<div class="section"><div class="section-head"><h2>Артисты</h2></div><div class="shelf">${ar.map(artistTile).join("")}</div></div>` : ""}
+      ${pl.length ? `<div class="section"><div class="section-head"><h2>Плейлисты</h2></div><div class="shelf">${pl.map(playlistTile).join("")}</div></div>` : ""}`;
+  }
+
+  function pagePlaylist(id) {
+    const p = playlistOf(id);
+    if (!p) return `<div class="empty"><div class="big">♫</div>Плейлист не найден</div>`;
+    const first = track(p.tracks[0]);
+    setGlow(id === "liked" ? "var(--accent-2)" : first?.color);
+    const mine = S.playlists.includes(p);
+    const total = p.tracks.reduce((s, tid) => s + durOf(track(tid) || {}), 0);
+    return `<div class="hero"><div class="art">${coverOf(p)}</div>
+        <div><div class="kind">${mine ? "Ваш плейлист" : id === "liked" ? "Плейлист" : "Подборка Толқын"}</div><h1>${esc(p.name)}</h1>
+        <div class="meta">${p.desc ? esc(p.desc) + " · " : ""}<b>${p.tracks.length} треков</b>, ${Math.round(total / 60)} мин</div></div></div>
+      <div class="actions">
+        <button class="big-play" data-play-list="${p.id}" aria-label="Слушать">▶</button>
+        <button class="icon" data-play-list="${p.id}" data-shuffle title="Перемешать" aria-label="Перемешать">⤮</button>
+        ${mine ? `<button class="icon" data-rename="${p.id}" title="Переименовать" aria-label="Переименовать">✎</button><button class="icon" data-del-playlist="${p.id}" title="Удалить" aria-label="Удалить">🗑</button>` : ""}
+        <button class="icon" data-share title="Поделиться" aria-label="Поделиться">↗</button>
+      </div>
+      ${p.tracks.length ? trackRows(p.tracks, "pl:" + p.id, { removable: mine })
+        : `<div class="empty"><div class="big">${id === "liked" ? "♥" : "♫"}</div>${id === "liked" ? "Нажимайте ♡ рядом с треками — они появятся здесь" : "Добавляйте треки через ⋯ → «Добавить в плейлист»"}</div>`}`;
+  }
+
+  function pageTrack(id) {
+    const t = track(id);
+    if (!t) return `<div class="empty"><div class="big">♫</div>Трек не найден</div>`;
+    setGlow(t.color);
+    const comments = [...(BASE_COMMENTS[id] || []).map(([at, name, text]) => ({ at, name, text })), ...(S.comments[id] || [])].sort((a, b) => a.at - b.at);
+    const similar = allTracks().filter(x => x.id !== id && (x.mood === t.mood || x.genre === t.genre)).slice(0, 6);
+    const isCur = currentTrack()?.id === id;
+    return `<div class="hero"><div class="art">${coverOf(t)}</div>
+        <div><div class="kind">Трек${t.mine ? " · загружен слушателем" : ""}</div><h1>${esc(t.title)}</h1>
+        <div class="meta"><a href="${artistLink(t)}"><b>${esc(artistName(t))}</b></a> · ${esc(t.genre)} · ${MOODS[t.mood]?.join(" ") || ""} · ${fmt(durOf(t))} · ${num(plays(t))} прослушиваний</div></div></div>
+      <div class="actions">
+        <button class="big-play" data-play="${t.id}" data-ctx="track" aria-label="Слушать">${isCur && !audio.paused ? "⏸" : "▶"}</button>
+        <button class="icon${S.liked[id] ? " on" : ""}" data-like="${id}" aria-label="В любимое">${S.liked[id] ? "♥" : "♡"}</button>
+        <button class="icon" data-more="${id}" aria-label="Ещё">⋯</button>
+        <button class="icon" data-share title="Поделиться" aria-label="Поделиться">↗</button>
+        ${t.mine ? `<button class="icon" data-del-upload="${id}" title="Удалить трек" aria-label="Удалить трек">🗑</button>` : ""}
+      </div>
+      ${t.desc ? `<p class="muted" style="max-width:700px;margin-bottom:10px">${esc(t.desc)}</p>` : ""}
+      <div class="wave-wrap"><canvas id="track-wave" data-track="${id}" aria-label="Волна трека, нажмите для перемотки"></canvas>
+        <div class="markers">${comments.map(c => `<span class="marker" style="left:${Math.min(100, c.at / (durOf(t) || 1) * 100)}%;background:${avaColor(c.name)}" data-seek-to="${c.at}" data-track-id="${id}" data-tip="${esc(c.name)}: ${esc(c.text)}">${esc(c.name[0])}</span>`).join("")}</div></div>
+      <div class="section"><div class="section-head"><h2>Комментарии к моментам трека (${comments.length})</h2></div>
+        <form class="c-form" id="c-form" data-track="${id}"><span class="at" id="c-at">на ${fmt(isCur ? audio.currentTime : 0)}</span>
+          <input id="c-text" maxlength="200" placeholder="Что вы чувствуете в этот момент трека?" required><button class="pill accent">Отправить</button></form>
+        <p class="small muted" style="margin:-8px 0 12px">Комментарий привяжется к текущей секунде трека и всплывёт у других слушателей в этот момент.</p>
+        ${comments.map(c => `<div class="comment">${ava(c.name)}<div><b>${esc(c.name)}</b><span class="ts" data-seek-to="${c.at}" data-track-id="${id}">${fmt(c.at)}</span><p>${esc(c.text)}</p></div></div>`).join("") || `<p class="muted">Будьте первым!</p>`}</div>
+      ${similar.length ? `<div class="section"><div class="section-head"><h2>Похожие треки</h2></div><div class="shelf">${similar.map(trackTile).join("")}</div></div>` : ""}`;
+  }
+
+  function pageArtist(id) {
+    const a = artist(id);
+    if (!a) return `<div class="empty">Артист не найден</div>`;
+    const tracks = TRACKS.filter(t => t.artist === id).sort((x, y) => plays(y) - plays(x));
+    setGlow(tracks[0]?.color);
+    const followed = S.follows[id];
+    return `<div class="hero artist"><div class="art"><img src="covers/a-${id}.jpg" alt=""></div>
+        <div><div class="kind">✓ Артист</div><h1>${esc(a.name)}</h1><div class="meta"><b>${(a.listeners + (followed ? 1 : 0)).toLocaleString("ru-RU")}</b> слушателей в месяц · ${esc(a.genre)}</div></div></div>
+      <div class="actions">
+        <button class="big-play" data-play-artist="${id}" aria-label="Слушать">▶</button>
+        <button class="pill ${followed ? "" : "ghost"}" data-follow="${id}">${followed ? "Вы подписаны" : "Подписаться"}</button>
+      </div>
+      <div class="section"><div class="section-head"><h2>Популярное</h2></div>${trackRows(tracks.map(t => t.id), "artist:" + id)}</div>
+      <div class="section"><div class="section-head"><h2>Об артисте</h2></div><p class="muted" style="max-width:640px">${esc(a.bio)}</p></div>
+      <div class="section"><div class="section-head"><h2>Похожие артисты</h2></div><div class="shelf">${ARTISTS.filter(x => x.id !== id && x.genre === a.genre).concat(ARTISTS.filter(x => x.id !== id && x.genre !== a.genre)).slice(0, 5).map(artistTile).join("")}</div></div>`;
+  }
+
+  function pageCharts() {
+    setGlow("#e0542e");
+    const top = [...allTracks()].sort((a, b) => plays(b) - plays(a)).map(t => t.id);
+    return `<div class="hero"><div class="art" style="background:linear-gradient(135deg,#e0542e,#6a1b9a);display:grid;place-items:center;font-size:80px">📈</div>
+      <div><div class="kind">Чарт</div><h1>Топ Толқын</h1><div class="meta">Самые прослушиваемые треки недели. Ваши прослушивания тоже считаются!</div></div></div>
+      <div class="actions"><button class="big-play" data-play-chart aria-label="Слушать чарт">▶</button></div>
+      ${trackRows(top, "chart", { chart: true })}`;
+  }
+
+  let libTab = "playlists";
+  function pageLibrary(tab) {
+    setGlow("var(--accent-2)");
+    if (tab) libTab = tab;
+    const tabs = [["playlists", "Плейлисты"], ["liked", "Любимые"], ["uploads", "Мои загрузки"], ["history", "История"], ["artists", "Артисты"]];
+    let body;
+    if (libTab === "playlists") body = `<div class="shelf"><div class="tile" data-new-playlist><div class="art" style="background:var(--hover);display:grid;place-items:center;font-size:44px">＋</div><b>Новый плейлист</b><span>Соберите свою подборку</span></div>${[likedPlaylist(), ...S.playlists].map(playlistTile).join("")}</div>`;
+    if (libTab === "liked") body = likedPlaylist().tracks.length ? trackRows(likedPlaylist().tracks, "pl:liked") : `<div class="empty"><div class="big">♥</div>Пока нет любимых треков</div>`;
+    if (libTab === "uploads") body = UPLOADS.length ? trackRows(UPLOADS.map(t => t.id), "uploads") : `<div class="empty"><div class="big">⤒</div>Вы ещё ничего не загрузили<br><br><a class="pill accent" href="#/upload">Загрузить трек</a></div>`;
+    if (libTab === "history") { const h = [...new Set(S.history)].filter(track); body = h.length ? trackRows(h, "history") : `<div class="empty"><div class="big">🕘</div>История пуста</div>`; }
+    if (libTab === "artists") { const f = ARTISTS.filter(a => S.follows[a.id]); body = f.length ? `<div class="shelf">${f.map(artistTile).join("")}</div>` : `<div class="empty"><div class="big">👤</div>Вы ни на кого не подписаны</div>`; }
+    return `<h1 class="greet">Моя медиатека</h1><div class="tabs">${tabs.map(([k, n]) => `<button class="${libTab === k ? "on" : ""}" data-libtab="${k}">${n}</button>`).join("")}</div>${body}`;
+  }
+
+  function pageWrapped() {
+    setGlow("#d4307a");
+    const entries = Object.entries(S.listened).filter(([id]) => track(id)).sort((a, b) => b[1] - a[1]);
+    const totalMin = Math.round(entries.reduce((s, [, sec]) => s + sec, 0) / 60);
+    if (!entries.length) return `<h1 class="greet">✨ Мои итоги</h1><div class="empty"><div class="big">🎧</div>Послушайте пару треков — и здесь появится ваша музыкальная статистика: минуты, любимые артисты и настроение.<br><br><button class="pill accent" data-wave="all">🌊 Включить Мою волну</button></div>`;
+    const byArtist = {}, byMood = {};
+    entries.forEach(([id, sec]) => { const t = track(id); byArtist[artistName(t)] = (byArtist[artistName(t)] || 0) + sec; byMood[t.mood] = (byMood[t.mood] || 0) + sec; });
+    const topArtist = Object.entries(byArtist).sort((a, b) => b[1] - a[1])[0][0];
+    const topMood = Object.entries(byMood).sort((a, b) => b[1] - a[1])[0][0];
+    const topTrack = track(entries[0][0]);
+    const persona = { energy: "Энерджайзер ⚡", calm: "Дзен-мастер 🌿", sad: "Ночной романтик 🌧", happy: "Солнечный человек ☀️" }[topMood];
+    const shareText = `Мои итоги в Толқын: ${totalMin} мин музыки, любимый артист — ${topArtist}, мой тип — ${persona}`;
+    return `<h1 class="greet">✨ Мои итоги</h1><p class="muted" style="margin:-10px 0 22px">Ваша музыкальная статистика за всё время.</p>
+      <div class="stories">
+        <div class="story" style="background:linear-gradient(160deg,#6c5ce7,#d4307a)"><h3>Вы слушали</h3><div><div class="big">${totalMin}</div><b>минут музыки</b></div></div>
+        <div class="story" style="background:linear-gradient(160deg,${topTrack.color},#111)"><h3>Трек №1</h3><img src="${esc(topTrack.cover)}" alt=""><div><b style="font-size:22px">${esc(topTrack.title)}</b><div style="opacity:.8">${esc(artistName(topTrack))}</div></div></div>
+        <div class="story" style="background:linear-gradient(160deg,#0f9e7e,#1d3557)"><h3>Любимый артист</h3><div class="big" style="font-size:36px">${esc(topArtist)}</div><div style="opacity:.8">${Math.round(byArtist[topArtist] / 60)} мин вместе</div></div>
+        <div class="story" style="background:linear-gradient(160deg,#e0542e,#f2c14e)"><h3>Ваш музыкальный тип</h3><div class="big" style="font-size:34px">${persona}</div><div style="opacity:.85">Больше всего вы слушаете «${MOODS[topMood][1].toLowerCase()}» настроение</div></div>
+        <div class="story" style="background:linear-gradient(160deg,#26348f,#5ee3c1)"><h3>Топ-5 треков</h3><ol>${entries.slice(0, 5).map(([id]) => `<li>${esc(track(id).title)}</li>`).join("")}</ol></div>
+      </div>
+      <div class="actions" style="margin-top:20px"><button class="pill accent" data-copy="${esc(shareText)}">↗ Поделиться итогами</button></div>`;
+  }
+
+  let pendingUpload = null;
+  function pageUpload() {
+    setGlow("var(--accent)");
+    return `<h1 class="greet">⤒ Загрузить трек</h1>
+      <p class="muted" style="margin:-10px 0 22px;max-width:640px">Выкладывайте свою музыку открыто — её смогут слушать все. Треки сохраняются в вашем браузере (это демо), с волной, визуализацией и комментариями.</p>
+      <div style="max-width:760px">
+        <label class="drop" id="drop" for="u-file"><div class="big">🎵</div><b id="drop-text">${pendingUpload ? esc(pendingUpload.file.name) : "Перетащите аудиофайл сюда или нажмите, чтобы выбрать"}</b><div class="small muted">MP3, WAV, OGG, M4A · до 50 МБ</div></label>
+        <input type="file" id="u-file" accept="audio/*" hidden>
+        <div class="progress" id="u-prog" hidden><i></i></div>
+        <form id="u-form">
+          <div class="form-grid">
+            <div class="span2"><label for="u-title">Название трека</label><input id="u-title" maxlength="80" required placeholder="Например: Ночной Алматы"></div>
+            <div><label for="u-artist">Имя артиста</label><input id="u-artist" maxlength="40" required value="${esc(S.name)}" placeholder="Ваш псевдоним"></div>
+            <div><label for="u-genre">Жанр</label><select id="u-genre">${Object.keys(GENRE_COLORS).map(g => `<option>${g}</option>`).join("")}</select></div>
+            <div><label for="u-mood">Настроение</label><select id="u-mood">${Object.entries(MOODS).map(([k, [ic, n]]) => `<option value="${k}">${ic} ${n}</option>`).join("")}</select></div>
+            <div><label>Обложка</label><div class="cover-pick"><img id="u-cover-prev" alt=""><div><input type="file" id="u-cover" accept="image/*" style="max-width:220px"><div class="small muted">Не выбрали — сгенерируем красивую</div></div></div></div>
+            <div class="span2"><label for="u-desc">Описание</label><textarea id="u-desc" maxlength="400" placeholder="История трека, с кем записывали, о чём он"></textarea></div>
+          </div>
+          <label class="check"><input type="checkbox" required> Я подтверждаю, что это моя музыка и у меня есть права на её публикацию. Чужие треки выкладывать нельзя.</label>
+          <button class="pill accent" style="margin-top:20px;padding:13px 26px" id="u-submit">Опубликовать</button>
+        </form>
+      </div>`;
+  }
+
+  // =====================================================================
+  // РОУТИНГ
+  // =====================================================================
+  function renderSide() {
+    const cur = location.hash;
+    $("side-lib").innerHTML = [likedPlaylist(), ...S.playlists].map(p => `<a class="lib-item${cur === "#/playlist/" + p.id ? " on" : ""}" href="#/playlist/${p.id}"><div class="mini">${coverOf(p)}</div><div style="min-width:0"><b>${esc(p.name)}</b><span>Плейлист · ${p.tracks.length} треков</span></div></a>`).join("")
+      + (UPLOADS.length ? `<a class="lib-item${cur === "#/library/uploads" ? " on" : ""}" href="#/library/uploads"><div class="mini" style="background:var(--hover);display:grid;place-items:center;font-size:18px">⤒</div><div><b>Мои загрузки</b><span>${UPLOADS.length} треков</span></div></a>` : "");
+    $("theme-btn").textContent = document.documentElement.dataset.theme === "dark" ? "☀️" : "🌙";
+  }
+
+  function render() {
+    const [page, arg] = location.hash.replace(/^#\/?/, "").split("/");
+    const views = { "": pageHome, search: () => pageSearch(arg), playlist: () => pagePlaylist(arg), track: () => pageTrack(arg), artist: () => pageArtist(arg),
+      charts: pageCharts, library: () => pageLibrary(arg), wrapped: pageWrapped, upload: pageUpload };
+    $("page").innerHTML = (views[page] || pageHome)();
+    document.querySelectorAll("[data-nav]").forEach(l => l.classList.toggle("on", l.dataset.nav === (page || "")));
+    renderSide();
+    drawTrackWave();
+    if (page === "search") { const s = $("search"); s.focus(); s.setSelectionRange(s.value.length, s.value.length); }
+  }
+  window.addEventListener("hashchange", () => { render(); $("main").scrollTop = 0; scrollTo(0, 0); closeMenu(); });
+  $("main").addEventListener("scroll", () => $("topbar").classList.toggle("scrolled", $("main").scrollTop > 20));
+
+  // =====================================================================
+  // ПЛЕЕР
+  // =====================================================================
+  const audio = $("audio");
+  const player = { queue: [], idx: -1, shuffle: false, repeat: false, wave: null, speed: 0, sleepAt: null, sleepEnd: false, shown: new Set() };
+  const SPEEDS = [[1, "1×", true], [0.82, "Slowed", false], [1.22, "Speed up", false]];
+  audio.volume = S.volume / 100;
+
+  const currentTrack = () => track(player.queue[player.idx]);
+
+  function playQueue(ids, startId, ctx) {
+    if (!ids.length) return;
+    player.wave = ctx === "wave" ? player.wave : null;
+    if (player.shuffle && !startId) startId = ids[Math.floor(Math.random() * ids.length)];
+    player.queue = [...ids];
+    loadTrack(Math.max(0, player.queue.indexOf(startId ?? ids[0])));
+  }
+  function loadTrack(i) {
+    player.idx = i;
+    const t = currentTrack();
+    if (!t) return;
+    audio.src = t.src;
+    applySpeed();
+    audio.play().catch(() => {});
+    player.shown = new Set();
+    S.history = [t.id, ...S.history.filter(x => x !== t.id)].slice(0, 50);
+    S.plays[t.id] = (S.plays[t.id] || 0) + 1;
+    save();
+    updatePlayer();
+    updateMediaSession(t);
+  }
+  function step(dir) {
+    if (!player.queue.length) return;
+    if (player.wave && dir > 0 && player.idx >= player.queue.length - 2) extendWave();
+    let i = player.shuffle && dir > 0 ? Math.floor(Math.random() * player.queue.length) : player.idx + dir;
+    if (i >= player.queue.length) i = 0;
+    if (i < 0) i = player.queue.length - 1;
+    loadTrack(i);
+  }
+
+  // «Моя волна»: подбираем треки под настроение, любимые — чаще
+  function waveBatch(mood, n = 6) {
+    const pool = allTracks().filter(t => mood === "all" || t.mood === mood);
+    const recent = player.queue.slice(-3);
+    const weighted = pool.flatMap(t => Array(S.liked[t.id] ? 3 : 1).fill(t.id)).filter(id => !recent.includes(id));
+    const out = [];
+    while (out.length < n && weighted.length) {
+      const id = weighted[Math.floor(Math.random() * weighted.length)];
+      if (out[out.length - 1] !== id) out.push(id);
+      if (new Set(out).size >= pool.length && out.length >= pool.length) break;
+    }
+    return out.length ? out : pool.map(t => t.id);
+  }
+  function startWave(mood) {
+    player.wave = mood;
+    player.shuffle = false;
+    player.queue = waveBatch(mood, 8);
+    loadTrack(0);
+    toast(`🌊 Моя волна · ${mood === "all" ? "Любое настроение" : MOODS[mood][1]}`);
+    if (location.hash === "" || location.hash === "#/") render();
+  }
+  function extendWave() { player.queue.push(...waveBatch(player.wave, 6)); }
+
+  function updatePlayer() {
+    const t = currentTrack();
+    const playing = t && !audio.paused;
+    $("p-play").textContent = $("f-play").textContent = playing ? "⏸" : "▶";
+    document.body.classList.toggle("paused", !playing);
+    if (t) {
+      $("p-cover").src = $("f-cover").src = t.cover;
+      $("f-bg").style.backgroundImage = `url("${t.cover}")`;
+      $("p-title").textContent = $("f-title").textContent = t.title;
+      $("p-title-link").href = `#/track/${t.id}`;
+      $("p-artist").textContent = player.wave ? `🌊 Моя волна · ${artistName(t)}` : artistName(t);
+      $("p-artist").href = artistLink(t);
+      $("f-artist").textContent = artistName(t);
+      $("p-like").textContent = S.liked[t.id] ? "♥" : "♡";
+      $("p-like").classList.toggle("on", !!S.liked[t.id]);
+      $("p-dur").textContent = $("f-dur").textContent = fmt(durOf(t) || audio.duration);
+    }
+    document.querySelectorAll('[data-pl="shuffle"]').forEach(b => b.classList.toggle("on", player.shuffle));
+    document.querySelectorAll('[data-pl="repeat"]').forEach(b => b.classList.toggle("on", player.repeat));
+    $("p-speed").textContent = SPEEDS[player.speed][1];
+    $("p-speed").classList.toggle("on", player.speed !== 0);
+    $("p-vol").value = Math.round(audio.volume * 100);
+    $("p-vol").style.setProperty("--p", audio.volume * 100 + "%");
+    // Обновляем отметки «играет сейчас» в списках без полной перерисовки
+    document.querySelectorAll("[data-row]").forEach(row => {
+      const on = t && row.dataset.row === t.id;
+      row.classList.toggle("cur", !!on);
+      const n = row.querySelector(".n"), pb = row.querySelector(".pb");
+      if (on && playing) n.innerHTML = `<span class="eq"><i></i><i></i><i></i></span>`;
+      else if (n.querySelector(".eq")) n.textContent = [...row.parentNode.querySelectorAll("[data-row]")].indexOf(row) + 1;
+      if (pb) pb.textContent = on && playing ? "⏸" : "▶";
+    });
+    document.querySelectorAll(".big-play[data-play]").forEach(b => b.textContent = t && b.dataset.play === t.id && playing ? "⏸" : "▶");
+    drawWaves();
+  }
+
+  function applySpeed() {
+    const [rate, , keepPitch] = SPEEDS[player.speed];
+    audio.playbackRate = rate;
+    // Slowed и Speed up меняют и тон — тот самый эффект из TikTok
+    audio.preservesPitch = audio.mozPreservesPitch = audio.webkitPreservesPitch = keepPitch;
+  }
+
+  // Волна-прогресс: в плеере, полноэкранном режиме и на странице трека
+  function drawWave(canvas, t, progress, colors) {
+    if (!canvas || !t) return;
+    const dpr = devicePixelRatio || 1, w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!w || !h) return;
+    if (canvas.width !== w * dpr || canvas.height !== h * dpr) { canvas.width = w * dpr; canvas.height = h * dpr; }
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const peaks = peaksOf(t);
+    if (!peaks.length) return;
+    const bars = Math.max(30, Math.floor(w / 4)), bw = w / bars;
+    for (let i = 0; i < bars; i++) {
+      const p = peaks[Math.floor(i / bars * peaks.length)] || 0;
+      const bh = Math.max(2, p * h * .95);
+      ctx.fillStyle = i / bars <= progress ? colors[0] : colors[1];
+      ctx.fillRect(i * bw + .5, (h - bh) / 2, Math.max(1, bw - 1.5), bh);
+    }
+  }
+  function progressOf(t) {
+    const d = durOf(t) || audio.duration;
+    return d ? Math.min(1, audio.currentTime / d) : 0;
+  }
+  function drawWaves() {
+    const t = currentTrack();
+    if (!t) return;
+    const p = progressOf(t);
+    drawWave($("p-wave"), t, p, [cssVar("--accent"), cssVar("--line")]);
+    if ($("full").classList.contains("open")) drawWave($("f-wave"), t, p, ["#ffffff", "rgba(255,255,255,.25)"]);
+    drawTrackWave();
+  }
+  function drawTrackWave() {
+    const c = $("track-wave");
+    if (!c) return;
+    const t = track(c.dataset.track), cur = currentTrack();
+    drawWave(c, t, cur && cur.id === t.id ? progressOf(t) : 0, [cssVar("--accent"), cssVar("--line")]);
+  }
+  function seekFromEvent(e, canvas, t) {
+    const r = canvas.getBoundingClientRect();
+    const x = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    const d = durOf(t) || audio.duration;
+    if (d) audio.currentTime = x * d;
+  }
+  [["p-wave"], ["f-wave"]].forEach(([id]) => {
+    const c = $(id);
+    let drag = false;
+    c.addEventListener("pointerdown", e => { const t = currentTrack(); if (!t) return; drag = true; c.setPointerCapture(e.pointerId); seekFromEvent(e, c, t); });
+    c.addEventListener("pointermove", e => { if (drag) seekFromEvent(e, c, currentTrack()); });
+    c.addEventListener("pointerup", () => drag = false);
+  });
+  $("p-wave").addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") { audio.currentTime += 5; e.preventDefault(); }
+    if (e.key === "ArrowLeft") { audio.currentTime -= 5; e.preventDefault(); }
+  });
+
+  audio.addEventListener("timeupdate", () => {
+    const t = currentTrack();
+    if (!t) return;
+    $("p-cur").textContent = $("f-cur").textContent = fmt(audio.currentTime);
+    const ca = $("c-at");
+    if (ca && $("c-form")?.dataset.track === t.id) ca.textContent = "на " + fmt(audio.currentTime);
+    drawWaves();
+    // Учёт прослушанного времени для «Итогов»
+    const now = audio.currentTime;
+    if (player.lastTime !== undefined && now > player.lastTime && now - player.lastTime < 2) {
+      S.listened[t.id] = (S.listened[t.id] || 0) + (now - player.lastTime);
+      save();
+    }
+    player.lastTime = now;
+    // Всплывающие комментарии на своей секунде
+    if (S.settings.bubbles) {
+      const all = [...(BASE_COMMENTS[t.id] || []).map(([at, name, text]) => ({ at, name, text })), ...(S.comments[t.id] || [])];
+      const c = all.find(c => !player.shown.has(c.at + c.name) && now >= c.at && now - c.at < 1.2);
+      if (c) { player.shown.add(c.at + c.name); showBubble(c); }
+    }
+    if (player.sleepAt && Date.now() >= player.sleepAt) { audio.pause(); player.sleepAt = null; updateSleep(); toast("😴 Таймер сна: спокойной ночи"); }
+  });
+  audio.addEventListener("seeking", () => { player.lastTime = undefined; });
+  audio.addEventListener("play", () => { updatePlayer(); startViz(); });
+  audio.addEventListener("pause", updatePlayer);
+  audio.addEventListener("loadedmetadata", updatePlayer);
+  audio.addEventListener("ended", () => {
+    player.lastTime = undefined;
+    if (player.sleepEnd) { player.sleepEnd = false; updateSleep(); toast("😴 Трек закончился — спокойной ночи"); return; }
+    if (player.repeat) { audio.currentTime = 0; audio.play(); }
+    else step(1);
+  });
+  audio.addEventListener("error", () => { if (currentTrack()) toast("Не удалось открыть аудиофайл"); });
+  $("p-vol").addEventListener("input", e => {
+    audio.volume = e.target.value / 100;
+    S.volume = +e.target.value;
+    e.target.style.setProperty("--p", e.target.value + "%");
+    save();
+  });
+
+  function showBubble(c) {
+    const b = $("bubble");
+    b.innerHTML = `${ava(c.name)}<span><b>${esc(c.name)}</b> · ${esc(c.text)}</span>`;
+    b.classList.add("show");
+    clearTimeout(showBubble.t);
+    showBubble.t = setTimeout(() => b.classList.remove("show"), 3500);
+  }
+
+  // Визуализатор: спектр, посчитанный заранее, синхронно с текущей секундой
+  let vizRunning = false;
+  function startViz() {
+    if (vizRunning) return;
+    vizRunning = true;
+    const mini = [...$("mini-viz").children];
+    let smooth = new Array(16).fill(0);
+    const loop = () => {
+      const t = currentTrack();
+      if (!t || audio.paused) { vizRunning = false; mini.forEach(i => i.style.height = "3px"); return; }
+      const b = bandsAt(t, audio.currentTime);
+      smooth = smooth.map((v, i) => v + (b[i] - v) * .35);
+      [1, 3, 6, 9, 12].forEach((band, i) => mini[i].style.height = 3 + smooth[band] * 19 + "px");
+      if ($("full").classList.contains("open")) drawFullViz(smooth);
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+  }
+  function drawFullViz(bands) {
+    const c = $("f-viz"), dpr = devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
+    if (c.width !== w * dpr) { c.width = w * dpr; c.height = h * dpr; }
+    const ctx = c.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    const n = 64, bw = w / n;
+    for (let i = 0; i < n; i++) {
+      const x = Math.abs(i - n / 2) / (n / 2);
+      const v = bands[Math.min(15, Math.floor(x * 16))] * (1 - x * .3);
+      const bh = Math.max(3, v * h);
+      const g = ctx.createLinearGradient(0, h - bh, 0, h);
+      g.addColorStop(0, "rgba(255,255,255,.9)");
+      g.addColorStop(1, "rgba(255,255,255,.05)");
+      ctx.fillStyle = g;
+      ctx.fillRect(i * bw + 1, h - bh, bw - 2, bh);
+    }
+    $("f-cover").style.transform = `scale(${1 + (bands[0] + bands[1]) * .025})`;
+  }
+
+  function openFull() {
+    if (!currentTrack()) return toast("Сначала включите трек");
+    $("full").classList.add("open");
+    drawWaves();
+    startViz();
+  }
+  const closeFull = () => $("full").classList.remove("open");
+
+  // Таймер сна
+  function updateSleep() {
+    const b = $("p-sleep");
+    b.classList.toggle("on", !!(player.sleepAt || player.sleepEnd));
+    const left = player.sleepAt ? Math.ceil((player.sleepAt - Date.now()) / 60000) : player.sleepEnd ? "∎" : "";
+    b.innerHTML = `☾${left ? `<span class="timer-left">${left}</span>` : ""}`;
+  }
+  setInterval(updateSleep, 20000);
+
+  // Кнопки управления в системе и на экране блокировки
+  function updateMediaSession(t) {
+    if (!("mediaSession" in navigator)) return;
+    navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: artistName(t), album: "Толқын", artwork: [{ src: new URL(t.cover, location.href).href, sizes: "500x500", type: "image/jpeg" }] });
+    navigator.mediaSession.setActionHandler("play", () => audio.play());
+    navigator.mediaSession.setActionHandler("pause", () => audio.pause());
+    navigator.mediaSession.setActionHandler("nexttrack", () => step(1));
+    navigator.mediaSession.setActionHandler("previoustrack", () => step(-1));
+  }
+
+  // =====================================================================
+  // МЕНЮ И ОКНА
+  // =====================================================================
+  const menu = $("menu");
+  function openMenu(html, anchor) {
+    menu.innerHTML = html;
+    menu.classList.add("open");
+    const r = anchor.getBoundingClientRect(), mw = menu.offsetWidth, mh = menu.offsetHeight;
+    menu.style.left = Math.max(8, Math.min(innerWidth - mw - 8, r.right - mw)) + "px";
+    menu.style.top = (r.bottom + mh + 8 > innerHeight ? Math.max(8, r.top - mh - 6) : r.bottom + 6) + "px";
+  }
+  function closeMenu() { menu.classList.remove("open"); }
+
+  const modal = $("modal");
+  function openModal(html) { $("box").innerHTML = html; modal.classList.add("open"); setTimeout(() => $("box").querySelector("input")?.focus(), 50); }
+  function closeModal() { modal.classList.remove("open"); }
+  modal.addEventListener("click", e => { if (e.target === modal || e.target.closest("[data-close]")) closeModal(); });
+
+  function askName(then) {
+    openModal(`<h2>Как вас называть?</h2><p class="muted small">Имя увидят другие слушатели рядом с вашими комментариями и треками.</p>
+      <form id="name-form"><input id="name-input" maxlength="30" required placeholder="Ваше имя или псевдоним" style="margin-top:14px">
+      <div class="row-btns"><button type="button" class="pill ghost" data-close>Отмена</button><button class="pill accent">Готово</button></div></form>`);
+    askName.then = then;
+  }
+
+  function newPlaylist(addId) {
+    openModal(`<h2>Новый плейлист</h2><form id="pl-form" data-add="${addId || ""}"><input id="pl-name" maxlength="40" required placeholder="Например: В дорогу" style="margin-top:14px">
+      <div class="row-btns"><button type="button" class="pill ghost" data-close>Отмена</button><button class="pill accent">Создать</button></div></form>`);
+  }
+
+  function openSettings() {
+    const s = S.settings;
+    openModal(`<h2>Настройки</h2>
+      <label>Имя</label><input id="set-name" maxlength="30" value="${esc(S.name)}" placeholder="Ваше имя">
+      <label>Тема</label><div class="seg">${[["dark", "🌙 Тёмная"], ["light", "☀️ Светлая"], ["auto", "Авто"]].map(([k, n]) => `<button data-set-theme="${k}" class="${s.theme === k ? "on" : ""}">${n}</button>`).join("")}</div>
+      <div style="margin-top:14px"><label class="switch">Показывать комментарии во время прослушивания<input type="checkbox" data-set="bubbles"${s.bubbles ? " checked" : ""}></label></div>
+      <p class="small muted" style="margin-top:10px">Горячие клавиши: Пробел — пауза, ← → — перемотка, Shift+→ — следующий, L — лайк, F — полный экран.</p>
+      <div class="row-btns"><button class="pill ghost" data-reset>Сбросить данные</button><button class="pill accent" data-save-settings>Готово</button></div>`);
+  }
+  function applyTheme() {
+    const t = S.settings.theme;
+    document.documentElement.dataset.theme = t === "auto" ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark") : t;
+    renderSide();
+    drawWaves();
+  }
+
+  // =====================================================================
+  // ЗАГРУЗКА ТРЕКОВ: анализ звука прямо в браузере
+  // =====================================================================
+  function fft(re, im) {
+    const n = re.length;
+    for (let i = 1, j = 0; i < n; i++) {
+      let bit = n >> 1;
+      for (; j & bit; bit >>= 1) j ^= bit;
+      j ^= bit;
+      if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; }
+    }
+    for (let len = 2; len <= n; len <<= 1) {
+      const ang = -2 * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang);
+      for (let i = 0; i < n; i += len) {
+        let cr = 1, ci = 0;
+        for (let k = 0; k < len / 2; k++) {
+          const a = i + k, b = a + len / 2;
+          const xr = re[b] * cr - im[b] * ci, xi = re[b] * ci + im[b] * cr;
+          re[b] = re[a] - xr; im[b] = im[a] - xi; re[a] += xr; im[a] += xi;
+          [cr, ci] = [cr * wr - ci * wi, cr * wi + ci * wr];
+        }
+      }
+    }
+  }
+  async function analyseAudio(blob, onProgress) {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const buf = await ctx.decodeAudioData(await blob.arrayBuffer());
+    ctx.close();
+    const sr = buf.sampleRate, ch = buf.getChannelData(0);
+    const enc = v => B36[Math.round(Math.max(0, Math.min(1, v)) * 35)];
+    // Волна: 160 пиков
+    const step = Math.floor(ch.length / 160);
+    const peaks = Array.from({ length: 160 }, (_, i) => { let m = 0; for (let j = i * step; j < (i + 1) * step; j += 8) m = Math.max(m, Math.abs(ch[j])); return m; });
+    const pm = Math.max(...peaks) || 1;
+    // Спектр: 16 полос, 12 кадров в секунду
+    const win = 1024, hop = Math.floor(sr / 12), edges = Array.from({ length: 17 }, (_, i) => 40 * Math.pow(12000 / 40, i / 16));
+    const hann = Float32Array.from({ length: win }, (_, i) => .5 - .5 * Math.cos(2 * Math.PI * i / win));
+    const frames = [];
+    const total = Math.floor((ch.length - win) / hop);
+    for (let f = 0; f < total; f++) {
+      const re = new Float32Array(win), im = new Float32Array(win);
+      for (let i = 0; i < win; i++) re[i] = ch[f * hop + i] * hann[i];
+      fft(re, im);
+      const bands = new Array(16).fill(0), counts = new Array(16).fill(0);
+      for (let k = 1; k < win / 2; k++) {
+        const fr = k * sr / win;
+        const b = edges.findIndex((e, i) => i < 16 && fr >= e && fr < edges[i + 1]);
+        if (b >= 0) { bands[b] += Math.hypot(re[k], im[k]); counts[b]++; }
+      }
+      frames.push(bands.map((v, i) => 20 * Math.log10(v / (counts[i] || 1) + 1e-6)));
+      if (f % 200 === 0) { onProgress(f / total); await new Promise(r => setTimeout(r)); }
+    }
+    const flat = frames.flat().filter(isFinite).sort((a, b) => a - b);
+    const lo = flat[Math.floor(flat.length * .05)] || 0, hi = flat[flat.length - 1] || 1;
+    return { d: Math.round(buf.duration * 100) / 100, p: peaks.map(p => enc(p / pm)).join(""), f: frames.flat().map(v => enc((v - lo) / (hi - lo || 1))).join("") };
+  }
+  // Обложка: своя картинка или сгенерированный градиент
+  function makeCover(file) {
+    return new Promise(res => {
+      const c = document.createElement("canvas");
+      c.width = c.height = 500;
+      const ctx = c.getContext("2d");
+      const done = () => c.toBlob(b => res(b), "image/jpeg", .88);
+      if (file) {
+        const img = new Image();
+        img.onload = () => { const s = Math.min(img.width, img.height); ctx.drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, 500, 500); URL.revokeObjectURL(img.src); done(); };
+        img.onerror = () => { file = null; gen(); done(); };
+        img.src = URL.createObjectURL(file);
+      } else { gen(); done(); }
+      function gen() {
+        const h = Math.random() * 360;
+        const g = ctx.createLinearGradient(0, 0, 500, 500);
+        g.addColorStop(0, `hsl(${h} 70% 55%)`); g.addColorStop(1, `hsl(${(h + 70) % 360} 65% 25%)`);
+        ctx.fillStyle = g; ctx.fillRect(0, 0, 500, 500);
+        for (let i = 0; i < 4; i++) {
+          const x = Math.random() * 500, y = Math.random() * 500, r = 120 + Math.random() * 160;
+          const rg = ctx.createRadialGradient(x, y, 0, x, y, r);
+          rg.addColorStop(0, `hsla(${(h + i * 50) % 360} 90% 75% / .7)`); rg.addColorStop(1, "transparent");
+          ctx.fillStyle = rg; ctx.fillRect(0, 0, 500, 500);
+        }
+      }
+    });
+  }
+  function pickUploadFile(file) {
+    if (!file) return;
+    if (!file.type.startsWith("audio/")) return toast("Это не аудиофайл");
+    if (file.size > 50 * 1024 * 1024) return toast("Файл больше 50 МБ");
+    pendingUpload = { file };
+    $("drop-text").textContent = "🎵 " + file.name;
+    const title = $("u-title");
+    if (!title.value) title.value = file.name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ");
+  }
+  async function publishUpload() {
+    if (!pendingUpload) return toast("Сначала выберите аудиофайл");
+    const btn = $("u-submit"), prog = $("u-prog");
+    btn.disabled = true; btn.textContent = "Анализируем звук…"; prog.hidden = false;
+    try {
+      const analysis = await analyseAudio(pendingUpload.file, p => prog.firstElementChild.style.width = Math.round(p * 90) + "%");
+      const coverBlob = await makeCover($("u-cover").files[0]);
+      prog.firstElementChild.style.width = "100%";
+      const genre = $("u-genre").value;
+      const row = { id: "u" + uid(), title: $("u-title").value.trim(), artistName: $("u-artist").value.trim(), genre, mood: $("u-mood").value,
+        desc: $("u-desc").value.trim(), color: GENRE_COLORS[genre] || "#666", audio: pendingUpload.file, coverBlob, analysis, date: new Date().toISOString(), plays: 0 };
+      await DB.put(row);
+      if (!S.name) { S.name = row.artistName; save(); }
+      pendingUpload = null;
+      await loadUploads();
+      toast("🎉 Трек опубликован!");
+      location.hash = "#/track/" + row.id;
+    } catch (err) {
+      toast("Не получилось обработать файл. Попробуйте MP3.");
+      btn.disabled = false; btn.textContent = "Опубликовать"; prog.hidden = true;
+    }
+  }
+
+  // =====================================================================
+  // ДЕЙСТВИЯ
+  // =====================================================================
+  function idsForCtx(ctx) {
+    if (!ctx || ctx === "track" || ctx === "tile") return allTracks().map(t => t.id);
+    if (ctx === "chart") return [...allTracks()].sort((a, b) => plays(b) - plays(a)).map(t => t.id);
+    if (ctx === "search") return [...document.querySelectorAll('#search-results [data-row]')].map(r => r.dataset.row);
+    if (ctx === "history") return [...new Set(S.history)].filter(track);
+    if (ctx === "uploads") return UPLOADS.map(t => t.id);
+    if (ctx.startsWith("pl:")) return playlistOf(ctx.slice(3))?.tracks || [];
+    if (ctx.startsWith("artist:")) return TRACKS.filter(t => t.artist === ctx.slice(7)).sort((x, y) => plays(y) - plays(x)).map(t => t.id);
+    return allTracks().map(t => t.id);
+  }
+  function toggleLike(id) {
+    S.liked[id] = !S.liked[id];
+    if (!S.liked[id]) delete S.liked[id];
+    save();
+    toast(S.liked[id] ? "♥ Добавлено в любимые" : "Убрано из любимых");
+    render();
+    updatePlayer();
+  }
+
+  document.addEventListener("click", e => {
+    const el = e.target.closest("button, [data-open], [data-fullscreen], [data-new-playlist], .marker, .ts");
+    if (!e.target.closest("#menu") && !e.target.closest("[data-more], [data-sleep], [data-queue]")) closeMenu();
+    if (!el) return;
+    const d = el.dataset;
+
+    if (d.play) {
+      e.stopPropagation();
+      const cur = currentTrack();
+      if (cur && cur.id === d.play) { audio.paused ? audio.play() : audio.pause(); return; }
+      playQueue(idsForCtx(d.ctx), d.play, d.ctx);
+      return;
+    }
+    if (d.playList) {
+      e.stopPropagation();
+      const p = playlistOf(d.playList);
+      if (!p?.tracks.length) return toast("В плейлисте пока нет треков");
+      if (d.shuffle !== undefined) { player.shuffle = true; }
+      playQueue(p.tracks, null, "pl");
+      return;
+    }
+    if (d.playArtist !== undefined) return playQueue(idsForCtx("artist:" + d.playArtist), null, "artist");
+    if (d.playChart !== undefined) return playQueue(idsForCtx("chart"), null, "chart");
+    if (d.wave) { e.stopPropagation(); return startWave(d.wave); }
+    if (d.open && !e.target.closest("button")) { location.hash = d.open; return; }
+    if (d.fullscreen !== undefined) return openFull();
+    if (d.closeFull !== undefined) return closeFull();
+
+    if (d.pl === "toggle") { if (!currentTrack()) return startWave("all"); audio.paused ? audio.play() : audio.pause(); }
+    if (d.pl === "next") step(1);
+    if (d.pl === "prev") audio.currentTime > 3 ? (audio.currentTime = 0) : step(-1);
+    if (d.pl === "shuffle") { player.shuffle = !player.shuffle; updatePlayer(); toast(player.shuffle ? "Перемешивание включено" : "Перемешивание выключено"); }
+    if (d.pl === "repeat") { player.repeat = !player.repeat; updatePlayer(); toast(player.repeat ? "Повтор трека" : "Повтор выключен"); }
+    if (d.speed !== undefined) {
+      player.speed = (player.speed + 1) % SPEEDS.length;
+      applySpeed(); updatePlayer();
+      toast(["Обычная скорость", "🐌 Slowed — медленно и ниже", "⚡ Speed up — быстрее и выше"][player.speed]);
+    }
+    if (d.sleep !== undefined) {
+      openMenu(`<div class="label">Таймер сна</div>${[5, 15, 30, 60].map(m => `<button data-sleep-set="${m}">☾ Через ${m} минут</button>`).join("")}<button data-sleep-set="end">☾ В конце трека</button>${player.sleepAt || player.sleepEnd ? `<hr><button data-sleep-set="off">Выключить таймер</button>` : ""}`, el);
+    }
+    if (d.sleepSet) {
+      player.sleepAt = null; player.sleepEnd = false;
+      if (d.sleepSet === "end") player.sleepEnd = true;
+      else if (d.sleepSet !== "off") player.sleepAt = Date.now() + d.sleepSet * 60000;
+      updateSleep(); closeMenu();
+      toast(d.sleepSet === "off" ? "Таймер выключен" : d.sleepSet === "end" ? "Музыка остановится в конце трека" : `Музыка остановится через ${d.sleepSet} мин`);
+    }
+    if (d.queue !== undefined) {
+      if (!player.queue.length) return toast("Очередь пуста");
+      openMenu(`<div class="label">${player.wave ? "🌊 Моя волна" : "Очередь"}</div>` + player.queue.slice(player.idx, player.idx + 10).map((id, i) => {
+        const t = track(id);
+        return t ? `<button data-jump="${player.idx + i}"><img src="${esc(t.cover)}" alt="" style="width:32px;height:32px;border-radius:6px;object-fit:cover">${i === 0 ? "▶ " : ""}${esc(t.title)} <span class="muted small">· ${esc(artistName(t))}</span></button>` : "";
+      }).join(""), el);
+    }
+    if (d.jump) { loadTrack(+d.jump); closeMenu(); }
+
+    if (d.like) { e.stopPropagation(); toggleLike(d.like); }
+    if (d.likeCurrent !== undefined) { const t = currentTrack(); if (t) toggleLike(t.id); }
+    if (d.more) {
+      e.stopPropagation();
+      const t = track(d.more);
+      openMenu(`<button data-play="${t.id}" data-ctx="track">▶ Слушать</button><button data-play-next="${t.id}">⤵ Играть следующим</button>
+        <button data-like="${t.id}">${S.liked[t.id] ? "♥ Убрать из любимых" : "♡ В любимые"}</button><hr>
+        <div class="label">Добавить в плейлист</div>${S.playlists.map(p => `<button data-add-to="${p.id}" data-track="${t.id}">♫ ${esc(p.name)}</button>`).join("")}
+        <button data-new-playlist="${t.id}">＋ Новый плейлист</button>
+        ${d.from?.startsWith("pl:") ? `<hr><button data-remove-from="${d.from.slice(3)}" data-track="${t.id}">✕ Убрать из этого плейлиста</button>` : ""}<hr>
+        <a href="#/track/${t.id}">Открыть трек</a>${t.mine ? "" : `<a href="#/artist/${t.artist}">К артисту</a>`}`, el);
+    }
+    if (d.playNext) {
+      if (!player.queue.length) playQueue([d.playNext], d.playNext);
+      else { player.queue.splice(player.idx + 1, 0, d.playNext); toast("Сыграет следующим"); }
+      closeMenu();
+    }
+    if (d.addTo) {
+      const p = S.playlists.find(p => p.id === d.addTo);
+      if (p.tracks.includes(d.track)) toast("Уже есть в плейлисте");
+      else { p.tracks.push(d.track); save(); toast(`Добавлено в «${p.name}»`); renderSide(); }
+      closeMenu();
+    }
+    if (d.removeFrom) {
+      const p = S.playlists.find(p => p.id === d.removeFrom);
+      p.tracks = p.tracks.filter(x => x !== d.track); save(); render(); closeMenu();
+    }
+    if (d.newPlaylist !== undefined) { closeMenu(); newPlaylist(d.newPlaylist); }
+    if (d.rename) {
+      const p = S.playlists.find(p => p.id === d.rename);
+      openModal(`<h2>Переименовать</h2><form id="rename-form" data-id="${p.id}"><input id="rename-input" maxlength="40" required value="${esc(p.name)}" style="margin-top:14px"><div class="row-btns"><button type="button" class="pill ghost" data-close>Отмена</button><button class="pill accent">Сохранить</button></div></form>`);
+    }
+    if (d.delPlaylist && confirm("Удалить плейлист?")) { S.playlists = S.playlists.filter(p => p.id !== d.delPlaylist); save(); location.hash = "#/library"; }
+    if (d.delUpload && confirm("Удалить этот трек навсегда?")) {
+      DB.del(d.delUpload).then(async () => {
+        if (currentTrack()?.id === d.delUpload) { audio.pause(); audio.removeAttribute("src"); }
+        await loadUploads(); toast("Трек удалён"); location.hash = "#/library/uploads";
+      });
+    }
+    if (d.follow) { S.follows[d.follow] = !S.follows[d.follow]; save(); render(); toast(S.follows[d.follow] ? "Вы подписались на артиста" : "Подписка отменена"); }
+    if (d.libtab) { libTab = d.libtab; render(); }
+    if (d.share !== undefined) navigator.clipboard?.writeText(location.href).then(() => toast("Ссылка скопирована"), () => toast(location.href));
+    if (d.copy) navigator.clipboard?.writeText(d.copy).then(() => toast("Итоги скопированы — вставьте в сторис или чат"), () => toast(d.copy));
+    if (d.seekTo !== undefined) {
+      const cur = currentTrack();
+      if (!cur || cur.id !== d.trackId) { playQueue(allTracks().map(t => t.id), d.trackId); audio.addEventListener("loadedmetadata", () => audio.currentTime = +d.seekTo, { once: true }); }
+      else { audio.currentTime = +d.seekTo; audio.play(); }
+    }
+
+    if (d.themeToggle !== undefined) { S.settings.theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark"; save(); applyTheme(); }
+    if (d.settings !== undefined) openSettings();
+    if (d.setTheme) { S.settings.theme = d.setTheme; save(); applyTheme(); openSettings(); }
+    if (d.saveSettings !== undefined) { S.name = $("set-name").value.trim(); save(); closeModal(); render(); toast("Сохранено"); }
+    if (d.reset !== undefined && confirm("Удалить всю историю, лайки, плейлисты и комментарии? Загруженные треки останутся.")) {
+      try { localStorage.removeItem(KEY); } catch {}
+      location.reload();
+    }
+  });
+
+  // Клик по волне на странице трека — перемотка этого трека
+  document.addEventListener("pointerdown", e => {
+    const c = e.target.closest("#track-wave");
+    if (!c) return;
+    const t = track(c.dataset.track), cur = currentTrack();
+    const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width;
+    if (!cur || cur.id !== t.id) {
+      playQueue(allTracks().map(t => t.id), t.id);
+      audio.addEventListener("loadedmetadata", () => audio.currentTime = x * (durOf(t) || audio.duration), { once: true });
+    } else audio.currentTime = x * (durOf(t) || audio.duration);
+  });
+  // Двойной клик по строке — играть
+  document.addEventListener("dblclick", e => {
+    const row = e.target.closest("[data-row]");
+    if (row) playQueue(idsForCtx(row.dataset.ctx), row.dataset.row, row.dataset.ctx);
+  });
+
+  document.addEventListener("input", e => {
+    if (e.target.id === "search") {
+      searchQuery = e.target.value;
+      $("search-results").innerHTML = searchResults();
+    }
+  });
+  document.addEventListener("change", e => {
+    if (e.target.dataset.set) { S.settings[e.target.dataset.set] = e.target.checked; save(); }
+    if (e.target.id === "u-file") pickUploadFile(e.target.files[0]);
+    if (e.target.id === "u-cover" && e.target.files[0]) $("u-cover-prev").src = URL.createObjectURL(e.target.files[0]);
+  });
+  // Перетаскивание файла на зону загрузки
+  ["dragenter", "dragover"].forEach(ev => document.addEventListener(ev, e => { const d = e.target.closest?.("#drop"); if (d) { e.preventDefault(); d.classList.add("over"); } }));
+  document.addEventListener("dragleave", e => e.target.closest?.("#drop")?.classList.remove("over"));
+  document.addEventListener("drop", e => {
+    const d = e.target.closest?.("#drop");
+    if (!d) return;
+    e.preventDefault(); d.classList.remove("over");
+    pickUploadFile(e.dataTransfer.files[0]);
+  });
+
+  document.addEventListener("submit", e => {
+    e.preventDefault();
+    const f = e.target;
+    if (f.id === "name-form") { S.name = $("name-input").value.trim(); save(); closeModal(); askName.then?.(); }
+    if (f.id === "pl-form") {
+      const p = { id: "p" + uid(), name: $("pl-name").value.trim(), desc: "", tracks: f.dataset.add ? [f.dataset.add] : [] };
+      S.playlists.push(p); save(); closeModal();
+      toast(`Плейлист «${p.name}» создан`);
+      location.hash = "#/playlist/" + p.id;
+    }
+    if (f.id === "rename-form") { S.playlists.find(p => p.id === f.dataset.id).name = $("rename-input").value.trim(); save(); closeModal(); render(); }
+    if (f.id === "c-form") {
+      if (!S.name) return askName(() => f.requestSubmit());
+      const id = f.dataset.track, cur = currentTrack();
+      const at = cur && cur.id === id ? Math.floor(audio.currentTime) : 0;
+      (S.comments[id] ||= []).push({ at, name: S.name, text: $("c-text").value.trim() });
+      save(); render(); toast(`Комментарий оставлен на ${fmt(at)}`);
+    }
+    if (f.id === "u-form") publishUpload();
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") { closeModal(); closeMenu(); closeFull(); }
+    if (e.target.closest("input, textarea, select")) return;
+    if (e.code === "Space") { e.preventDefault(); if (!currentTrack()) startWave("all"); else audio.paused ? audio.play() : audio.pause(); }
+    if (!currentTrack()) return;
+    if (e.key === "ArrowRight" && e.shiftKey) step(1);
+    else if (e.key === "ArrowLeft" && e.shiftKey) step(-1);
+    else if (e.key === "ArrowRight" && e.target.id !== "p-wave") audio.currentTime += 5;
+    else if (e.key === "ArrowLeft" && e.target.id !== "p-wave") audio.currentTime -= 5;
+    if (e.key.toLowerCase() === "l" || e.key.toLowerCase() === "д") toggleLike(currentTrack().id);
+    if (e.key.toLowerCase() === "f" || e.key.toLowerCase() === "а") $("full").classList.contains("open") ? closeFull() : openFull();
+  });
+  addEventListener("resize", drawWaves);
+
+  // =====================================================================
+  // ЗАПУСК
+  // =====================================================================
+  (async () => {
+    await loadUploads();
+    render();
+    updatePlayer();
+    updateSleep();
+    // Последний трек ждёт в плеере, как в настоящих приложениях
+    const last = S.history.find(track);
+    if (last) { player.queue = allTracks().map(t => t.id); player.idx = player.queue.indexOf(last); audio.src = track(last).src; updatePlayer(); }
+  })();
+</script>
+</body>
+</html>

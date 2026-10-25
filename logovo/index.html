@@ -1,0 +1,1760 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Логово — сообщество авторов игр, музыки и арта</title>
+<meta name="description" content="Форум для авторов и фанатов: игры, музыка, арт. Подписывайтесь на любимых авторов и получайте доступ к демо, трекам и исходникам.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;700&family=Unbounded:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* Светлая тема */
+  :root {
+    --bg: #f2f0eb;
+    --paper: #fbfaf7;
+    --ink: #1c1c20;
+    --muted: #6c6a65;
+    --line: #1c1c20;
+    --shadow-c: #1c1c20;
+    --soft: #eef3dc;
+    --stripe: #f1eefb;
+    --dash: #dcd7cc;
+    --lime: #cfe38a;
+    --violet: #8c78d6;
+    --pink: #f0b4c6;
+    --blue: #a9d4e8;
+    --gold: #e8c46a;
+    --on-accent: #1c1c20;
+    --b: 2px solid var(--line);
+    --sh: 3px 3px 0 var(--shadow-c);
+    --r: 16px;
+  }
+  /* Тёмная тема */
+  :root[data-theme="dark"] {
+    --bg: #131316;
+    --paper: #1c1c21;
+    --ink: #ecebe6;
+    --muted: #9b9a94;
+    --line: #36363e;
+    --shadow-c: #050507;
+    --soft: #252b1c;
+    --stripe: #211f2b;
+    --dash: #33333a;
+    --lime: #b8cf72;
+    --violet: #8a77cf;
+    --pink: #d99aae;
+    --blue: #86b5ca;
+    --gold: #cfae5c;
+  }
+  :root[data-size="lg"] { font-size: 18px; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Onest", system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; font-size: 1rem; transition: background .3s, color .3s; }
+  .card, .btn, .chip, .tier, .opt, .file, header, input, textarea, select { transition: background-color .3s, border-color .3s, color .2s, transform .1s, box-shadow .1s; }
+  h1, h2, h3, .logo, .btn, .tag, .chip, .tab { font-family: "Unbounded", sans-serif; }
+  h1, h2, h3 { line-height: 1.15; }
+  a { color: inherit; }
+  button { font: inherit; color: inherit; }
+  img { max-width: 100%; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 13px; }
+
+  /* Шапка */
+  header { position: sticky; top: 0; z-index: 40; background: var(--bg); border-bottom: var(--b); }
+  .nav { display: flex; align-items: center; gap: 18px; height: 70px; }
+  .logo { font-weight: 900; font-size: 22px; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+  .logo i { width: 34px; height: 34px; border: var(--b); border-radius: 10px; background: var(--lime); display: grid; place-items: center; font-style: normal; box-shadow: 2px 2px 0 var(--shadow-c); }
+  .nav nav { display: flex; gap: 4px; flex: 1; }
+  .nav nav a { text-decoration: none; padding: 8px 13px; border-radius: 99px; font-weight: 500; font-size: 15px; white-space: nowrap; }
+  .nav nav a:hover, .nav nav a.on { background: var(--ink); color: var(--bg); }
+  .user { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  .round-btn { position: relative; width: 40px; height: 40px; border: var(--b); border-radius: 50%; background: var(--paper); cursor: pointer; font-size: 17px; box-shadow: 2px 2px 0 var(--shadow-c); display: grid; place-items: center; text-decoration: none; }
+  .round-btn:hover { transform: translate(-1px, -1px); }
+  .dot { position: absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 99px; background: var(--pink); color: var(--on-accent); border: 2px solid var(--line); font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+  .me-chip { display: flex; align-items: center; gap: 8px; text-decoration: none; padding: 3px 12px 3px 3px; border: var(--b); border-radius: 99px; background: var(--paper); box-shadow: 2px 2px 0 var(--shadow-c); }
+  .me-chip b { font-size: 13px; display: block; line-height: 1.1; }
+  .me-chip span { font-size: 11px; color: var(--muted); display: block; line-height: 1.2; }
+
+  /* Уведомления */
+  .notif-panel { position: absolute; right: 20px; top: 76px; width: 360px; max-width: calc(100vw - 40px); max-height: 70vh; overflow: auto; z-index: 60; padding: 10px; display: none; }
+  .notif-panel.open { display: block; animation: pop .2s; }
+  .notif { display: flex; gap: 10px; padding: 10px; border-radius: 10px; text-decoration: none; font-size: 14px; }
+  .notif:hover { background: var(--soft); }
+  .notif.unread { background: var(--stripe); }
+  .notif .ic { font-size: 20px; }
+
+  /* Кнопки */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 20px; border: var(--b); border-radius: 12px; background: var(--paper); font-size: 14px; font-weight: 700; text-decoration: none; cursor: pointer; box-shadow: var(--sh); }
+  .btn:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow-c); }
+  .btn:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--shadow-c); }
+  .btn.lime { background: var(--lime); color: var(--on-accent); }
+  .btn.violet { background: var(--violet); color: #fff; }
+  .btn.gold { background: var(--gold); color: var(--on-accent); }
+  .btn.ink { background: var(--ink); color: var(--bg); }
+  .btn.sm { padding: 8px 14px; font-size: 12px; box-shadow: 2px 2px 0 var(--shadow-c); }
+  .btn.full { width: 100%; }
+  .btn[disabled] { opacity: .5; pointer-events: none; }
+
+  .chip { display: inline-block; padding: 7px 14px; border: var(--b); border-radius: 99px; background: var(--paper); font-size: 12px; font-weight: 700; cursor: pointer; text-decoration: none; }
+  .chip.on { background: var(--ink); color: var(--bg); }
+  .tag { display: inline-block; padding: 3px 10px; border: 2px solid var(--line); border-radius: 99px; font-size: 11px; font-weight: 700; color: var(--on-accent); white-space: nowrap; }
+  .tag.games { background: var(--lime); } .tag.music { background: var(--pink); } .tag.art { background: var(--blue); } .tag.talk { background: var(--gold); }
+  .plus-badge { display: inline-block; background: var(--gold); color: var(--on-accent); border-radius: 6px; font-size: 10px; font-weight: 900; padding: 1px 6px; margin-left: 4px; vertical-align: middle; font-family: "Unbounded", sans-serif; }
+
+  .card { background: var(--paper); border: var(--b); border-radius: var(--r); box-shadow: var(--sh); }
+  .ava { flex: none; display: inline-grid; place-items: center; border: var(--b); border-radius: 50%; font-family: "Unbounded", sans-serif; font-weight: 900; color: var(--on-accent); object-fit: cover; overflow: hidden; }
+  .ava.plus { outline: 3px solid var(--gold); outline-offset: 1px; }
+
+  main { padding: 30px 0 140px; min-height: 70vh; }
+  .layout { display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start; }
+  aside { position: sticky; top: 90px; display: grid; gap: 20px; }
+  aside .card { padding: 20px; }
+  aside h3 { font-size: 15px; margin-bottom: 14px; }
+  .page-title { font-size: 32px; margin-bottom: 6px; }
+  .page-sub { color: var(--muted); margin-bottom: 24px; }
+
+  /* Вкладки ленты */
+  .tabs { display: flex; gap: 6px; margin-bottom: 22px; overflow-x: auto; padding-bottom: 4px; }
+  .tab { flex: none; padding: 10px 16px; border: var(--b); border-radius: 12px; background: var(--paper); font-size: 13px; font-weight: 700; text-decoration: none; box-shadow: 2px 2px 0 var(--shadow-c); }
+  .tab.on { background: var(--ink); color: var(--bg); }
+
+  /* Главный баннер */
+  .hero { padding: 40px 34px; margin-bottom: 24px; color: #fff; position: relative; overflow: hidden;
+    background: linear-gradient(100deg, rgba(14,12,24,.92) 0%, rgba(14,12,24,.65) 55%, rgba(14,12,24,.15) 100%), url("img/hero.jpg") center / cover; }
+  .hero h1 { font-size: clamp(26px, 4vw, 42px); font-weight: 900; max-width: 600px; margin-bottom: 12px; }
+  .hero h1 mark { background: var(--lime); color: var(--on-accent); padding: 0 8px; border-radius: 8px; }
+  .hero p { max-width: 520px; font-size: 16px; opacity: .9; margin-bottom: 20px; }
+  .hero .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .live { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 14px; padding: 5px 12px; border-radius: 99px; background: rgba(255,255,255,.12); backdrop-filter: blur(6px); }
+  .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #7ee07e; animation: pulse 1.8s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(126,224,126,.6); } 70% { box-shadow: 0 0 0 8px rgba(126,224,126,0); } }
+
+  /* Пост */
+  .post { padding: 22px; margin-bottom: 22px; }
+  .post-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .post-head .who { flex: 1; min-width: 0; }
+  .post-head b { display: block; }
+  .post-head a { text-decoration: none; }
+  .post-head span { color: var(--muted); font-size: 13px; }
+  .post h2 { font-size: 19px; margin-bottom: 8px; }
+  .post h2 a { text-decoration: none; }
+  .post h2 a:hover { text-decoration: underline; }
+  .post p.text { white-space: pre-line; overflow-wrap: anywhere; }
+  .cover { display: block; width: 100%; aspect-ratio: 16 / 8; object-fit: cover; border: var(--b); border-radius: 12px; margin: 12px 0; }
+  .compact .cover { display: none; }
+  .post-foot { display: flex; align-items: center; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .icon-btn { border: 2px solid var(--line); background: var(--paper); color: var(--ink); border-radius: 99px; padding: 6px 12px; cursor: pointer; font-weight: 700; font-size: 14px; text-decoration: none; }
+  .icon-btn.on { background: var(--pink); color: var(--on-accent); }
+  .icon-btn.saved { background: var(--gold); color: var(--on-accent); }
+
+  /* Файл */
+  .file { display: flex; align-items: center; gap: 14px; padding: 14px; border: var(--b); border-radius: 12px; margin-top: 12px; }
+  .file .ic { width: 46px; height: 46px; border: var(--b); border-radius: 10px; display: grid; place-items: center; font-size: 22px; background: var(--lime); flex: none; }
+  .file .meta { flex: 1; min-width: 0; }
+  .file .meta b { display: block; overflow-wrap: anywhere; }
+  .file .meta span { color: var(--muted); font-size: 13px; }
+  .file.locked { background: repeating-linear-gradient(45deg, var(--paper) 0 12px, var(--stripe) 12px 24px); }
+  .file.locked .ic { background: var(--violet); color: #fff; }
+
+  /* Трек в посте */
+  .track { display: flex; align-items: center; gap: 14px; padding: 12px; border: var(--b); border-radius: 12px; margin-top: 12px; background: var(--soft); }
+  .track img { width: 54px; height: 54px; object-fit: cover; border-radius: 10px; border: var(--b); }
+  .track .meta { flex: 1; min-width: 0; }
+  .track .meta b { display: block; }
+  .play-btn { width: 46px; height: 46px; flex: none; border-radius: 50%; border: var(--b); background: var(--ink); color: var(--bg); cursor: pointer; font-size: 16px; box-shadow: 2px 2px 0 var(--shadow-c); }
+  .eq { display: none; gap: 2px; align-items: end; height: 14px; margin-left: 6px; vertical-align: middle; }
+  .playing .eq { display: inline-flex; }
+  .eq i { width: 3px; background: currentColor; animation: eq .8s ease-in-out infinite; }
+  .eq i:nth-child(2) { animation-delay: -.3s; } .eq i:nth-child(3) { animation-delay: -.5s; } .eq i:nth-child(4) { animation-delay: -.15s; }
+  @keyframes eq { 0%, 100% { height: 3px; } 50% { height: 14px; } }
+
+  /* Опрос */
+  .poll { margin-top: 12px; display: grid; gap: 8px; }
+  .poll-opt { position: relative; overflow: hidden; text-align: left; padding: 12px 14px; border: var(--b); border-radius: 12px; background: var(--paper); cursor: pointer; font-weight: 500; }
+  .poll-opt .bar { position: absolute; inset: 0 auto 0 0; background: var(--soft); transition: width .6s cubic-bezier(.3,.8,.3,1); }
+  .poll-opt span { position: relative; display: flex; justify-content: space-between; gap: 10px; }
+  .poll-opt.mine { border-color: var(--violet); }
+  .poll-opt.mine .bar { background: color-mix(in srgb, var(--violet) 25%, transparent); }
+  .poll[data-voted] .poll-opt { cursor: default; }
+
+  /* Автор */
+  .banner { height: 240px; border: var(--b); border-radius: var(--r); box-shadow: var(--sh); margin-bottom: -60px; background-size: cover; background-position: center; }
+  .author-top { display: flex; align-items: end; gap: 20px; padding: 0 24px; margin-bottom: 26px; flex-wrap: wrap; }
+  .author-top .info { flex: 1; padding-top: 70px; }
+  .author-top h1 { font-size: 30px; }
+  .stats { display: flex; gap: 22px; margin-top: 8px; font-size: 14px; flex-wrap: wrap; }
+  .stats b { font-family: "Unbounded", sans-serif; }
+
+  .tiers { display: grid; gap: 14px; }
+  .tier { padding: 18px; border: var(--b); border-radius: 14px; background: var(--paper); position: relative; }
+  .tier.hl { background: var(--soft); }
+  .tier h4 { font-family: "Unbounded", sans-serif; font-size: 15px; }
+  .tier .price { font-family: "Unbounded", sans-serif; font-size: 22px; font-weight: 900; margin: 6px 0 10px; }
+  .tier .price small { font-size: 12px; font-weight: 500; color: var(--muted); }
+  .tier ul { list-style: none; margin-bottom: 14px; font-size: 14px; }
+  .tier li { padding: 3px 0 3px 22px; position: relative; }
+  .tier li::before { content: "✓"; position: absolute; left: 0; font-weight: 900; }
+  .tier .mine { position: absolute; top: -12px; right: 14px; background: var(--lime); color: var(--on-accent); border: 2px solid var(--line); border-radius: 99px; padding: 2px 10px; font-size: 11px; font-weight: 700; font-family: "Unbounded", sans-serif; }
+
+  /* Комментарии */
+  .comments { margin-top: 22px; padding: 22px; }
+  .comments-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .comments h3 { font-size: 17px; }
+  .comment { display: flex; gap: 12px; padding: 14px 0; border-top: 2px dashed var(--dash); }
+  .comment .body { flex: 1; min-width: 0; }
+  .comment .name { font-weight: 700; font-size: 14px; }
+  .comment .when { color: var(--muted); font-size: 12px; margin-left: 6px; }
+  .comment p { margin-top: 2px; overflow-wrap: anywhere; white-space: pre-line; }
+  .c-actions { display: flex; gap: 14px; margin-top: 6px; font-size: 13px; }
+  .c-actions button { background: none; border: 0; cursor: pointer; color: var(--muted); font-weight: 700; padding: 0; }
+  .c-actions button.on { color: var(--pink); }
+  .replies { margin-top: 6px; padding-left: 16px; border-left: 2px solid var(--dash); }
+  .replies .comment { border-top: 0; padding: 10px 0 4px; }
+  .reply-form { margin-top: 10px; display: flex; gap: 8px; }
+  .reply-form input { padding: 8px 12px; }
+
+  textarea, input, select { width: 100%; font: inherit; padding: 12px 14px; border: var(--b); border-radius: 12px; background: var(--paper); color: var(--ink); color-scheme: light dark; }
+  textarea { resize: vertical; min-height: 90px; }
+  textarea:focus, input:focus, select:focus { outline: none; box-shadow: 3px 3px 0 var(--violet); }
+  label { display: block; font-weight: 700; font-size: 14px; margin: 16px 0 6px; }
+  .hint { color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+  /* Горячее */
+  .hot-item { display: flex; gap: 16px; align-items: center; padding: 16px 18px; margin-bottom: 12px; text-decoration: none; }
+  .hot-item .rank { font-family: "Unbounded", sans-serif; font-weight: 900; font-size: 26px; width: 44px; text-align: center; flex: none; }
+  .hot-item:nth-child(-n+3) .rank { color: var(--violet); }
+  .hot-item img { width: 76px; height: 56px; object-fit: cover; border-radius: 10px; border: var(--b); flex: none; }
+  .hot-item .meta { flex: 1; min-width: 0; }
+  .hot-item .meta b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hot-item .heat { font-size: 13px; font-weight: 700; white-space: nowrap; }
+  .hot-mini { display: flex; gap: 10px; align-items: baseline; text-decoration: none; padding: 7px 0; font-size: 14px; border-top: 1px dashed var(--dash); }
+  .hot-mini:first-of-type { border-top: 0; }
+  .hot-mini i { font-style: normal; font-weight: 900; font-family: "Unbounded", sans-serif; color: var(--violet); }
+
+  /* Обсуждения */
+  .thread { display: flex; gap: 14px; padding: 18px; margin-bottom: 14px; text-decoration: none; align-items: center; }
+  .thread .meta { flex: 1; min-width: 0; }
+  .thread h3 { font-size: 16px; margin-bottom: 4px; }
+  .thread .nums { text-align: right; font-size: 13px; color: var(--muted); flex: none; }
+  .thread .nums b { display: block; font-family: "Unbounded", sans-serif; color: var(--ink); font-size: 16px; }
+
+  /* Чаты */
+  .rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .room { padding: 20px; text-decoration: none; position: relative; }
+  .room h3 { font-size: 16px; margin: 8px 0 6px; }
+  .room .lock { position: absolute; top: 16px; right: 16px; }
+  .room.locked { background: repeating-linear-gradient(45deg, var(--paper) 0 12px, var(--stripe) 12px 24px); }
+  .chat { display: flex; flex-direction: column; height: min(640px, calc(100vh - 260px)); overflow: hidden; }
+  .chat-head { padding: 16px 20px; border-bottom: var(--b); display: flex; align-items: center; gap: 12px; }
+  .chat-log { flex: 1; overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { display: flex; gap: 10px; max-width: 80%; }
+  .msg .bubble { background: var(--bg); border: 2px solid var(--line); border-radius: 14px 14px 14px 4px; padding: 8px 12px; }
+  .msg .bubble b { font-size: 13px; display: block; }
+  .msg.mine { align-self: flex-end; flex-direction: row-reverse; }
+  .msg.mine .bubble { background: var(--soft); border-radius: 14px 14px 4px 14px; }
+  .typing { color: var(--muted); font-size: 13px; padding: 0 20px 8px; min-height: 22px; }
+  .chat-form { display: flex; gap: 10px; padding: 14px 20px; border-top: var(--b); }
+
+  /* Логово+ */
+  .plus-hero { padding: 40px; text-align: center; background: linear-gradient(135deg, var(--gold), var(--pink)); color: var(--on-accent); margin-bottom: 26px; }
+  .plus-hero h1 { font-size: clamp(30px, 5vw, 48px); margin-bottom: 10px; }
+  .perks { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; margin-bottom: 26px; }
+  .perk { padding: 20px; }
+  .perk .ic { font-size: 28px; }
+  .perk h3 { font-size: 15px; margin: 8px 0 4px; }
+  .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 700px; margin: 0 auto; }
+  .note-box { padding: 16px 20px; border: 2px dashed var(--line); border-radius: 14px; margin: 26px auto 0; max-width: 700px; font-size: 14px; }
+
+  /* Профиль и уровни */
+  .xp { height: 12px; border: 2px solid var(--line); border-radius: 99px; overflow: hidden; background: var(--bg); margin: 8px 0 4px; }
+  .xp i { display: block; height: 100%; background: var(--lime); transition: width .6s; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: 2px solid var(--line); border-radius: 99px; font-size: 13px; font-weight: 700; background: var(--paper); }
+  .badge.off { opacity: .35; filter: grayscale(1); }
+
+  /* Настройки */
+  .settings { display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: start; }
+  .settings nav { position: sticky; top: 90px; display: grid; gap: 6px; }
+  .settings nav a { text-decoration: none; padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: 14px; }
+  .settings nav a:hover { background: var(--soft); }
+  .set-card { padding: 24px; margin-bottom: 22px; scroll-margin-top: 90px; }
+  .set-card h2 { font-size: 18px; margin-bottom: 4px; }
+  .switch { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px dashed var(--dash); cursor: pointer; margin: 0; font-weight: 500; }
+  .switch:first-of-type { border-top: 0; }
+  .switch input { appearance: none; width: 48px; height: 28px; flex: none; border: var(--b); border-radius: 99px; background: var(--bg); position: relative; cursor: pointer; padding: 0; transition: background .2s; }
+  .switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--ink); transition: transform .2s; }
+  .switch input:checked { background: var(--lime); }
+  .switch input:checked::after { transform: translateX(20px); background: var(--on-accent); }
+  .colors { display: flex; gap: 10px; flex-wrap: wrap; }
+  .colors button { width: 36px; height: 36px; border-radius: 50%; border: 3px solid var(--paper); outline: 2px solid var(--line); cursor: pointer; position: relative; }
+  .colors button.on { outline: 3px solid var(--violet); }
+  .colors button[data-plus-only]::after { content: "+"; position: absolute; right: -6px; top: -8px; background: var(--gold); color: var(--on-accent); border-radius: 50%; width: 16px; height: 16px; font-size: 11px; font-weight: 900; display: grid; place-items: center; }
+  .avatar-edit { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .tier-row { display: grid; grid-template-columns: 1fr 120px; gap: 8px; margin-bottom: 8px; }
+  .tier-row input:last-child { grid-column: 1 / -1; }
+  .seg { display: inline-flex; border: var(--b); border-radius: 12px; overflow: hidden; }
+  .seg button { border: 0; background: var(--paper); padding: 9px 16px; cursor: pointer; font-weight: 700; font-size: 13px; }
+  .seg button + button { border-left: var(--b); }
+  .seg button.on { background: var(--ink); color: var(--bg); }
+
+  /* Создание */
+  .types { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 8px; }
+  .type { padding: 14px 10px; border: var(--b); border-radius: 14px; background: var(--paper); cursor: pointer; text-align: center; font-weight: 700; font-size: 13px; }
+  .type div { font-size: 24px; }
+  .type.on { background: var(--soft); box-shadow: 3px 3px 0 var(--violet); }
+
+  /* Окна */
+  .modal { position: fixed; inset: 0; z-index: 100; background: rgba(18,18,18,.55); display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal.open { display: flex; animation: fade .2s; }
+  @keyframes fade { from { opacity: 0; } }
+  .modal .box { width: 100%; max-width: 480px; max-height: 92vh; overflow: auto; padding: 26px; animation: pop .25s cubic-bezier(.3,1.5,.5,1); }
+  @keyframes pop { from { transform: scale(.94); opacity: 0; } }
+  .box h2 { font-size: 20px; margin-bottom: 6px; }
+  .box .sub { color: var(--muted); margin-bottom: 14px; }
+  .x { float: right; border: 2px solid var(--line); background: var(--paper); border-radius: 50%; width: 34px; height: 34px; cursor: pointer; font-weight: 900; }
+  .opts { display: grid; gap: 8px; }
+  .opt { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: var(--b); border-radius: 12px; cursor: pointer; background: var(--paper); margin: 0; font-weight: 500; }
+  .opt input { width: auto; accent-color: var(--violet); }
+  .opt .grow { flex: 1; }
+  .opt small { display: block; color: var(--muted); }
+  .opt:has(input:checked) { background: var(--soft); }
+  .sum { display: flex; justify-content: space-between; align-items: baseline; margin: 18px 0; padding-top: 14px; border-top: 2px dashed var(--dash); }
+  .sum b { font-family: "Unbounded", sans-serif; font-size: 26px; }
+  .safe { color: var(--muted); font-size: 12px; text-align: center; margin-top: 12px; }
+  .center { text-align: center; }
+  .big-ok { font-size: 64px; margin: 6px 0 10px; animation: pop .4s cubic-bezier(.3,1.8,.5,1); }
+
+  /* Тестовая платёжная страница */
+  .pay { max-width: 420px !important; padding: 0 !important; overflow: hidden; border-radius: 14px; background: #fff !important; color: #1c1c20; border-color: #1c1c20 !important; font-family: system-ui, sans-serif; }
+  .pay-top { background: #1d2733; color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+  .test-band { background: #ffe066; color: #5c4400; font-size: 13px; font-weight: 700; text-align: center; padding: 8px; }
+  .pay-body { padding: 22px 22px 26px; }
+  .pay-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; font-size: 14px; color: #444; }
+  .pay-amount { font-size: 30px; font-weight: 800; margin: 6px 0 18px; }
+  .kaspi { border: 1px solid #ddd; border-radius: 12px; padding: 16px; display: flex; gap: 16px; align-items: center; margin-bottom: 16px; font-size: 14px; color: #444; }
+  .qr { width: 96px; height: 96px; flex: none; border: 6px solid #fff; outline: 1px solid #ddd; background:
+      conic-gradient(from 90deg at 18% 18%, #111 25%, transparent 0) 0 0 / 32px 32px,
+      repeating-linear-gradient(90deg, #111 0 4px, transparent 4px 9px),
+      repeating-linear-gradient(0deg, #111 0 5px, transparent 5px 8px); background-blend-mode: normal, multiply; }
+  .pay-btn { width: 100%; border: 0; border-radius: 10px; padding: 14px; font-size: 16px; font-weight: 700; cursor: pointer; background: #e4002b; color: #fff; }
+  .pay-btn.card { background: #1d4ed8; }
+  .pay-cancel { width: 100%; border: 0; background: none; padding: 12px; color: #666; cursor: pointer; text-decoration: underline; }
+  .spinner { width: 54px; height: 54px; border: 5px solid #e5e5e5; border-top-color: #1d4ed8; border-radius: 50%; margin: 30px auto 16px; animation: spin .8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Плеер */
+  .player { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 50; display: none; grid-template-columns: minmax(180px, 1fr) minmax(260px, 2fr) minmax(160px, 1fr); gap: 20px; align-items: center; padding: 10px 16px; }
+  .player.show { display: grid; animation: up .35s cubic-bezier(.3,1.3,.5,1); }
+  @keyframes up { from { transform: translateY(120%); } }
+  .pl-now { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .pl-now img { width: 52px; height: 52px; border-radius: 10px; border: var(--b); object-fit: cover; flex: none; }
+  .pl-now .meta { min-width: 0; }
+  .pl-now b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pl-now a { text-decoration: none; color: var(--muted); font-size: 13px; }
+  .pl-mid { display: grid; gap: 4px; }
+  .pl-ctrl { display: flex; justify-content: center; align-items: center; gap: 10px; }
+  .pl-ctrl button { background: none; border: 0; cursor: pointer; font-size: 18px; width: 36px; height: 36px; border-radius: 50%; }
+  .pl-ctrl button:hover { background: var(--soft); }
+  .pl-ctrl .main { width: 44px; height: 44px; background: var(--ink); color: var(--bg); border: var(--b); }
+  .pl-ctrl .main:hover { background: var(--ink); transform: scale(1.06); }
+  .pl-ctrl button.on { color: var(--violet); }
+  .pl-seek { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  input[type=range] { -webkit-appearance: none; appearance: none; padding: 0; border: 0; height: 6px; border-radius: 99px; background: linear-gradient(to right, var(--violet) var(--p, 0%), var(--dash) var(--p, 0%)); cursor: pointer; box-shadow: none !important; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--ink); border: 2px solid var(--paper); }
+  input[type=range]::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--ink); border: 2px solid var(--paper); }
+  .pl-right { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+  .pl-right input { max-width: 110px; }
+  .preview-tag { display: inline-block; font-size: 10px; font-weight: 900; background: var(--violet); color: #fff; border-radius: 6px; padding: 1px 6px; margin-left: 6px; vertical-align: middle; font-family: "Unbounded", sans-serif; }
+  .queue { position: fixed; right: 12px; bottom: 96px; width: 340px; max-width: calc(100vw - 24px); z-index: 55; padding: 12px; display: none; max-height: 60vh; overflow: auto; }
+  .queue.open { display: block; animation: pop .2s; }
+  .q-item { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; cursor: pointer; }
+  .q-item:hover { background: var(--soft); }
+  .q-item.cur { background: var(--stripe); }
+  .q-item img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+  .q-item .meta { flex: 1; min-width: 0; font-size: 14px; }
+  .q-item .meta span { display: block; color: var(--muted); font-size: 12px; }
+
+  .toast { position: fixed; left: 50%; bottom: 110px; transform: translateX(-50%) translateY(200px); background: var(--ink); color: var(--bg); padding: 12px 20px; border-radius: 12px; font-weight: 700; z-index: 200; transition: transform .3s; max-width: calc(100% - 40px); text-align: center; }
+  .toast.show { transform: translateX(-50%); }
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+  .back { display: inline-block; margin-bottom: 18px; font-weight: 700; text-decoration: none; }
+  .demo-bar { background: var(--ink); color: var(--bg); text-align: center; font-size: 13px; padding: 7px 16px; }
+  footer { border-top: var(--b); padding: 28px 0 120px; color: var(--muted); font-size: 14px; }
+  .credits summary { cursor: pointer; margin-top: 10px; }
+  .credits ul { list-style: none; margin-top: 10px; columns: 2 300px; font-size: 12px; }
+  .credits li { margin-bottom: 4px; break-inside: avoid; }
+
+  @media (max-width: 980px) {
+    .layout, .settings { grid-template-columns: 1fr; }
+    aside, .settings nav { position: static; }
+    .settings nav { display: flex; overflow-x: auto; }
+    .nav nav { display: none; }
+    .player { grid-template-columns: 1fr auto; }
+    .pl-mid .pl-seek, .pl-right input { display: none; }
+    .pl-ctrl .side { display: none; }
+  }
+  @media (max-width: 600px) {
+    .hero { padding: 26px 20px; }
+    .author-top .info { padding-top: 0; }
+    .me-chip div { display: none; }
+    .me-chip { padding: 3px; }
+    .types { grid-template-columns: 1fr 1fr; }
+    .plans { grid-template-columns: 1fr; }
+    .hot-item img { display: none; }
+    .player { left: 6px; right: 6px; bottom: 6px; gap: 10px; }
+    .pl-right { display: none; }
+  }
+</style>
+<script>
+  // Тема и размер шрифта выставляются до отрисовки, чтобы страница не мигала
+  try {
+    const s = JSON.parse(localStorage.getItem("logovo-demo") || "{}").settings || {};
+    const theme = s.theme && s.theme !== "auto" ? s.theme : (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.dataset.theme = theme;
+    if (s.bigFont) document.documentElement.dataset.size = "lg";
+  } catch { document.documentElement.dataset.theme = "light"; }
+</script>
+</head>
+<body>
+
+<div class="demo-bar">Демо-версия платформы: оплата тестовая, деньги не списываются, всё хранится только в вашем браузере.</div>
+
+<header>
+  <div class="wrap nav">
+    <a href="#/" class="logo"><i>🐺</i>Логово</a>
+    <nav>
+      <a href="#/" data-nav="">Лента</a>
+      <a href="#/hot" data-nav="hot">🔥 Горячее</a>
+      <a href="#/talk" data-nav="talk">Обсуждения</a>
+      <a href="#/chats" data-nav="chats">Чаты</a>
+      <a href="#/authors" data-nav="authors">Авторы</a>
+      <a href="#/plus" data-nav="plus">Логово+</a>
+    </nav>
+    <div class="user" id="user"></div>
+  </div>
+</header>
+<div class="card notif-panel" id="notif-panel"></div>
+
+<main><div class="wrap" id="app"></div></main>
+
+<footer><div class="wrap">© 2026 Логово · сообщество авторов из Казахстана · демо-проект. Музыка сгенерирована специально для демо.
+  <details class="credits"><summary>Фото: Wikimedia Commons — авторы и лицензии</summary><ul id="credits"></ul></details>
+</div></footer>
+
+<!-- Плеер живёт вне страниц, поэтому музыка не прерывается при переходах -->
+<div class="player card" id="player">
+  <div class="pl-now">
+    <img id="pl-cover" alt="">
+    <div class="meta"><b id="pl-title"></b><a id="pl-author" href="#/"></a></div>
+  </div>
+  <div class="pl-mid">
+    <div class="pl-ctrl">
+      <button class="side" data-pl="shuffle" title="Перемешать" aria-label="Перемешать">🔀</button>
+      <button data-pl="prev" title="Предыдущий" aria-label="Предыдущий">⏮</button>
+      <button class="main" data-pl="toggle" id="pl-toggle" aria-label="Играть">▶</button>
+      <button data-pl="next" title="Следующий" aria-label="Следующий">⏭</button>
+      <button class="side" data-pl="repeat" title="Повтор" aria-label="Повтор">🔁</button>
+    </div>
+    <div class="pl-seek"><span id="pl-cur">0:00</span><input type="range" id="pl-seek" min="0" max="1000" value="0" aria-label="Перемотка"><span id="pl-dur">0:00</span></div>
+  </div>
+  <div class="pl-right">
+    <button class="icon-btn" data-pl="like" id="pl-like" title="В любимое">♡</button>
+    <button class="icon-btn" data-pl="queue" title="Очередь">☰</button>
+    <span>🔊</span><input type="range" id="pl-vol" min="0" max="100" aria-label="Громкость">
+  </div>
+</div>
+<div class="card queue" id="queue"></div>
+<audio id="audio" preload="metadata"></audio>
+
+<div class="modal" id="modal"><div class="box card" id="box"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+  // =====================================================================
+  // ДАННЫЕ
+  // =====================================================================
+  const SECTIONS = { games: "Игры", music: "Музыка", art: "Арт" };
+
+  const AUTHORS = [
+    { id: "kara", name: "Kara Studio", handle: "@karastudio", section: "games", color: "#cfe38a",
+      bio: "Инди-студия из Алматы. Делаем хоррор «Тени Медеу» — про заброшенный каток в горах.", followers: 2140,
+      tiers: [
+        { id: "fan", name: "Фанат", price: 490, perks: ["Новости разработки раньше всех", "Значок фаната на форуме"] },
+        { id: "tester", name: "Тестер", price: 990, perks: ["Всё из «Фаната»", "Доступ к демо-версиям", "Чат тестеров"] },
+        { id: "coauthor", name: "Соавтор", price: 2990, perks: ["Всё из «Тестера»", "Исходники уровней", "Ваше имя в титрах игры"] },
+      ] },
+    { id: "dina", name: "Dina Beats", handle: "@dinabeats", section: "music", color: "#f0b4c6",
+      bio: "Битмейкер. Пишу lo-fi и хип-хоп биты с казахскими мотивами — домбра + 808.", followers: 5320,
+      tiers: [
+        { id: "listener", name: "Слушатель", price: 390, perks: ["Новые биты на неделю раньше", "Чат слушателей"] },
+        { id: "producer", name: "Продюсер", price: 1490, perks: ["Всё из «Слушателя»", "Стемы и проекты битов", "Лицензия на некоммерческое использование"] },
+      ] },
+    { id: "bakhyt", name: "pixel_bakhyt", handle: "@pixel_bakhyt", section: "games", color: "#a9d4e8",
+      bio: "Один разработчик, одна мечта: пиксельная RPG «Степной волк» про кочевников.", followers: 980,
+      tiers: [
+        { id: "rider", name: "Всадник", price: 590, perks: ["Девлоги каждую неделю", "Демо-версии игры"] },
+        { id: "khan", name: "Хан", price: 1990, perks: ["Всё из «Всадника»", "Арт-бук в высоком качестве", "Персонаж в игре с вашим именем"] },
+      ] },
+    { id: "aru", name: "Aru Draws", handle: "@arudraws", section: "art", color: "#f3c39a",
+      bio: "Иллюстратор. Рисую горы Алматы, котов и уютные кофейни. Делюсь кистями и процессом.", followers: 3410,
+      tiers: [
+        { id: "friend", name: "Друг", price: 290, perks: ["Обои для телефона каждый месяц", "Таймлапсы рисования"] },
+        { id: "student", name: "Ученик", price: 1190, perks: ["Всё из «Друга»", "Мои кисти для Procreate", "PSD-файлы со слоями"] },
+      ] },
+    { id: "timur", name: "Тимур Synth", handle: "@timursynth", section: "music", color: "#c3b5ee",
+      bio: "Synthwave и ретро-электроника. Пишу альбом «Ночной Алматы».", followers: 1760,
+      tiers: [
+        { id: "night", name: "Полуночник", price: 490, perks: ["Полные версии треков альбома", "Закулисье студии"] },
+      ] },
+  ];
+
+  const TRACKS = [
+    { id: "t1", author: "dina",   title: "Көктем",           src: "audio/koktem.mp3",   cover: "img/c-p2.jpg", access: null },
+    { id: "t2", author: "timur",  title: "Аль-Фараби, 2:00", src: "audio/alfarabi.mp3", cover: "img/c-p6.jpg", access: "night" },
+    { id: "t3", author: "kara",   title: "Тени Медеу — тема", src: "audio/medeu.mp3",   cover: "img/c-p1.jpg", access: null },
+    { id: "t4", author: "bakhyt", title: "Степной ветер",    src: "audio/steppe.mp3",   cover: "img/c-p8.jpg", access: null },
+  ];
+  const PREVIEW_SECONDS = 15;
+
+  const BASE_POSTS = [
+    { id: "p1", author: "kara", title: "Тени Медеу: демо 0.3 готово!", date: "2026-10-24", likes: 214, track: "t3",
+      text: "Наконец-то! Новый уровень — раздевалка катка, переработанный звук шагов и первая встреча с Ней.\n\nПослушайте главную тему игры, а сама демка — для тестеров. Пишите, где было страшнее всего.",
+      file: { name: "TeniMedeu_demo_0.3.zip", size: "412 МБ" }, access: "tester" },
+    { id: "p2", author: "dina", title: "Новый бит «Көктем» — домбра + lo-fi", date: "2026-10-23", likes: 389, track: "t1",
+      text: "Весенний бит в октябре — почему бы и нет. Записала живую домбру у бабушки на даче.\n\nСлушать можно всем, а стемы (каждая дорожка отдельно) — для продюсеров.",
+      file: { name: "Koktem_stems.zip", size: "186 МБ" }, access: "producer" },
+    { id: "p3", author: "bakhyt", title: "Девлог #12: как я рисовал юрту 3 недели", date: "2026-10-22", likes: 97,
+      text: "Юрта в пиксель-арте — это боль. Рассказываю, сколько раз переделывал купол и почему в итоге вдохновился бабушкиным ковром." },
+    { id: "p4", author: "aru", title: "Бесплатные обои: Алматы на закате", date: "2026-10-21", likes: 512,
+      text: "Октябрьские обои для всех, без подписки. Сохраняйте и ставьте на телефон!",
+      file: { name: "Almaty_sunset_wallpaper.png", size: "4 МБ" }, access: null },
+    { id: "p5", author: "aru", title: "Набор кистей «Горы и облака» для Procreate", date: "2026-10-19", likes: 276,
+      text: "12 кистей, которыми я рисую все свои пейзажи. Внутри — облака, снег на вершинах, хвоя и текстура акварели.",
+      file: { name: "Aru_Mountains_Brushes.brushset", size: "38 МБ" }, access: "student" },
+    { id: "p6", author: "timur", title: "Ночной Алматы — первый трек альбома", date: "2026-10-18", likes: 143, track: "t2",
+      text: "Трек называется «Аль-Фараби, 2:00». Синты, дождь, пустой проспект. Превью — всем, полная версия — полуночникам." },
+    { id: "p7", author: "kara", title: "Опрос: какой будет следующая локация?", date: "2026-10-16", likes: 88,
+      text: "Помогите выбрать, куда отправить героя после катка. Победитель появится в демо 0.4!",
+      poll: ["Старая канатная дорога", "Гостиница «Казахстан» ночью", "Заброшенный пионерлагерь"], pollBase: [41, 67, 52] },
+    { id: "p8", author: "bakhyt", title: "Степной волк — демо с первой главой", date: "2026-10-12", likes: 164, track: "t4",
+      text: "Первая глава целиком: кочевье, охота и первый бой с волками. Около 40 минут геймплея. Саундтрек — в плеере!",
+      file: { name: "StepnoyVolk_chapter1.zip", size: "96 МБ" }, access: "rider" },
+  ];
+
+  const BASE_THREADS = [
+    { id: "d1", name: "Ерлан", section: "games", date: "2026-10-24", views: 1840, likes: 96,
+      title: "Какие инди-игры из Казахстана вы знаете?", text: "Хочу собрать список. Я знаю пару хорроров и одну RPG. Делитесь — поддержим своих!" },
+    { id: "d2", name: "Асель", section: "music", date: "2026-10-23", views: 1210, likes: 71,
+      title: "С чего начать писать биты? Посоветуйте программы", text: "Есть ноутбук и наушники, бюджета почти нет. FL Studio, Ableton или что-то бесплатное?" },
+    { id: "d3", name: "Мадина", section: "art", date: "2026-10-22", views: 960, likes: 58,
+      title: "Покажите своё рабочее место художника 🎨", text: "Мой стол — сплошной хаос из маркеров и кружек. А у вас?" },
+    { id: "d4", name: "Данияр", section: "games", date: "2026-10-20", views: 2310, likes: 140,
+      title: "Ищу команду для геймджема в ноябре", text: "Нужен художник и звукорежиссёр. Я программист (Godot). Пишите сюда!" },
+    { id: "d5", name: "Тимур", section: "music", date: "2026-10-17", views: 640, likes: 33,
+      title: "Где в Алматы недорого записать вокал?", text: "Ищу студию до 10 000 ₸ за час. Поделитесь опытом." },
+  ];
+
+  const BASE_COMMENTS = {
+    p1: [{ id: "c1", name: "Ерлан", text: "Звук шагов — мурашки! Ждём полную версию", date: "2026-10-24", likes: 24,
+           replies: [{ id: "c1r1", name: "Kara Studio", text: "Спасибо! Записывали шаги на настоящем льду 😄", date: "2026-10-24", likes: 31 }] },
+         { id: "c2", name: "Айгерим", text: "Музыка из главного меню просто топ", date: "2026-10-24", likes: 12, replies: [] }],
+    p2: [{ id: "c3", name: "Асель", text: "Домбра + 808 — это гениально 🔥", date: "2026-10-23", likes: 40, replies: [] }],
+    p7: [{ id: "c4", name: "Данияр", text: "Гостиница «Казахстан» ночью, без вариантов", date: "2026-10-16", likes: 19, replies: [] }],
+    d1: [{ id: "c5", name: "Мадина", text: "«Тени Медеу» от Kara Studio — уже есть демка!", date: "2026-10-24", likes: 15, replies: [] },
+         { id: "c6", name: "Арман", text: "Ещё «Степной волк» — пиксельная RPG, очень атмосферно", date: "2026-10-24", likes: 9, replies: [] }],
+    d2: [{ id: "c7", name: "Dina Beats", text: "Начни с бесплатного — например, LMMS или Cakewalk. Главное — начать!", date: "2026-10-23", likes: 52, replies: [] }],
+    d4: [{ id: "c8", name: "Aru Draws", text: "Могу помочь с артом, если по времени совпадём", date: "2026-10-21", likes: 22, replies: [] }],
+  };
+
+  const ROOMS = [
+    { id: "general", name: "Общий чат", emoji: "💬", desc: "Болтаем обо всём: игры, музыка, жизнь в Алматы.", access: "open" },
+    { id: "jam", name: "Геймджем-тусовка", emoji: "🎮", desc: "Ищем команды и делимся прогрессом.", access: "open" },
+    { id: "club", name: "Клуб Логово+", emoji: "✦", desc: "Закрытый чат для участников Логово+. Встречи с авторами и анонсы раньше всех.", access: "plus" },
+    { id: "studio", name: "Студия битмейкеров", emoji: "🎛", desc: "Разборы треков и обмен опытом. Только для Логово+.", access: "plus" },
+    { id: "kara-test", name: "Чат тестеров Kara Studio", emoji: "👻", desc: "Обсуждаем демо «Тени Медеу» напрямую с разработчиками.", access: { author: "kara", tier: "tester" } },
+    { id: "dina-fans", name: "Слушатели Dina Beats", emoji: "🎧", desc: "Первыми слушаем новые биты.", access: { author: "dina", tier: "listener" } },
+  ];
+  const BASE_MESSAGES = {
+    general: [["Арман", "Всем привет! Кто идёт на фестиваль инди-игр в субботу?"], ["Асель", "Я! Говорят, Kara Studio будет показывать новую демку"], ["Ерлан", "Надо брать попкорн и валерьянку 😅"]],
+    jam: [["Данияр", "Тема джема будет объявлена в пятницу в 19:00"], ["Мадина", "Я художник, ищу команду!"]],
+    club: [["Модератор", "Добро пожаловать в клуб! В четверг — эфир с Dina Beats 🎧"]],
+    studio: [["Тимур Synth", "Кто пробовал сайдчейн на пэды? Делюсь пресетом в пятницу"]],
+    "kara-test": [["Kara Studio", "Демо 0.3 вышло! Ждём ваши баг-репорты сюда"]],
+    "dina-fans": [["Dina Beats", "Скоро выложу бит с кобызом. Угадаете название?"]],
+  };
+  const BOT_NAMES = ["Арман", "Асель", "Ерлан", "Мадина", "Данияр", "Жания", "Нурлан"];
+  const BOT_REPLIES = ["Согласен на 100%!", "О, интересно, расскажи подробнее", "Ахах, жиза 😄", "Плюсую!", "Я тоже об этом думал", "Кстати, кто слушал новый бит Dina?", "Сохраню себе, спасибо!", "Звучит круто 🔥"];
+
+  const PLUS_PLANS = [
+    { id: "month", name: "Месяц", price: 990, months: 1, note: "Попробовать" },
+    { id: "year", name: "Год", price: 7990, months: 12, note: "Выгода 33%" },
+  ];
+
+  const LEVELS = [[0, "Новичок"], [50, "Свой"], [150, "Активист"], [300, "Знаток"], [600, "Легенда"], [1000, "Хранитель Логова"], [1600, "Вожак стаи"]];
+  const BADGES = {
+    hello:    ["👋", "Добро пожаловать", "Зарегистрироваться"],
+    comment:  ["💬", "Голос", "Написать первый комментарий"],
+    patron:   ["💎", "Меценат", "Подписаться на автора"],
+    voter:    ["🗳", "Выборщик", "Проголосовать в опросе"],
+    creator:  ["✍️", "Творец", "Опубликовать пост или обсуждение"],
+    melomane: ["🎧", "Меломан", "Послушать 3 разных трека"],
+    plus:     ["✦", "Логово+", "Оформить Логово+"],
+    streak:   ["🔥", "Постоянство", "Заходить 3 дня подряд"],
+  };
+  const NICK_COLORS = [["#1c1c20", false], ["#8c78d6", false], ["#3e8e5a", false], ["#c0504d", false], ["#d4a017", true], ["#e05fa0", true], ["#2fa8c9", true], ["#ff7a00", true]];
+
+  // =====================================================================
+  // СОСТОЯНИЕ (хранится в браузере)
+  // =====================================================================
+  const KEY = "logovo-demo";
+  const DEFAULTS = {
+    user: null, subs: {}, plus: null, comments: {}, replies: {}, likes: {}, cLikes: {}, saved: {}, votes: {},
+    myPosts: [], myThreads: [], chats: {}, notifs: [], liked: {}, played: {},
+    author: { enabled: false, section: "games", tiers: [{ id: "my1", name: "Поддержка", price: 490, perks: ["Ранний доступ к постам"] }] },
+    settings: { theme: "auto", bigFont: false, compact: false, notifyReplies: true, notifyAuthors: true, autoplay: true, volume: 70 },
+    streak: { last: null, days: 0 },
+  };
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; }
+  }
+  const saved = load();
+  const state = { ...structuredClone(DEFAULTS), ...saved, settings: { ...DEFAULTS.settings, ...(saved.settings || {}) } };
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch { toast("Не удалось сохранить: память браузера переполнена"); }
+  }
+
+  // =====================================================================
+  // ПОМОЩНИКИ
+  // =====================================================================
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const money = n => Number(n).toLocaleString("ru-RU") + " ₸";
+  const today = () => new Date().toISOString().slice(0, 10);
+  const uid = () => Math.random().toString(36).slice(2, 9);
+  const fmtDate = d => new Date(d).toLocaleDateString("ru-RU", { day: "numeric", month: "long" });
+  const fmtTime = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+  const plusActive = () => !!state.plus && new Date(state.plus.until) > new Date();
+
+  function myAuthor() {
+    if (!state.user || !state.author.enabled) return null;
+    return { id: "me", name: state.user.name, handle: "@" + state.user.name.toLowerCase().replace(/\s+/g, "_"), section: state.author.section,
+      color: state.user.color || "#cfe38a", bio: state.user.bio || "Новый автор Логова.", followers: 0, tiers: state.author.tiers, mine: true };
+  }
+  const authorsAll = () => myAuthor() ? [...AUTHORS, myAuthor()] : AUTHORS;
+  const authorOf = id => authorsAll().find(a => a.id === id);
+  const allPosts = () => [...state.myPosts.filter(p => p.author !== "me" || myAuthor()), ...BASE_POSTS];
+  const postOf = id => allPosts().find(p => p.id === id);
+  const allThreads = () => [...state.myThreads, ...BASE_THREADS];
+  const threadOf = id => allThreads().find(t => t.id === id);
+  // Загруженные треки нельзя сохранить в браузере навсегда — держим их до закрытия вкладки
+  const sessionTracks = [];
+  const allTracks = () => [...sessionTracks, ...TRACKS];
+  const trackOf = id => allTracks().find(t => t.id === id);
+  const tierLevel = (a, tierId) => a.tiers.findIndex(t => t.id === tierId);
+  const subOf = authorId => {
+    const s = state.subs[authorId];
+    return s && new Date(s.until) > new Date() ? s : null;
+  };
+  // Доступ: файл бесплатный, это ваш пост, или подписка на автора нужного уровня и выше
+  function hasTier(authorId, tierId) {
+    if (!tierId || authorId === "me") return true;
+    const a = authorOf(authorId), s = subOf(authorId);
+    return !!s && tierLevel(a, s.tier) >= tierLevel(a, tierId);
+  }
+  const hasAccess = p => hasTier(p.author, p.access);
+  const commentCount = id => {
+    const top = [...(BASE_COMMENTS[id] || []), ...(state.comments[id] || [])];
+    return top.reduce((n, c) => n + 1 + (c.replies || []).length + (state.replies[c.id] || []).length, 0);
+  };
+
+  function ava(a, size = 46) {
+    if (a.id === "me") return userAva(state.user, size);
+    return `<img class="ava" src="img/a-${a.id}.jpg" alt="" style="width:${size}px;height:${size}px;background:${a.color}">`;
+  }
+  // Аватар обычного участника: своё фото, если загружено, иначе буква
+  function userAva(u, size = 38) {
+    const name = typeof u === "string" ? u : u?.name || "?";
+    const isMe = state.user && name === state.user.name;
+    const cls = "ava" + (isMe && plusActive() ? " plus" : "");
+    if (isMe && state.user.avatar) return `<img class="${cls}" src="${esc(state.user.avatar)}" alt="" style="width:${size}px;height:${size}px">`;
+    const author = AUTHORS.find(a => a.name === name);
+    if (author) return ava(author, size);
+    const hue = [...name].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
+    const bg = isMe ? (state.user.color || "#cfe38a") : `hsl(${hue} 55% 78%)`;
+    return `<span class="${cls}" style="width:${size}px;height:${size}px;font-size:${size * .4}px;background:${bg}">${esc(name[0] || "?")}</span>`;
+  }
+  const nameTag = name => {
+    const isMe = state.user && name === state.user.name;
+    return `<span style="${isMe && state.user.color ? `color:${state.user.color}` : ""}">${esc(name)}</span>${isMe && plusActive() ? `<span class="plus-badge">+</span>` : ""}`;
+  };
+
+  function toast(msg) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toast.t);
+    toast.t = setTimeout(() => t.classList.remove("show"), 2600);
+  }
+
+  // =====================================================================
+  // ОПЫТ, УРОВНИ, ЗНАЧКИ, УВЕДОМЛЕНИЯ
+  // =====================================================================
+  function levelOf(xp) {
+    let i = 0;
+    while (i + 1 < LEVELS.length && xp >= LEVELS[i + 1][0]) i++;
+    const next = LEVELS[i + 1];
+    return { n: i + 1, name: LEVELS[i][1], from: LEVELS[i][0], to: next ? next[0] : null };
+  }
+  function gainXP(n, why) {
+    if (!state.user) return;
+    const before = levelOf(state.user.xp).n;
+    state.user.xp += plusActive() ? n * 2 : n;
+    save();
+    const lv = levelOf(state.user.xp);
+    if (lv.n > before) {
+      notify("⭐", `Новый уровень: ${lv.name}!`, "#/profile");
+      setTimeout(() => openModal(`<div class="center"><div class="big-ok">⭐</div><h2>Уровень ${lv.n}!</h2>
+        <p class="sub" style="margin-top:8px">Теперь вы — <b>${esc(lv.name)}</b>. Так держать!</p>
+        <button class="btn lime full" data-close>Ура!</button></div>`), 400);
+    } else if (why) toast(`+${plusActive() ? n * 2 : n} опыта · ${why}`);
+    renderHeader();
+  }
+  function award(id) {
+    if (!state.user || state.user.badges.includes(id)) return;
+    state.user.badges.push(id);
+    save();
+    const [ic, name] = BADGES[id];
+    notify(ic, `Новый значок: «${name}»`, "#/profile");
+    setTimeout(() => toast(`${ic} Новый значок: «${name}»`), 900);
+  }
+  function notify(icon, text, link = "#/") {
+    state.notifs.unshift({ id: uid(), icon, text, link, read: false, date: new Date().toISOString() });
+    state.notifs = state.notifs.slice(0, 30);
+    save();
+    renderHeader();
+  }
+
+  // Ежедневный бонус и серия дней подряд
+  function checkStreak() {
+    if (!state.user) return;
+    const d = today();
+    if (state.streak.last === d) return;
+    const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+    state.streak.days = state.streak.last === y ? state.streak.days + 1 : 1;
+    state.streak.last = d;
+    save();
+    setTimeout(() => gainXP(5, `ежедневный бонус · ${state.streak.days} дн. подряд 🔥`), 800);
+    if (state.streak.days >= 3) award("streak");
+  }
+
+  // =====================================================================
+  // БЛОКИ ИНТЕРФЕЙСА
+  // =====================================================================
+  function fileBlock(p) {
+    if (!p.file) return "";
+    const a = authorOf(p.author);
+    if (hasAccess(p)) {
+      return `<div class="file"><div class="ic">📦</div>
+        <div class="meta"><b>${esc(p.file.name)}</b><span>${esc(p.file.size)}${p.access ? " · открыто по вашей подписке на автора" : " · бесплатно"}</span></div>
+        <button class="btn lime sm" data-download="${p.id}">Скачать</button></div>`;
+    }
+    const t = a.tiers.find(t => t.id === p.access);
+    return `<div class="file locked"><div class="ic">🔒</div>
+      <div class="meta"><b>${esc(p.file.name)}</b><span>${esc(p.file.size)} · по подписке на ${esc(a.name)} «${esc(t.name)}» от ${money(t.price)}/мес</span></div>
+      <button class="btn violet sm" data-subscribe="${a.id}" data-tier="${t.id}">Открыть</button></div>`;
+  }
+
+  function trackBlock(p) {
+    const tr = trackOf(p.track);
+    if (!tr) return p.trackData ? `<div class="track"><div class="meta"><b>🎵 ${esc(p.trackData.title)}</b><span class="small muted">Файл трека доступен только в той вкладке, где его загрузили (демо)</span></div></div>` : "";
+    const full = hasTier(tr.author, tr.access);
+    return `<div class="track" data-track-row="${tr.id}">
+      <button class="play-btn" data-play="${tr.id}" aria-label="Слушать">▶</button>
+      <img src="${esc(tr.cover)}" alt="">
+      <div class="meta"><b>${esc(tr.title)}<span class="eq"><i></i><i></i><i></i><i></i></span></b>
+        <span class="small muted">${esc(authorOf(tr.author).name)} · ${full ? "полная версия" : `превью ${PREVIEW_SECONDS} сек — полная по подписке`}</span></div>
+      <button class="icon-btn${state.liked[tr.id] ? " on" : ""}" data-like-track="${tr.id}" title="В любимое">${state.liked[tr.id] ? "♥" : "♡"}</button>
+    </div>`;
+  }
+
+  function pollBlock(p) {
+    if (!p.poll) return "";
+    const vote = state.votes[p.id];
+    const counts = p.poll.map((_, i) => (p.pollBase?.[i] || 0) + (vote === i ? 1 : 0));
+    const total = counts.reduce((a, b) => a + b, 0) || 1;
+    const voted = vote !== undefined;
+    return `<div class="poll"${voted ? " data-voted" : ""}>
+      ${p.poll.map((o, i) => `<button class="poll-opt${vote === i ? " mine" : ""}" data-vote="${p.id}" data-i="${i}"${voted ? " disabled" : ""}>
+        <div class="bar" style="width:${voted ? Math.round(counts[i] / total * 100) : 0}%"></div>
+        <span><span>${vote === i ? "✓ " : ""}${esc(o)}</span>${voted ? `<b>${Math.round(counts[i] / total * 100)}%</b>` : ""}</span></button>`).join("")}
+      <div class="small muted">${total} голосов${voted ? "" : " · проголосуйте, чтобы увидеть результаты"}</div>
+    </div>`;
+  }
+
+  function postCard(p, full = false) {
+    const a = authorOf(p.author);
+    if (!a) return "";
+    const liked = state.likes[p.id], isSaved = state.saved[p.id];
+    const text = full || p.text.length < 220 ? p.text : p.text.slice(0, 200).trim() + "…";
+    const cover = p.id.startsWith("p") ? `img/c-${p.id}.jpg` : null;
+    return `<article class="post card">
+      <div class="post-head">
+        <a href="#/author/${a.id}">${ava(a)}</a>
+        <div class="who"><a href="#/author/${a.id}"><b>${esc(a.name)}</b></a><span>${fmtDate(p.date)}</span></div>
+        <span class="tag ${a.section}">${SECTIONS[a.section]}</span>
+      </div>
+      <h2><a href="#/post/${p.id}">${esc(p.title)}</a></h2>
+      ${cover && !p.track ? `<a href="#/post/${p.id}"><img class="cover" src="${cover}" alt="" loading="lazy"></a>` : ""}
+      <p class="text">${esc(text)}</p>
+      ${p.track || p.trackData ? trackBlock(p) : ""}
+      ${pollBlock(p)}
+      ${fileBlock(p)}
+      <div class="post-foot">
+        <button class="icon-btn${liked ? " on" : ""}" data-like="${p.id}">♥ ${(p.likes || 0) + (liked ? 1 : 0)}</button>
+        <a class="icon-btn" href="#/post/${p.id}">💬 ${commentCount(p.id)}</a>
+        <button class="icon-btn${isSaved ? " saved" : ""}" data-save="${p.id}" title="В закладки">${isSaved ? "★ Сохранено" : "☆"}</button>
+        <button class="icon-btn" data-share="${p.id}" title="Поделиться">↗</button>
+      </div>
+    </article>`;
+  }
+
+  function commentItem(c, targetId, isReply = false) {
+    const liked = state.cLikes[c.id];
+    const replies = isReply ? [] : [...(c.replies || []), ...(state.replies[c.id] || [])];
+    return `<div class="comment">${userAva(c.name, isReply ? 30 : 38)}
+      <div class="body"><span class="name">${nameTag(c.name)}</span><span class="when">${fmtDate(c.date)}</span>
+        <p>${esc(c.text)}</p>
+        <div class="c-actions">
+          <button class="${liked ? "on" : ""}" data-clike="${c.id}">♥ ${(c.likes || 0) + (liked ? 1 : 0)}</button>
+          ${isReply ? "" : `<button data-reply="${c.id}">Ответить</button>`}
+        </div>
+        ${replies.length ? `<div class="replies">${replies.map(r => commentItem(r, targetId, true)).join("")}</div>` : ""}
+        <div id="reply-${c.id}"></div>
+      </div></div>`;
+  }
+
+  let commentSort = "top";
+  function commentsBlock(targetId) {
+    let list = [...(BASE_COMMENTS[targetId] || []), ...(state.comments[targetId] || [])];
+    const score = c => (c.likes || 0) + (state.cLikes[c.id] ? 1 : 0);
+    list = commentSort === "top" ? list.sort((a, b) => score(b) - score(a)) : list.sort((a, b) => b.date.localeCompare(a.date));
+    return `<div class="comments card">
+      <div class="comments-head"><h3>Обсуждение (${commentCount(targetId)})</h3>
+        <div class="seg"><button class="${commentSort === "top" ? "on" : ""}" data-csort="top">Популярные</button><button class="${commentSort === "new" ? "on" : ""}" data-csort="new">Новые</button></div></div>
+      <form id="comment-form" data-target="${targetId}">
+        <textarea id="comment-text" maxlength="800" placeholder="${state.user ? "Напишите, что думаете… (+10 опыта)" : "Войдите, чтобы участвовать в обсуждении"}" required></textarea>
+        <button class="btn ink sm" style="margin-top:10px">Отправить</button>
+      </form>
+      <div style="margin-top:12px">${list.map(c => commentItem(c, targetId)).join("") || `<p class="hint">Комментариев пока нет — будьте первым!</p>`}</div>
+    </div>`;
+  }
+
+  function tiersBlock(a, highlight) {
+    if (a.id === "me") return `<p class="small muted">Это ваши уровни подписки. Изменить их можно в <a href="#/settings">настройках</a>.</p>` + a.tiers.map(t => `<div class="tier" style="margin-top:12px"><h4>${esc(t.name)}</h4><div class="price">${money(t.price)} <small>/ мес</small></div><ul>${t.perks.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>`).join("");
+    const s = subOf(a.id);
+    return `<div class="tiers">${a.tiers.map(t => {
+      const mine = s && s.tier === t.id;
+      return `<div class="tier${t.id === highlight ? " hl" : ""}">
+        ${mine ? `<span class="mine">Ваша подписка</span>` : ""}
+        <h4>${esc(t.name)}</h4>
+        <div class="price">${money(t.price)} <small>/ месяц</small></div>
+        <ul>${t.perks.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+        ${mine ? `<button class="btn sm full" disabled>Подписка активна</button>`
+               : `<button class="btn ${t.id === highlight ? "lime" : ""} sm full" data-subscribe="${a.id}" data-tier="${t.id}">${s ? "Перейти на этот уровень" : "Подписаться"}</button>`}
+      </div>`;
+    }).join("")}</div>
+    <p class="hint">Подписка на автора открывает только его материалы. Логово+ — отдельно.</p>`;
+  }
+
+  // Рейтинг «горячего»: лайки, комментарии и свежесть
+  function hotList() {
+    const now = Date.now();
+    const age = d => Math.max(1, (now - new Date(d)) / 864e5);
+    const posts = allPosts().map(p => ({ kind: "post", id: p.id, title: p.title, href: `#/post/${p.id}`, date: p.date,
+      who: authorOf(p.author)?.name, img: p.id.startsWith("p") ? `img/c-${p.id}.jpg` : null,
+      likes: (p.likes || 0) + (state.likes[p.id] ? 1 : 0), comments: commentCount(p.id), section: authorOf(p.author)?.section }));
+    const threads = allThreads().map(t => ({ kind: "talk", id: t.id, title: t.title, href: `#/talk/${t.id}`, date: t.date, who: t.name, img: null,
+      likes: (t.likes || 0) + (state.likes[t.id] ? 1 : 0), comments: commentCount(t.id), views: t.views, section: "talk" }));
+    return [...posts, ...threads].map(x => ({ ...x, score: (x.likes + x.comments * 12 + (x.views || 0) / 40) / Math.pow(age(x.date) + 1, .8) }))
+      .sort((a, b) => b.score - a.score);
+  }
+
+  function sidebar() {
+    const hot = hotList().slice(0, 5);
+    const top = [...AUTHORS].sort((x, y) => y.followers - x.followers).slice(0, 3);
+    return `<aside>
+      ${state.user ? profileMini() : `<div class="card" style="background:var(--lime);color:var(--on-accent)"><h3>Присоединяйтесь!</h3><p style="margin-bottom:14px;font-size:14px">Комментируйте, получайте опыт и значки, голосуйте в опросах.</p><button class="btn ink sm" data-login>Войти за 5 секунд</button></div>`}
+      <div class="card"><h3>🔥 Горячее сейчас</h3>
+        ${hot.map((h, i) => `<a class="hot-mini" href="${h.href}"><i>${i + 1}</i><span>${esc(h.title)}</span></a>`).join("")}
+        <a class="btn sm" href="#/hot" style="margin-top:12px">Весь рейтинг</a></div>
+      <div class="card"><h3>Популярные авторы</h3>
+        ${top.map(a => `<a href="#/author/${a.id}" style="display:flex;gap:10px;align-items:center;text-decoration:none;margin-bottom:12px">${ava(a, 38)}<div><b>${esc(a.name)}</b><div class="small muted">${a.followers.toLocaleString("ru-RU")} подписчиков</div></div></a>`).join("")}</div>
+      ${plusActive() ? "" : `<a class="card" href="#/plus" style="background:linear-gradient(135deg,var(--gold),var(--pink));color:var(--on-accent);text-decoration:none"><h3>✦ Логово+</h3><p style="font-size:14px">Закрытые чаты, золотая рамка, x2 опыта. От 990 ₸/мес.</p></a>`}
+    </aside>`;
+  }
+
+  function profileMini() {
+    const lv = levelOf(state.user.xp);
+    const pct = lv.to ? Math.round((state.user.xp - lv.from) / (lv.to - lv.from) * 100) : 100;
+    return `<a class="card" href="#/profile" style="text-decoration:none;display:block">
+      <div style="display:flex;gap:12px;align-items:center">${userAva(state.user, 48)}<div><b>${nameTag(state.user.name)}</b><div class="small muted">Ур. ${lv.n} · ${esc(lv.name)} · 🔥 ${state.streak.days} дн.</div></div></div>
+      <div class="xp"><i style="width:${pct}%"></i></div>
+      <div class="small muted">${state.user.xp} опыта${lv.to ? ` · до следующего уровня ${lv.to - state.user.xp}` : " · максимальный уровень"}</div></a>`;
+  }
+
+  const tabs = cur => `<div class="tabs">
+    ${[["", "Лента"], ["hot", "🔥 Горячее"], ["talk", "💬 Обсуждения"], ["chats", "Чаты"], ["saved", "★ Закладки"]]
+      .map(([k, v]) => `<a class="tab${cur === k ? " on" : ""}" href="#/${k}">${v}</a>`).join("")}</div>`;
+
+  const needLogin = what => `<div class="card empty"><p style="margin-bottom:16px">Войдите, чтобы ${what}</p><button class="btn lime" data-login>Войти</button></div>`;
+
+  // =====================================================================
+  // СТРАНИЦЫ
+  // =====================================================================
+  function pageFeed(section) {
+    const posts = allPosts().filter(p => !section || authorOf(p.author)?.section === section).sort((a, b) => b.date.localeCompare(a.date));
+    return `<div class="layout"><div class="${state.settings.compact ? "compact" : ""}">
+      ${section || state.user ? "" : `<div class="hero card"><span class="live">Сейчас онлайн: ${(1200 + Math.floor(Math.random() * 150)).toLocaleString("ru-RU")} участников</span>
+        <h1>Поддерживай авторов — <mark>получай</mark> эксклюзив</h1>
+        <p>Игры, музыка и арт от авторов из Казахстана. Подпишись на любимого автора и открой демо, треки и исходники.</p>
+        <div class="btns"><a class="btn lime" href="#/authors">Найти авторов →</a><button class="btn" data-play="t1">▶ Послушать бит</button></div></div>`}
+      ${tabs("")}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+        <a class="chip${section ? "" : " on"}" href="#/">Всё</a>
+        ${Object.entries(SECTIONS).map(([k, v]) => `<a class="chip${section === k ? " on" : ""}" href="#/section/${k}">${v}</a>`).join("")}
+      </div>
+      ${posts.map(p => postCard(p)).join("") || `<div class="card empty">Здесь пока пусто</div>`}
+    </div>${sidebar()}</div>`;
+  }
+
+  function pageHot() {
+    const list = hotList().slice(0, 12);
+    return `<div class="layout"><div>${tabs("hot")}
+      <h1 class="page-title">🔥 Горячее</h1><p class="page-sub">Самые обсуждаемые посты и темы прямо сейчас. Рейтинг обновляется от лайков, комментариев и свежести.</p>
+      ${list.map((h, i) => `<a class="hot-item card" href="${h.href}"><span class="rank">${i + 1}</span>
+        ${h.img ? `<img src="${h.img}" alt="">` : ""}
+        <div class="meta"><b>${esc(h.title)}</b><span class="small muted">${h.kind === "talk" ? "Обсуждение" : "Пост"} · ${esc(h.who)} · ♥ ${h.likes} · 💬 ${h.comments}</span></div>
+        <span class="heat">${i < 3 ? "🔥🔥🔥" : i < 6 ? "🔥🔥" : "🔥"}</span></a>`).join("")}
+    </div>${sidebar()}</div>`;
+  }
+
+  function pageTalk() {
+    const list = allThreads().sort((a, b) => b.date.localeCompare(a.date));
+    return `<div class="layout"><div>${tabs("talk")}
+      <div style="display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;margin-bottom:20px">
+        <div><h1 class="page-title">Обсуждения</h1><p class="muted">Форум сообщества: вопросы, поиск команды, советы.</p></div>
+        <a class="btn lime" href="#/new/talk">＋ Новая тема</a></div>
+      ${list.map(t => `<a class="thread card" href="#/talk/${t.id}">${userAva(t.name, 44)}
+        <div class="meta"><h3>${esc(t.title)}</h3><span class="small muted">${nameTag(t.name)} · ${fmtDate(t.date)} · <span class="tag ${t.section === "talk" ? "talk" : t.section}">${SECTIONS[t.section] || "Разное"}</span></span></div>
+        <div class="nums"><b>${commentCount(t.id)}</b>ответов<br>${(t.views || 0).toLocaleString("ru-RU")} просм.</div></a>`).join("")}
+    </div>${sidebar()}</div>`;
+  }
+
+  function pageThread(id) {
+    const t = threadOf(id);
+    if (!t) return `<div class="card empty">Тема не найдена</div>`;
+    const liked = state.likes[t.id];
+    return `<a class="back" href="#/talk">← Все обсуждения</a><div class="layout"><div>
+      <article class="post card"><div class="post-head">${userAva(t.name)}<div class="who"><b>${nameTag(t.name)}</b><span>${fmtDate(t.date)} · ${(t.views || 0).toLocaleString("ru-RU")} просмотров</span></div><span class="tag ${t.section}">${SECTIONS[t.section] || "Разное"}</span></div>
+        <h2>${esc(t.title)}</h2><p class="text">${esc(t.text)}</p>
+        <div class="post-foot"><button class="icon-btn${liked ? " on" : ""}" data-like="${t.id}">♥ ${(t.likes || 0) + (liked ? 1 : 0)}</button><button class="icon-btn" data-share="${t.id}">↗ Поделиться</button></div></article>
+      ${commentsBlock(t.id)}
+    </div>${sidebar()}</div>`;
+  }
+
+  function pagePost(id) {
+    const p = postOf(id);
+    if (!p) return `<div class="card empty">Пост не найден. <a href="#/">В ленту</a></div>`;
+    const a = authorOf(p.author);
+    return `<a class="back" href="#/">← Назад в ленту</a>
+      <div class="layout"><div>${postCard(p, true)}${commentsBlock(p.id)}</div>
+      <aside><div class="card">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">${ava(a)}<div><b>${esc(a.name)}</b><div class="small muted">${esc(a.handle)}</div></div></div>
+        <p style="font-size:14px;margin-bottom:16px">${esc(a.bio)}</p>
+        ${tiersBlock(a, p.access)}
+      </div></aside></div>`;
+  }
+
+  function pageAuthor(id) {
+    const a = authorOf(id);
+    if (!a) return `<div class="card empty">Автор не найден</div>`;
+    const posts = allPosts().filter(p => p.author === id).sort((x, y) => y.date.localeCompare(x.date));
+    const tracks = allTracks().filter(t => t.author === id);
+    const banner = a.id === "me" ? `background:linear-gradient(135deg, ${a.color}, var(--violet))` : `background-image:url('img/b-${a.id}.jpg')`;
+    return `<div class="banner" style="${banner}"></div>
+      <div class="author-top">${ava(a, 120)}
+        <div class="info"><h1>${esc(a.name)}</h1><span class="muted">${esc(a.handle)}</span> <span class="tag ${a.section}">${SECTIONS[a.section]}</span>
+          <div class="stats"><div><b>${a.followers.toLocaleString("ru-RU")}</b> подписчиков</div><div><b>${posts.length}</b> постов</div><div><b>${tracks.length}</b> треков</div><div><b>${posts.filter(p => p.access).length}</b> по подписке</div></div>
+        </div>
+        ${tracks.length ? `<button class="btn lime" data-play-author="${a.id}">▶ Слушать всё</button>` : ""}
+      </div>
+      <div class="layout"><div>
+        <p class="card" style="padding:20px;margin-bottom:22px">${esc(a.bio)}</p>
+        ${posts.map(p => postCard(p)).join("") || `<div class="card empty">Постов пока нет${a.id === "me" ? ` — <a href="#/new">создайте первый!</a>` : ""}</div>`}
+      </div>
+      <aside><div class="card"><h3>Уровни подписки</h3>${tiersBlock(a, a.tiers[Math.min(1, a.tiers.length - 1)].id)}</div></aside></div>`;
+  }
+
+  function pageAuthors() {
+    return `<h1 class="page-title">Авторы</h1><p class="page-sub">Подписка на автора открывает его закрытые файлы, полные треки и чаты.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px">
+      ${authorsAll().map(a => `<a href="#/author/${a.id}" class="card" style="text-decoration:none;overflow:hidden">
+        <div style="height:120px;${a.id === "me" ? `background:linear-gradient(135deg,${a.color},var(--violet))` : `background:url('img/b-${a.id}.jpg') center/cover`};border-bottom:var(--b)"></div>
+        <div style="padding:18px">
+          <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">${ava(a, 40)}<div><b>${esc(a.name)}</b>${a.id === "me" ? ` <span class="plus-badge">это вы</span>` : ""}<div class="small muted">${a.followers.toLocaleString("ru-RU")} подписчиков</div></div></div>
+          <p class="small muted" style="margin-bottom:12px">${esc(a.bio)}</p>
+          <span class="tag ${a.section}">${SECTIONS[a.section]}</span> <b class="small">от ${money(Math.min(...a.tiers.map(t => t.price)))}/мес</b>
+        </div></a>`).join("")}
+      </div>`;
+  }
+
+  function roomAccess(r) {
+    if (r.access === "open") return true;
+    if (r.access === "plus") return plusActive();
+    return hasTier(r.access.author, r.access.tier);
+  }
+  function roomLockText(r) {
+    if (r.access === "plus") return "Логово+";
+    const a = authorOf(r.access.author);
+    return `Подписчики ${a.name}`;
+  }
+
+  function pageChats() {
+    return `<div class="layout"><div>${tabs("chats")}
+      <h1 class="page-title">Чаты</h1><p class="page-sub">Общие чаты открыты всем. Закрытые — для участников Логово+ или подписчиков конкретного автора.</p>
+      <div class="rooms">${ROOMS.map(r => {
+        const ok = roomAccess(r);
+        const last = [...(BASE_MESSAGES[r.id] || []).map(([n, t]) => ({ name: n, text: t })), ...(state.chats[r.id] || [])].slice(-1)[0];
+        return `<a class="room card${ok ? "" : " locked"}" href="#/chat/${r.id}">
+          <span class="lock">${ok ? "" : "🔒"}</span><div style="font-size:30px">${r.emoji}</div>
+          <h3>${esc(r.name)}</h3><p class="small muted">${esc(r.desc)}</p>
+          <p class="small" style="margin-top:10px">${ok ? (last ? `<b>${esc(last.name)}:</b> ${esc(last.text).slice(0, 60)}` : "") : `<span class="tag ${r.access === "plus" ? "talk" : "games"}">${esc(roomLockText(r))}</span>`}</p></a>`;
+      }).join("")}</div>
+    </div>${sidebar()}</div>`;
+  }
+
+  function pageChat(id) {
+    const r = ROOMS.find(r => r.id === id);
+    if (!r) return `<div class="card empty">Чат не найден</div>`;
+    if (!roomAccess(r)) {
+      const cta = r.access === "plus"
+        ? `<a class="btn gold" href="#/plus">Оформить Логово+</a>`
+        : `<button class="btn violet" data-subscribe="${r.access.author}" data-tier="${r.access.tier}">Подписаться на ${esc(authorOf(r.access.author).name)}</button>`;
+      return `<a class="back" href="#/chats">← Все чаты</a><div class="card empty" style="max-width:560px;margin:0 auto">
+        <div style="font-size:48px">${r.emoji}🔒</div><h2 style="margin:10px 0">${esc(r.name)}</h2><p style="margin-bottom:18px">${esc(r.desc)}</p>${cta}</div>`;
+    }
+    if (!state.user) return `<a class="back" href="#/chats">← Все чаты</a>` + needLogin("писать в чат");
+    const msgs = [...(BASE_MESSAGES[r.id] || []).map(([n, t]) => ({ name: n, text: t })), ...(state.chats[r.id] || [])];
+    return `<a class="back" href="#/chats">← Все чаты</a>
+      <div class="chat card"><div class="chat-head"><span style="font-size:28px">${r.emoji}</span><div><b>${esc(r.name)}</b><div class="small muted">${12 + r.id.length * 7} участников онлайн</div></div></div>
+        <div class="chat-log" id="chat-log">${msgs.map(m => msgHtml(m)).join("")}</div>
+        <div class="typing" id="typing"></div>
+        <form class="chat-form" id="chat-form" data-room="${r.id}"><input id="chat-input" maxlength="300" placeholder="Сообщение…" autocomplete="off" required><button class="btn lime">➤</button></form>
+      </div>`;
+  }
+  const msgHtml = m => {
+    const mine = state.user && m.name === state.user.name;
+    return `<div class="msg${mine ? " mine" : ""}">${userAva(m.name, 32)}<div class="bubble"><b>${nameTag(m.name)}</b>${esc(m.text)}</div></div>`;
+  };
+
+  function pagePlus() {
+    const active = plusActive();
+    const perks = [["💬", "Закрытые чаты", "Клуб Логово+ и Студия битмейкеров, встречи с авторами"], ["✦", "Золотая рамка и значок", "Вас заметят в любом обсуждении"],
+      ["🎨", "Цвета ника", "4 эксклюзивных цвета для вашего имени"], ["⚡", "x2 опыта", "Быстрее растите в уровнях и собирайте значки"],
+      ["🗳", "Голос в развитии Логова", "Голосуйте за новые функции платформы"], ["🎟", "Ранний доступ", "Новые функции сайта — раньше всех"]];
+    return `<div class="plus-hero card"><h1>✦ Логово+</h1><p style="font-size:17px;max-width:560px;margin:0 auto">Подписка на само сообщество: закрытые чаты, статус и оформление профиля.</p></div>
+      <div class="perks">${perks.map(([ic, h, t]) => `<div class="perk card"><div class="ic">${ic}</div><h3>${h}</h3><p class="small muted">${t}</p></div>`).join("")}</div>
+      ${active ? `<div class="card center" style="padding:28px;max-width:560px;margin:0 auto"><div class="big-ok">✦</div><h2>Логово+ активно</h2>
+        <p class="muted" style="margin:8px 0 16px">${state.plus.cancelled ? "Отменено, доступ до " : "Следующее продление: "}${fmtDate(state.plus.until)}</p>
+        ${state.plus.cancelled ? `<button class="btn lime" data-plus-resume>Возобновить</button>` : `<button class="btn sm" data-plus-cancel>Отменить подписку</button>`}</div>`
+      : `<div class="plans">${PLUS_PLANS.map(p => `<div class="tier${p.id === "year" ? " hl" : ""}"><h4>${p.name} <span class="small muted">· ${p.note}</span></h4>
+        <div class="price">${money(p.price)}${p.months > 1 ? ` <small>≈ ${money(Math.round(p.price / 12))}/мес</small>` : ` <small>/ месяц</small>`}</div>
+        <button class="btn ${p.id === "year" ? "gold" : ""} full" data-plus="${p.id}">Оформить</button></div>`).join("")}</div>`}
+      <div class="note-box">ℹ️ Логово+ <b>не открывает</b> платные файлы и треки авторов — их открывает только подписка на конкретного автора. Так деньги за контент получает его создатель.</div>`;
+  }
+
+  function pageProfile() {
+    if (!state.user) return needLogin("видеть свой профиль");
+    const lv = levelOf(state.user.xp);
+    const pct = lv.to ? Math.round((state.user.xp - lv.from) / (lv.to - lv.from) * 100) : 100;
+    const subs = Object.entries(state.subs).filter(([id]) => subOf(id) && authorOf(id));
+    return `<div class="layout"><div>
+      <div class="card" style="padding:26px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:22px">
+        ${userAva(state.user, 96)}
+        <div style="flex:1;min-width:220px"><h1 style="font-size:26px">${nameTag(state.user.name)}</h1>
+          <p class="muted">${esc(state.user.bio || "Пока ничего о себе не рассказал")}</p>
+          <div class="small" style="margin-top:6px">Уровень ${lv.n} · <b>${esc(lv.name)}</b> · 🔥 ${state.streak.days} дн. подряд · с нами с ${fmtDate(state.user.joined)}</div>
+          <div class="xp"><i style="width:${pct}%"></i></div><div class="small muted">${state.user.xp} опыта${lv.to ? ` / ${lv.to}` : ""}</div></div>
+        <a class="btn" href="#/settings">⚙ Настройки</a>
+      </div>
+      <div class="card" style="padding:22px;margin-bottom:22px"><h2 style="font-size:18px;margin-bottom:14px">Значки (${state.user.badges.length}/${Object.keys(BADGES).length})</h2>
+        <div class="badges">${Object.entries(BADGES).map(([id, [ic, name, how]]) => `<span class="badge${state.user.badges.includes(id) ? "" : " off"}" title="${esc(how)}">${ic} ${esc(name)}</span>`).join("")}</div>
+        <p class="hint">Наведите на значок, чтобы узнать, как его получить.</p></div>
+      <div class="card" style="padding:22px;margin-bottom:22px"><h2 style="font-size:18px;margin-bottom:14px">Мои подписки на авторов</h2>
+        ${subs.length ? subs.map(([id, s]) => {
+          const a = authorOf(id), t = a.tiers.find(t => t.id === s.tier);
+          return `<div style="display:flex;gap:14px;align-items:center;padding:12px 0;border-top:1px dashed var(--dash);flex-wrap:wrap">${ava(a, 46)}
+            <div style="flex:1;min-width:180px"><b>${esc(a.name)}</b><div class="small muted">«${esc(t.name)}» · ${money(t.price)}/мес · ${s.cancelled ? `отменена, доступ до ${fmtDate(s.until)}` : `продление ${fmtDate(s.until)}`}</div></div>
+            ${s.cancelled ? `<button class="btn lime sm" data-resume="${id}">Возобновить</button>` : `<button class="btn sm" data-cancel="${id}">Отменить</button>`}</div>`;
+        }).join("") : `<p class="muted">Подписок пока нет. <a href="#/authors">Найти авторов</a></p>`}
+        <p class="hint" style="margin-top:10px">Логово+: ${plusActive() ? `активно до ${fmtDate(state.plus.until)}` : `не оформлено — <a href="#/plus">подробнее</a>`}</p></div>
+      <div class="card" style="padding:22px"><h2 style="font-size:18px;margin-bottom:14px">♥ Любимые треки</h2>
+        ${allTracks().filter(t => state.liked[t.id]).map(t => `<div class="q-item" data-play="${t.id}"><img src="${esc(t.cover)}" alt=""><div class="meta">${esc(t.title)}<span>${esc(authorOf(t.author).name)}</span></div>▶</div>`).join("") || `<p class="muted">Нажимайте ♡ в плеере, и треки появятся здесь.</p>`}</div>
+    </div>${sidebar()}</div>`;
+  }
+
+  function pageSaved() {
+    if (!state.user) return needLogin("сохранять посты в закладки");
+    const posts = allPosts().filter(p => state.saved[p.id]);
+    return `<div class="layout"><div>${tabs("saved")}<h1 class="page-title">★ Закладки</h1><p class="page-sub">Посты, которые вы сохранили на потом.</p>
+      ${posts.map(p => postCard(p)).join("") || `<div class="card empty">Пока пусто. Нажмите ☆ под любым постом.</div>`}</div>${sidebar()}</div>`;
+  }
+
+  function pageSettings() {
+    if (!state.user) return needLogin("открыть настройки");
+    const s = state.settings, u = state.user, au = state.author;
+    const sw = (key, title, desc) => {
+      const on = key === "authorEnabled" ? au.enabled : s[key];
+      return `<label class="switch"><span>${title}${desc ? `<br><span class="small muted">${desc}</span>` : ""}</span><input type="checkbox" data-setting="${key}"${on ? " checked" : ""}></label>`;
+    };
+    return `<h1 class="page-title">Настройки</h1><p class="page-sub">Всё сохраняется автоматически.</p>
+      <div class="settings"><nav class="card" style="padding:10px">
+        <a href="#/settings" data-jump="set-profile">👤 Профиль</a><a href="#/settings" data-jump="set-look">🎨 Внешний вид</a><a href="#/settings" data-jump="set-notif">🔔 Уведомления</a>
+        <a href="#/settings" data-jump="set-player">🎧 Плеер</a><a href="#/settings" data-jump="set-author">✍️ Профиль автора</a><a href="#/settings" data-jump="set-data">🗂 Данные</a></nav>
+      <div>
+        <section class="set-card card" id="set-profile"><h2>Профиль</h2><p class="hint">Так вас видят другие участники.</p>
+          <label>Аватар</label>
+          <div class="avatar-edit">${userAva(u, 80)}
+            <div><input type="file" id="avatar-file" accept="image/*" style="max-width:260px"><p class="hint">JPG или PNG. Фото уменьшится до 160×160.</p>
+            ${u.avatar ? `<button class="btn sm" data-avatar-remove style="margin-top:8px">Убрать фото</button>` : ""}</div></div>
+          <label for="set-name">Никнейм</label><input id="set-name" maxlength="24" value="${esc(u.name)}">
+          <label for="set-bio">О себе</label><textarea id="set-bio" maxlength="200" placeholder="Играю в хорроры, пишу биты по ночам…">${esc(u.bio || "")}</textarea>
+          <label>Цвет ника</label>
+          <div class="colors">${NICK_COLORS.map(([c, plus]) => `<button style="background:${c}" data-color="${c}"${plus ? " data-plus-only" : ""} class="${(u.color || "") === c ? "on" : ""}" title="${plus ? "Только для Логово+" : c}" aria-label="Цвет ${c}"></button>`).join("")}</div>
+          <p class="hint">Цвета со значком «+» — для участников Логово+.</p>
+          <button class="btn lime" data-save-profile style="margin-top:18px">Сохранить профиль</button>
+        </section>
+        <section class="set-card card" id="set-look"><h2>Внешний вид</h2>
+          <label>Тема</label>
+          <div class="seg">${[["auto", "Как в системе"], ["light", "☀️ Светлая"], ["dark", "🌙 Тёмная"]].map(([k, v]) => `<button data-theme="${k}" class="${s.theme === k ? "on" : ""}">${v}</button>`).join("")}</div>
+          <div style="margin-top:14px">${sw("bigFont", "Крупный текст", "Удобнее читать с телефона")}${sw("compact", "Компактная лента", "Скрыть большие обложки постов")}</div>
+        </section>
+        <section class="set-card card" id="set-notif"><h2>Уведомления</h2>
+          ${sw("notifyReplies", "Ответы на мои комментарии")}${sw("notifyAuthors", "Новые посты авторов, на которых я подписан")}
+        </section>
+        <section class="set-card card" id="set-player"><h2>Плеер</h2>
+          ${sw("autoplay", "Автоматически включать следующий трек")}
+          <label>Громкость по умолчанию: <span id="vol-label">${s.volume}%</span></label><input type="range" min="0" max="100" value="${s.volume}" data-setting-range="volume" style="--p:${s.volume}%">
+        </section>
+        <section class="set-card card" id="set-author"><h2>Профиль автора</h2><p class="hint">Станьте автором: публикуйте посты, треки и файлы, а фанаты смогут подписаться именно на вас.</p>
+          <div style="margin-top:10px">${sw("authorEnabled", "Я автор", au.enabled ? `Ваша страница: <a href="#/author/me">открыть</a>` : "")}</div>
+          ${au.enabled ? `<label>Раздел</label><select id="au-section">${Object.entries(SECTIONS).map(([k, v]) => `<option value="${k}"${au.section === k ? " selected" : ""}>${v}</option>`).join("")}</select>
+            <label>Уровни подписки (до 3)</label>
+            <div id="tier-rows">${au.tiers.map((t, i) => `<div class="tier-row"><input data-tier-name="${i}" maxlength="24" value="${esc(t.name)}" placeholder="Название"><input data-tier-price="${i}" type="number" min="100" max="50000" step="10" value="${t.price}" placeholder="Цена, ₸"><input data-tier-perk="${i}" maxlength="80" value="${esc(t.perks[0] || "")}" placeholder="Что получит подписчик"></div>`).join("")}</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+              ${au.tiers.length < 3 ? `<button class="btn sm" data-tier-add>＋ Добавить уровень</button>` : ""}
+              ${au.tiers.length > 1 ? `<button class="btn sm" data-tier-remove>− Убрать последний</button>` : ""}
+              <button class="btn lime sm" data-save-author>Сохранить</button></div>` : ""}
+        </section>
+        <section class="set-card card" id="set-data"><h2>Данные</h2><p class="hint" style="margin-bottom:14px">Демо хранит всё только в этом браузере.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" data-logout>Выйти из аккаунта</button><button class="btn" data-reset>Сбросить демо-данные</button></div></section>
+      </div></div>`;
+  }
+
+  let newType = "post";
+  function pageNew(type) {
+    if (!state.user) return needLogin("публиковать");
+    if (type) newType = type;
+    const au = myAuthor();
+    if (!au && newType !== "talk") newType = "talk";
+    const types = [["post", "📝", "Пост"], ["track", "🎵", "Трек"], ["poll", "🗳", "Опрос"], ["talk", "💬", "Обсуждение"]];
+    const tierOpts = au ? `<label for="n-access">Кто может получить файл/полный трек</label><select id="n-access"><option value="">Все бесплатно</option>
+      ${au.tiers.map(t => `<option value="${t.id}">Подписчики «${esc(t.name)}» и выше (от ${money(t.price)})</option>`).join("")}</select>` : "";
+    return `<a class="back" href="#/">← Назад</a><div class="card" style="padding:28px;max-width:760px">
+      <h1 style="font-size:26px;margin-bottom:16px">Создать</h1>
+      <div class="types">${types.map(([k, ic, n]) => `<button class="type${newType === k ? " on" : ""}" data-newtype="${k}"${!au && k !== "talk" ? ` data-need-author` : ""}><div>${ic}</div>${n}${!au && k !== "talk" ? " 🔒" : ""}</button>`).join("")}</div>
+      ${!au ? `<p class="hint">Посты, треки и опросы публикуют авторы. <a href="#/settings" data-jump="set-author">Стать автором</a> можно в настройках — это бесплатно.</p>` : ""}
+      <form id="new-form">
+        <label for="n-title">${newType === "poll" ? "Вопрос" : "Заголовок"}</label><input id="n-title" maxlength="120" required placeholder="${newType === "talk" ? "О чём хотите поговорить?" : newType === "poll" ? "Какую игру делать следующей?" : "Например: демо 0.4 — новый уровень"}">
+        ${newType === "talk" ? `<label for="n-section">Раздел</label><select id="n-section">${Object.entries(SECTIONS).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select>` : ""}
+        <label for="n-text">Текст</label><textarea id="n-text" maxlength="3000" ${newType === "poll" ? "" : "required"} placeholder="Расскажите подробнее"></textarea>
+        ${newType === "poll" ? `<label>Варианты ответа</label>${[1, 2, 3, 4].map(i => `<input class="poll-input" maxlength="80" placeholder="Вариант ${i}${i > 2 ? " (необязательно)" : ""}" ${i <= 2 ? "required" : ""} style="margin-bottom:8px">`).join("")}` : ""}
+        ${newType === "post" ? `<label for="n-file">Прикрепить файл</label><input id="n-file" type="file"><p class="hint">В демо файл никуда не загружается — сохраняются название и размер.</p>${tierOpts}` : ""}
+        ${newType === "track" ? `<label for="n-audio">Аудиофайл (mp3, wav, ogg)</label><input id="n-audio" type="file" accept="audio/*" required><p class="hint">В демо трек играет, пока открыта эта вкладка: файл не загружается на сервер.</p>${tierOpts}` : ""}
+        <button class="btn lime" style="margin-top:22px">Опубликовать</button>
+      </form></div>`;
+  }
+
+  // =====================================================================
+  // РОУТИНГ
+  // =====================================================================
+  function renderHeader() {
+    const unread = state.notifs.filter(n => !n.read).length;
+    const dark = document.documentElement.dataset.theme === "dark";
+    let html = `<button class="round-btn" data-theme-toggle title="${dark ? "Светлая тема" : "Тёмная тема"}" aria-label="Сменить тему">${dark ? "☀️" : "🌙"}</button>`;
+    if (state.user) {
+      const lv = levelOf(state.user.xp);
+      html += `<a class="round-btn" href="#/new" title="Создать" aria-label="Создать">＋</a>
+        <button class="round-btn" data-notif title="Уведомления" aria-label="Уведомления">🔔${unread ? `<span class="dot">${unread}</span>` : ""}</button>
+        <a class="me-chip" href="#/profile">${userAva(state.user, 32)}<div><b>${esc(state.user.name)}</b><span>Ур. ${lv.n} · 🔥${state.streak.days}</span></div></a>`;
+    } else html += `<button class="btn lime sm" data-login>Войти</button>`;
+    $("user").innerHTML = html;
+  }
+
+  function render() {
+    const [page, arg] = location.hash.replace(/^#\/?/, "").split("/");
+    const views = { "": () => pageFeed(), section: () => pageFeed(arg), hot: pageHot, talk: () => arg ? pageThread(arg) : pageTalk(),
+      post: () => pagePost(arg), author: () => pageAuthor(arg), authors: pageAuthors, chats: pageChats, chat: () => pageChat(arg),
+      plus: pagePlus, profile: pageProfile, saved: pageSaved, settings: pageSettings, new: () => pageNew(arg) };
+    $("app").innerHTML = (views[page] || views[""])();
+    document.querySelectorAll("[data-nav]").forEach(l => l.classList.toggle("on", l.dataset.nav === (page || "")));
+    renderHeader();
+    syncPlayButtons();
+    const log = $("chat-log");
+    if (log) log.scrollTop = log.scrollHeight;
+  }
+  window.addEventListener("hashchange", () => { render(); scrollTo(0, 0); $("notif-panel").classList.remove("open"); });
+
+  // =====================================================================
+  // ПЛЕЕР
+  // =====================================================================
+  const audio = $("audio");
+  const player = { queue: [], idx: -1, shuffle: false, repeat: false };
+  audio.volume = state.settings.volume / 100;
+
+  function playTrack(id, queue) {
+    player.queue = queue || allTracks().map(t => t.id);
+    player.idx = player.queue.indexOf(id);
+    const tr = trackOf(id);
+    if (!tr) return;
+    audio.src = tr.src;
+    audio.play().catch(() => toast("Не удалось включить трек"));
+    $("player").classList.add("show");
+    updatePlayer();
+    state.played[id] = true;
+    save();
+    if (Object.keys(state.played).length >= 3) award("melomane");
+  }
+  function currentTrack() { return trackOf(player.queue[player.idx]); }
+  function step(dir) {
+    if (!player.queue.length) return;
+    let i = player.shuffle ? Math.floor(Math.random() * player.queue.length) : player.idx + dir;
+    i = (i + player.queue.length) % player.queue.length;
+    playTrack(player.queue[i], player.queue);
+  }
+  function updatePlayer() {
+    const tr = currentTrack();
+    if (!tr) return;
+    const a = authorOf(tr.author);
+    const full = hasTier(tr.author, tr.access);
+    $("pl-cover").src = tr.cover;
+    $("pl-title").innerHTML = esc(tr.title) + (full ? "" : `<span class="preview-tag">ПРЕВЬЮ</span>`);
+    $("pl-author").textContent = a.name;
+    $("pl-author").href = `#/author/${a.id}`;
+    $("pl-toggle").textContent = audio.paused ? "▶" : "⏸";
+    $("pl-like").textContent = state.liked[tr.id] ? "♥" : "♡";
+    $("pl-vol").value = Math.round(audio.volume * 100);
+    $("pl-vol").style.setProperty("--p", audio.volume * 100 + "%");
+    document.querySelector('[data-pl="shuffle"]').classList.toggle("on", player.shuffle);
+    document.querySelector('[data-pl="repeat"]').classList.toggle("on", player.repeat);
+    renderQueue();
+    syncPlayButtons();
+  }
+  function syncPlayButtons() {
+    const tr = currentTrack(), playing = tr && !audio.paused;
+    document.querySelectorAll("[data-track-row]").forEach(row => {
+      const on = playing && row.dataset.trackRow === tr.id;
+      row.classList.toggle("playing", on);
+      row.querySelector(".play-btn").textContent = on ? "⏸" : "▶";
+    });
+  }
+  function renderQueue() {
+    $("queue").innerHTML = `<b style="display:block;padding:4px 8px 8px">Очередь</b>` + player.queue.map((id, i) => {
+      const t = trackOf(id);
+      return t ? `<div class="q-item${i === player.idx ? " cur" : ""}" data-play="${t.id}"><img src="${esc(t.cover)}" alt=""><div class="meta">${esc(t.title)}<span>${esc(authorOf(t.author).name)}${hasTier(t.author, t.access) ? "" : " · превью"}</span></div>${i === player.idx && !audio.paused ? "🔊" : ""}</div>` : "";
+    }).join("");
+  }
+  audio.addEventListener("timeupdate", () => {
+    const tr = currentTrack();
+    if (!tr) return;
+    const full = hasTier(tr.author, tr.access);
+    const dur = full ? audio.duration || 0 : Math.min(PREVIEW_SECONDS, audio.duration || PREVIEW_SECONDS);
+    // Превью: без подписки играет только начало трека
+    if (!full && audio.currentTime >= PREVIEW_SECONDS) {
+      audio.pause();
+      audio.currentTime = 0;
+      const a = authorOf(tr.author), t = a.tiers.find(t => t.id === tr.access);
+      openModal(`<button class="x" data-close>✕</button><h2>Понравилось?</h2>
+        <p class="sub">Полная версия «${esc(tr.title)}» доступна подписчикам ${esc(a.name)} «${esc(t.name)}» — ${money(t.price)}/мес.</p>
+        <button class="btn violet full" data-subscribe="${a.id}" data-tier="${t.id}">Открыть полную версию</button>`);
+    }
+    const p = dur ? Math.min(100, audio.currentTime / dur * 100) : 0;
+    $("pl-seek").value = p * 10;
+    $("pl-seek").style.setProperty("--p", p + "%");
+    $("pl-cur").textContent = fmtTime(audio.currentTime);
+    $("pl-dur").textContent = fmtTime(dur);
+  });
+  audio.addEventListener("play", updatePlayer);
+  audio.addEventListener("pause", updatePlayer);
+  audio.addEventListener("ended", () => {
+    if (player.repeat) { audio.currentTime = 0; audio.play(); }
+    else if (state.settings.autoplay) step(1);
+  });
+  $("pl-seek").addEventListener("input", e => {
+    const tr = currentTrack();
+    if (!tr || !audio.duration) return;
+    const full = hasTier(tr.author, tr.access);
+    const dur = full ? audio.duration : Math.min(PREVIEW_SECONDS, audio.duration);
+    audio.currentTime = e.target.value / 1000 * dur;
+  });
+  $("pl-vol").addEventListener("input", e => {
+    audio.volume = e.target.value / 100;
+    e.target.style.setProperty("--p", e.target.value + "%");
+  });
+
+  // =====================================================================
+  // ОКНА: ВХОД И ОПЛАТА
+  // =====================================================================
+  const modal = $("modal"), box = $("box");
+  function openModal(html, cls = "") { box.className = "box card " + cls; box.innerHTML = html; modal.classList.add("open"); }
+  function closeModal() { modal.classList.remove("open"); }
+  modal.addEventListener("click", e => { if (e.target === modal || e.target.closest("[data-close]")) closeModal(); });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") { closeModal(); $("queue").classList.remove("open"); $("notif-panel").classList.remove("open"); }
+    if (e.code === "Space" && player.idx >= 0 && !e.target.closest("input, textarea, select, button")) {
+      e.preventDefault();
+      audio.paused ? audio.play() : audio.pause();
+    }
+  });
+
+  let afterLogin = null;
+  function login(then) {
+    afterLogin = then || null;
+    openModal(`<button class="x" data-close>✕</button><h2>Вход в Логово</h2>
+      <p class="sub">В демо достаточно придумать никнейм.</p>
+      <form id="login-form"><input id="login-name" maxlength="24" required placeholder="Ваш никнейм">
+      <button class="btn lime full" style="margin-top:14px">Войти</button></form>`);
+    setTimeout(() => $("login-name")?.focus(), 50);
+  }
+
+  let checkout = null;
+  function openCheckout(target) {
+    if (!state.user) return login(() => openCheckout(target));
+    if (target.kind === "author" && target.authorId === "me") return toast("Нельзя подписаться на самого себя 🙂");
+    checkout = { months: 1, method: "kaspi", ...target };
+    renderCheckout();
+  }
+  function checkoutInfo() {
+    if (checkout.kind === "plus") {
+      const p = PLUS_PLANS.find(p => p.id === checkout.plan);
+      return { title: "Логово+", line: `Логово+ · ${p.name}`, sum: p.price, months: p.months };
+    }
+    const a = authorOf(checkout.authorId), t = a.tiers.find(t => t.id === checkout.tierId);
+    const sum = Math.round(t.price * checkout.months * (checkout.months === 3 ? .9 : 1) / 10) * 10;
+    return { title: a.name, line: `${a.name} · «${t.name}», ${checkout.months} мес.`, sum, months: checkout.months };
+  }
+  function renderCheckout() {
+    const info = checkoutInfo();
+    const method = `<label>Способ оплаты</label><div class="opts">
+      <label class="opt"><input type="radio" name="method" value="kaspi"${checkout.method === "kaspi" ? " checked" : ""}><span class="grow"><b>Kaspi QR</b><small>Оплата через приложение Kaspi.kz</small></span></label>
+      <label class="opt"><input type="radio" name="method" value="card"${checkout.method === "card" ? " checked" : ""}><span class="grow"><b>Банковская карта</b><small>Visa, Mastercard — на защищённой странице банка</small></span></label></div>`;
+    let body;
+    if (checkout.kind === "plus") {
+      body = `<h2>✦ Логово+</h2><p class="sub">Закрытые чаты, статус и оформление профиля</p>
+        <div class="opts">${PLUS_PLANS.map(p => `<label class="opt"><input type="radio" name="plan" value="${p.id}"${p.id === checkout.plan ? " checked" : ""}><span class="grow"><b>${p.name}</b><small>${p.note}</small></span><b>${money(p.price)}</b></label>`).join("")}</div>`;
+    } else {
+      const a = authorOf(checkout.authorId);
+      body = `<h2>Подписка на ${esc(a.name)}</h2><p class="sub">Открывает закрытые материалы этого автора</p>
+        <div class="opts">${a.tiers.map(t => `<label class="opt"><input type="radio" name="tier" value="${t.id}"${t.id === checkout.tierId ? " checked" : ""}><span class="grow"><b>${esc(t.name)}</b><small>${esc(t.perks[t.perks.length - 1])}</small></span><b>${money(t.price)}</b></label>`).join("")}</div>
+        <label>Период</label><div class="opts">
+          <label class="opt"><input type="radio" name="months" value="1"${checkout.months === 1 ? " checked" : ""}><span class="grow"><b>1 месяц</b></span></label>
+          <label class="opt"><input type="radio" name="months" value="3"${checkout.months === 3 ? " checked" : ""}><span class="grow"><b>3 месяца</b><small>Скидка 10%</small></span></label></div>`;
+    }
+    openModal(`<button class="x" data-close>✕</button>${body}${method}
+      <div class="sum"><span>К оплате</span><b>${money(info.sum)}</b></div>
+      <button class="btn violet full" data-go-pay>Перейти к оплате</button>
+      <p class="safe">🔒 Данные карты вводятся только на странице платёжного сервиса — Логово их не видит и не хранит.</p>`);
+  }
+  // Имитация страницы платёжного сервиса
+  function renderPayPage() {
+    const info = checkoutInfo(), kaspi = checkout.method === "kaspi";
+    openModal(`<div class="pay-top"><b>🔒 TestPay</b><span>Безопасная оплата</span></div>
+      <div class="test-band">ТЕСТОВЫЙ РЕЖИМ — деньги не списываются</div>
+      <div class="pay-body">
+        <div class="pay-row"><span>Магазин</span><span>Логово</span></div>
+        <div class="pay-row"><span>Назначение</span><span style="text-align:right">${esc(info.line)}</span></div>
+        <div class="pay-amount">${money(info.sum)}</div>
+        ${kaspi ? `<div class="kaspi"><div class="qr" aria-hidden="true"></div><div>Откройте Kaspi.kz → «Сканировать» и наведите камеру на QR-код.<br><br><b>В демо</b> просто нажмите кнопку ниже.</div></div>
+             <button class="pay-btn" data-pay-ok>Я оплатил в Kaspi (тест)</button>`
+          : `<div class="kaspi">Здесь банк показал бы форму ввода карты. В демо-версии карта не нужна — нажмите кнопку, чтобы имитировать успешный платёж.</div>
+             <button class="pay-btn card" data-pay-ok>Оплатить ${money(info.sum)} (тест)</button>`}
+        <button class="pay-cancel" data-pay-cancel>Отменить и вернуться в Логово</button>
+      </div>`, "pay");
+  }
+  function processPayment() {
+    openModal(`<div class="pay-top"><b>🔒 TestPay</b><span>Безопасная оплата</span></div>
+      <div class="pay-body center"><div class="spinner"></div><b>Проверяем платёж…</b><p style="color:#666;font-size:14px;margin-top:6px">Не закрывайте окно</p></div>`, "pay");
+    setTimeout(() => {
+      const info = checkoutInfo();
+      const until = new Date();
+      until.setMonth(until.getMonth() + info.months);
+      let text;
+      if (checkout.kind === "plus") {
+        state.plus = { plan: checkout.plan, until: until.toISOString(), cancelled: false };
+        award("plus");
+        text = "Закрытые чаты открыты, рамка и значок уже на вашем профиле.";
+      } else {
+        const a = authorOf(checkout.authorId), t = a.tiers.find(t => t.id === checkout.tierId);
+        state.subs[checkout.authorId] = { tier: checkout.tierId, until: until.toISOString(), cancelled: false };
+        award("patron");
+        if (state.settings.notifyAuthors) setTimeout(() => notify("📬", `${a.name} благодарит вас за подписку!`, `#/author/${a.id}`), 3000);
+        text = `Вы подписаны на <b>${esc(a.name)}</b>, уровень «${esc(t.name)}». Файлы, треки и чат этого уровня уже открыты.`;
+      }
+      save();
+      gainXP(50);
+      openModal(`<div class="center"><div class="big-ok">🎉</div><h2>Готово!</h2>
+        <p class="sub" style="margin-top:8px">${text}</p>
+        <p class="hint" style="margin-bottom:18px">Доступ до ${fmtDate(until)}. Управлять подписками можно в профиле.</p>
+        <button class="btn lime full" data-close>Отлично!</button></div>`);
+      render();
+      if (player.idx >= 0) updatePlayer();
+    }, 1600);
+  }
+
+  // Аватар: уменьшаем фото через canvas, чтобы поместилось в памяти браузера
+  function loadAvatar(file) {
+    if (!file || !file.type.startsWith("image/")) return toast("Выберите картинку");
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      c.width = c.height = 160;
+      const s = Math.min(img.width, img.height);
+      c.getContext("2d").drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, 160, 160);
+      state.user.avatar = c.toDataURL("image/jpeg", .85);
+      URL.revokeObjectURL(img.src);
+      save(); render(); toast("Аватар обновлён");
+    };
+    img.onerror = () => toast("Не удалось прочитать картинку");
+    img.src = URL.createObjectURL(file);
+  }
+
+  function applyTheme() {
+    const t = state.settings.theme;
+    document.documentElement.dataset.theme = t === "auto" ? (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : t;
+    document.documentElement.dataset.size = state.settings.bigFont ? "lg" : "";
+  }
+
+  // Ответ «участника» в чате, чтобы чат казался живым
+  function botReply(roomId) {
+    const name = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
+    setTimeout(() => { const t = $("typing"); if (t) t.textContent = `${name} печатает…`; }, 700);
+    setTimeout(() => {
+      (state.chats[roomId] ||= []).push({ name, text: BOT_REPLIES[Math.floor(Math.random() * BOT_REPLIES.length)] });
+      state.chats[roomId] = state.chats[roomId].slice(-80);
+      save();
+      if (location.hash === `#/chat/${roomId}`) {
+        $("chat-log").insertAdjacentHTML("beforeend", msgHtml(state.chats[roomId].slice(-1)[0]));
+        $("chat-log").scrollTop = $("chat-log").scrollHeight;
+        $("typing").textContent = "";
+      }
+    }, 2200 + Math.random() * 1500);
+  }
+
+  // =====================================================================
+  // ДЕЙСТВИЯ
+  // =====================================================================
+  document.addEventListener("click", e => {
+    const el = e.target.closest("button, [data-login], [data-play], [data-jump]");
+    if (!el) {
+      if (!e.target.closest("#notif-panel")) $("notif-panel").classList.remove("open");
+      if (!e.target.closest("#queue, #player")) $("queue").classList.remove("open");
+      return;
+    }
+    const d = el.dataset;
+
+    if (d.jump) { e.preventDefault(); if (location.hash !== "#/settings") location.hash = "#/settings"; setTimeout(() => $(d.jump)?.scrollIntoView({ behavior: "smooth" }), 60); return; }
+    if (d.themeToggle !== undefined) {
+      state.settings.theme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      save(); applyTheme(); render();
+    }
+    if (d.theme) { state.settings.theme = d.theme; save(); applyTheme(); render(); }
+    if (d.login !== undefined) login();
+    if (d.notif !== undefined) {
+      const panel = $("notif-panel");
+      panel.innerHTML = `<b style="display:block;padding:6px 10px 10px">Уведомления</b>` + (state.notifs.map(n => `<a class="notif${n.read ? "" : " unread"}" href="${esc(n.link)}"><span class="ic">${n.icon}</span><span>${esc(n.text)}<br><span class="small muted">${fmtDate(n.date)}</span></span></a>`).join("") || `<p class="muted" style="padding:10px">Пока тихо</p>`);
+      panel.classList.toggle("open");
+      state.notifs.forEach(n => n.read = true);
+      save(); renderHeader();
+      return;
+    }
+    if (d.subscribe) openCheckout({ kind: "author", authorId: d.subscribe, tierId: d.tier });
+    if (d.plus) openCheckout({ kind: "plus", plan: d.plus });
+    if (d.goPay !== undefined) renderPayPage();
+    if (d.payOk !== undefined) processPayment();
+    if (d.payCancel !== undefined) { renderCheckout(); toast("Оплата отменена"); }
+
+    if (d.like) {
+      if (!state.user) return login();
+      state.likes[d.like] = !state.likes[d.like];
+      if (state.likes[d.like]) gainXP(2);
+      save(); render();
+    }
+    if (d.save) {
+      if (!state.user) return login();
+      state.saved[d.save] = !state.saved[d.save];
+      save(); render(); toast(state.saved[d.save] ? "Сохранено в закладки" : "Убрано из закладок");
+    }
+    if (d.share) {
+      const url = location.href.split("#")[0] + (d.share.startsWith("d") ? "#/talk/" : "#/post/") + d.share;
+      navigator.clipboard?.writeText(url).then(() => toast("Ссылка скопирована"), () => toast(url));
+    }
+    if (d.vote) {
+      if (!state.user) return login();
+      if (state.votes[d.vote] !== undefined) return;
+      state.votes[d.vote] = +d.i;
+      save(); award("voter"); gainXP(5, "голос учтён"); render();
+    }
+    if (d.clike) {
+      if (!state.user) return login();
+      state.cLikes[d.clike] = !state.cLikes[d.clike];
+      save(); render();
+    }
+    if (d.reply) {
+      if (!state.user) return login();
+      const slot = $("reply-" + d.reply);
+      slot.innerHTML = slot.innerHTML ? "" : `<form class="reply-form" data-reply-to="${d.reply}"><input maxlength="500" placeholder="Ваш ответ…" required><button class="btn sm ink">➤</button></form>`;
+      slot.querySelector("input")?.focus();
+    }
+    if (d.csort) { commentSort = d.csort; render(); }
+
+    if (d.download) {
+      const p = postOf(d.download);
+      if (!hasAccess(p)) return;
+      const blob = new Blob([`Это демонстрационный файл с платформы «Логово».\nВ настоящей версии здесь был бы файл ${p.file.name} (${p.file.size}).\n`], { type: "text/plain" });
+      const link = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: p.file.name + ".demo.txt" });
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+      toast("Загрузка началась (демо-файл)");
+    }
+    if (d.cancel && confirm("Отменить подписку? Доступ сохранится до конца оплаченного периода.")) { state.subs[d.cancel].cancelled = true; save(); render(); toast("Подписка отменена"); }
+    if (d.resume) { state.subs[d.resume].cancelled = false; save(); render(); toast("Подписка возобновлена"); }
+    if (d.plusCancel !== undefined && confirm("Отменить Логово+? Доступ к закрытым чатам сохранится до конца периода.")) { state.plus.cancelled = true; save(); render(); }
+    if (d.plusResume !== undefined) { state.plus.cancelled = false; save(); render(); }
+
+    // Плеер
+    if (d.play) {
+      const tr = currentTrack();
+      if (tr && tr.id === d.play) audio.paused ? audio.play() : audio.pause();
+      else playTrack(d.play);
+    }
+    if (d.playAuthor) { const ids = allTracks().filter(t => t.author === d.playAuthor).map(t => t.id); playTrack(ids[0], ids); }
+    if (d.likeTrack) {
+      if (!state.user) return login();
+      state.liked[d.likeTrack] = !state.liked[d.likeTrack]; save(); render(); updatePlayer();
+    }
+    if (d.pl) {
+      const tr = currentTrack();
+      if (d.pl === "toggle") audio.paused ? audio.play() : audio.pause();
+      if (d.pl === "next") step(1);
+      if (d.pl === "prev") audio.currentTime > 3 ? (audio.currentTime = 0) : step(-1);
+      if (d.pl === "shuffle") { player.shuffle = !player.shuffle; updatePlayer(); toast(player.shuffle ? "Перемешивание включено" : "Перемешивание выключено"); }
+      if (d.pl === "repeat") { player.repeat = !player.repeat; updatePlayer(); toast(player.repeat ? "Повтор трека включён" : "Повтор выключен"); }
+      if (d.pl === "queue") $("queue").classList.toggle("open");
+      if (d.pl === "like" && tr) {
+        if (!state.user) return login();
+        state.liked[tr.id] = !state.liked[tr.id]; save(); updatePlayer(); render(); toast(state.liked[tr.id] ? "Добавлено в любимое" : "Убрано из любимого");
+      }
+    }
+
+    // Настройки
+    if (d.color) {
+      if (d.plusOnly !== undefined && !plusActive()) return toast("Этот цвет доступен в Логово+ ✦");
+      state.user.color = d.color; save(); render();
+    }
+    if (d.saveProfile !== undefined) {
+      const name = $("set-name").value.trim();
+      if (!name) return toast("Никнейм не может быть пустым");
+      state.user.name = name;
+      state.user.bio = $("set-bio").value.trim();
+      save(); render(); toast("Профиль сохранён");
+    }
+    if (d.avatarRemove !== undefined) { state.user.avatar = null; save(); render(); }
+    if (d.logout !== undefined) { state.lastUser = state.user; state.user = null; save(); location.hash = "#/"; render(); toast("Вы вышли. Прогресс сохранится, если войдёте под тем же ником"); }
+    if (d.tierAdd !== undefined) { readTiers(); state.author.tiers.push({ id: "my" + uid(), name: "Новый уровень", price: 990, perks: [""] }); save(); render(); }
+    if (d.tierRemove !== undefined) { readTiers(); state.author.tiers.pop(); save(); render(); }
+    if (d.saveAuthor !== undefined) { readTiers(); state.author.section = $("au-section").value; save(); render(); toast("Профиль автора сохранён"); }
+    if (d.reset !== undefined && confirm("Удалить все демо-данные: профиль, подписки, посты, комментарии?")) {
+      try { localStorage.removeItem(KEY); } catch {}
+      location.hash = "#/";
+      location.reload();
+    }
+
+    if (d.newtype) {
+      if (d.needAuthor !== undefined) return toast("Сначала включите «Я автор» в настройках");
+      newType = d.newtype; render();
+    }
+  });
+
+  function readTiers() {
+    state.author.tiers.forEach((t, i) => {
+      const n = document.querySelector(`[data-tier-name="${i}"]`);
+      if (!n) return;
+      t.name = n.value.trim() || `Уровень ${i + 1}`;
+      t.price = Math.max(100, Math.min(50000, +document.querySelector(`[data-tier-price="${i}"]`).value || 490));
+      t.perks = [document.querySelector(`[data-tier-perk="${i}"]`).value.trim() || "Поддержка автора"];
+    });
+    // Уровни должны идти от дешёвого к дорогому, чтобы доступ «и выше» работал верно
+    state.author.tiers.sort((a, b) => a.price - b.price);
+  }
+
+  document.addEventListener("change", e => {
+    const t = e.target;
+    if (t.dataset.setting) {
+      const key = t.dataset.setting;
+      if (key === "authorEnabled") { state.author.enabled = t.checked; if (t.checked) toast("Теперь вы автор! Создайте первый пост ✍️"); }
+      else state.settings[key] = t.checked;
+      save(); applyTheme(); render();
+    }
+    if (t.id === "avatar-file") loadAvatar(t.files[0]);
+    if (checkout && ["tier", "months", "method", "plan"].includes(t.name)) {
+      if (t.name === "tier") checkout.tierId = t.value;
+      if (t.name === "months") checkout.months = +t.value;
+      if (t.name === "method") checkout.method = t.value;
+      if (t.name === "plan") checkout.plan = t.value;
+      renderCheckout();
+    }
+  });
+  document.addEventListener("input", e => {
+    if (e.target.dataset.settingRange === "volume") {
+      state.settings.volume = +e.target.value;
+      audio.volume = state.settings.volume / 100;
+      e.target.style.setProperty("--p", e.target.value + "%");
+      $("vol-label").textContent = e.target.value + "%";
+      save();
+      if (player.idx >= 0) updatePlayer();
+    }
+  });
+
+  document.addEventListener("submit", e => {
+    e.preventDefault();
+    const f = e.target;
+    if (f.id === "login-form") {
+      const name = $("login-name").value.trim() || "Гость";
+      if (state.lastUser && state.lastUser.name === name) state.user = state.lastUser;
+      else if (!state.user || state.user.name !== name) state.user = { name, bio: "", avatar: null, color: "", xp: 0, badges: [], joined: today() };
+      save(); closeModal();
+      award("hello");
+      notify("🐺", "Добро пожаловать в Логово! Загляните в «Горячее» и настройте профиль.", "#/settings");
+      checkStreak();
+      render();
+      toast(`Привет, ${name}!`);
+      if (afterLogin) { const fn = afterLogin; afterLogin = null; setTimeout(fn, 300); }
+    }
+    if (f.id === "comment-form") {
+      if (!state.user) return login();
+      const text = $("comment-text").value.trim();
+      if (!text) return;
+      const id = "u" + uid();
+      (state.comments[f.dataset.target] ||= []).push({ id, name: state.user.name, text, date: today(), likes: 0, replies: [] });
+      save(); award("comment"); gainXP(10, "комментарий"); commentSort = "new"; render();
+      // Имитация ответа другого участника
+      if (state.settings.notifyReplies) setTimeout(() => {
+        const name = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
+        (state.replies[id] ||= []).push({ id: "b" + uid(), name, text: BOT_REPLIES[Math.floor(Math.random() * BOT_REPLIES.length)], date: today(), likes: 0 });
+        save();
+        notify("💬", `${name} ответил на ваш комментарий`, location.hash);
+        toast(`💬 ${name} ответил на ваш комментарий`);
+        if (document.getElementById("comment-form")?.dataset.target === f.dataset.target) render();
+      }, 6000);
+    }
+    if (f.dataset.replyTo) {
+      const text = f.querySelector("input").value.trim();
+      if (!text) return;
+      (state.replies[f.dataset.replyTo] ||= []).push({ id: "u" + uid(), name: state.user.name, text, date: today(), likes: 0 });
+      save(); gainXP(5, "ответ"); render();
+    }
+    if (f.id === "chat-form") {
+      const text = $("chat-input").value.trim();
+      if (!text) return;
+      const room = f.dataset.room;
+      (state.chats[room] ||= []).push({ name: state.user.name, text });
+      save();
+      $("chat-log").insertAdjacentHTML("beforeend", msgHtml({ name: state.user.name, text }));
+      $("chat-log").scrollTop = $("chat-log").scrollHeight;
+      $("chat-input").value = "";
+      gainXP(1);
+      botReply(room);
+    }
+    if (f.id === "new-form") publish();
+  });
+
+  function publish() {
+    const title = $("n-title").value.trim(), text = $("n-text").value.trim();
+    if (newType === "talk") {
+      const t = { id: "d" + uid(), name: state.user.name, section: $("n-section").value, date: today(), views: 1, likes: 0, title, text: text || title };
+      state.myThreads.unshift(t);
+      save(); award("creator"); gainXP(25, "новая тема");
+      location.hash = "#/talk/" + t.id;
+      return;
+    }
+    const post = { id: "u" + uid(), author: "me", title, text, date: today(), likes: 0, access: null };
+    if (newType === "post") {
+      const file = $("n-file").files[0];
+      if (file) {
+        post.file = { name: file.name, size: file.size > 1048576 ? (file.size / 1048576).toFixed(1) + " МБ" : Math.max(1, Math.round(file.size / 1024)) + " КБ" };
+        post.access = $("n-access").value || null;
+      }
+    }
+    if (newType === "poll") {
+      post.poll = [...document.querySelectorAll(".poll-input")].map(i => i.value.trim()).filter(Boolean);
+      post.pollBase = post.poll.map(() => 0);
+      if (!post.text) post.text = "Голосуйте!";
+    }
+    if (newType === "track") {
+      const file = $("n-audio").files[0];
+      const id = "ut" + uid();
+      // Ссылка на файл живёт только в этой вкладке: в демо треки не загружаются на сервер
+      post.track = id;
+      post.trackData = { id, author: "me", title, src: URL.createObjectURL(file), cover: "img/hero.jpg", access: $("n-access").value || null };
+      sessionTracks.push(post.trackData);
+    }
+    state.myPosts.unshift(post);
+    save(); award("creator"); gainXP(25, "публикация");
+    location.hash = "#/post/" + post.id;
+  }
+
+  // =====================================================================
+  // АВТОРЫ ФОТО И ЗАПУСК
+  // =====================================================================
+  const CREDITS = [
+    ["Главный баннер — Алматы с Кок-Тобе", "Edgarpo01", "CC BY-SA 3.0", "File:Almaty,_Kok-tobe_exposition.jpg"],
+    ["Заброшенное здание", "Ximonic (Simo Räsänen)", "CC BY 3.0", "File:Inside_an_abandoned_support_building_of_Vantaankoski_mill_in_Vantaanlaakso,_Vantaa,_Finland,_2021_April.jpg"],
+    ["Домбра", "Mizu basyo", "CC BY-SA 3.0", "File:Kazakh_Dombra2.png"],
+    ["Шанырак юрты", "Nakonana", "CC BY-SA 4.0", "File:Ceiling_and_smoke_hoop_of_a_Turkic_yurt_in_the_Museum_of_Nomadic_Cultures_in_Elista,_Kalmykia,_Russia.jpg"],
+    ["Закат с Кок-Тобе", "Vmenkov", "CC BY-SA 3.0", "File:Sunset_over_the_Almaty_seen_from_Kok_Tobe_mountain,_pic_2.jpg"],
+    ["Кисти", "Rhododendrites", "CC BY-SA 4.0", "File:Paint_brushes_(30804).jpg"],
+    ["Улица Желтоксан ночью", "Matti Blume", "CC BY-SA 4.0", "File:Zheltoksan_Street,_Almaty_(LRM_20240402_003913-RR).jpg"],
+    ["Гостиница «Казахстан» и фонтан", "Nikolay Yushnikov", "Public domain", "File:Almaty_Fountain_2007.JPG"],
+    ["Степь Казахстана", "Togzhan Ibrayeva", "CC BY-SA 4.0", "File:Steppes_of_Kazakhstan.jpg"],
+    ["Заброшенный этаж", "Trougnouf (Benoit Brummer)", "CC BY 4.0", "File:Ground_floor_of_an_abandoned_building_in_the_Ronet_classification_yard_(DSCF5512).jpg"],
+    ["Каток Медеу", "Kefi", "CC0", "File:Medeobanen1.jpg"],
+    ["Наушники", "Jacek Halicki", "CC BY-SA 4.0", "File:2023_S%C5%82uchawki_Sennheiser_HD_540.jpg"],
+    ["Микшерный пульт", "Shixart1985", "CC BY 2.0", "File:Mixing_console_setup_in_a_modern_studio_showcasing_professional_sound_equipment_and_controls_undefined.jpg"],
+    ["Казахский орнамент", "автор неизвестен", "CC0", "File:Shimshi._Kazakh_mat.jpg"],
+    ["Кони в степи", "Radosław Botev", "CC BY 3.0 pl", "File:Kazakhstan_steppe_Almaty_Province_(1)_horses.jpg"],
+    ["Гуашь", "Jeff Dahl", "CC BY-SA 3.0", "File:Gouache.jpg"],
+    ["Шымбулак", "Matti Blume", "CC BY-SA 4.0", "File:Shymbulak,_Almaty_(P1180180).jpg"],
+    ["Синтезатор", "R.Bartz", "CC BY-SA 2.5", "File:Electronic_Dream_Plant_Wasp_Synthesizer.jpg"],
+    ["Ночная улица Алматы", "Torekhan Sarmanov", "CC BY 2.0", "File:Street_at_night_(Almaty,_2001).jpg"],
+  ];
+  $("credits").innerHTML = CREDITS.map(([what, who, lic, file]) =>
+    `<li>${esc(what)} — <a href="https://commons.wikimedia.org/wiki/${file}" target="_blank" rel="noopener">${esc(who)}</a>, ${lic}</li>`).join("");
+
+  if (!state.notifs.length && state.user) notify("🔥", "Kara Studio выложила демо 0.3 «Тени Медеу»", "#/post/p1");
+  checkStreak();
+  render();
+</script>
+</body>
+</html>

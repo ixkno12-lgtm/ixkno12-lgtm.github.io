@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Печать & Кофе — кофейня и типография в Алматы</title>
+<meta name="description" content="Уютная кофейня и типография под одной крышей. Кофе, выпечка, печать на бумаге, широкоформатная печать и сувениры. Алматы.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f6efe4;
+    --paper-2: #ede2d1;
+    --ink: #2b1d14;
+    --ink-soft: #6b5546;
+    --coffee: #6f4428;
+    --cyan: #1fa3c4;
+    --magenta: #d6336c;
+    --yellow: #f2b51b;
+    --radius: 18px;
+    --max: 1100px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Manrope", system-ui, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 17px;
+  }
+  h1, h2, h3 { font-family: "Playfair Display", Georgia, serif; line-height: 1.15; }
+  a { color: inherit; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+
+  /* Шапка */
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(246, 239, 228, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--paper-2);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { font-family: "Playfair Display", serif; font-weight: 800; font-size: 22px; text-decoration: none; }
+  .logo span { color: var(--magenta); }
+  .nav ul { display: flex; gap: 28px; list-style: none; }
+  .nav ul a { text-decoration: none; font-weight: 500; color: var(--ink-soft); }
+  .nav ul a:hover { color: var(--ink); }
+
+  /* Главный экран */
+  .hero { padding: 90px 0 80px; position: relative; overflow: hidden; }
+  .hero .wrap { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
+  .tag {
+    display: inline-block; padding: 6px 14px; border-radius: 99px;
+    background: var(--paper-2); color: var(--coffee); font-weight: 700; font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .hero h1 { font-size: clamp(40px, 6vw, 68px); margin-bottom: 20px; }
+  .hero h1 em { color: var(--coffee); }
+  .hero p { font-size: 19px; color: var(--ink-soft); max-width: 480px; margin-bottom: 32px; }
+  .btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 14px 26px; border-radius: 99px;
+    font-weight: 700; text-decoration: none; transition: transform .15s;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-main { background: var(--ink); color: var(--paper); }
+  .btn-ghost { border: 2px solid var(--ink); }
+
+  /* Чашка с точками CMYK */
+  .cup { position: relative; width: 100%; max-width: 380px; aspect-ratio: 1; margin: 0 auto; }
+  .dot { position: absolute; border-radius: 50%; mix-blend-mode: multiply; opacity: .85; }
+  .dot.c { background: var(--cyan); width: 55%; height: 55%; top: 5%; left: 8%; }
+  .dot.m { background: var(--magenta); width: 55%; height: 55%; top: 5%; right: 8%; }
+  .dot.y { background: var(--yellow); width: 55%; height: 55%; bottom: 5%; left: 22%; }
+  .cup svg { position: absolute; inset: 18%; width: 64%; height: 64%; }
+
+  /* Секции */
+  section { padding: 80px 0; }
+  .section-head { text-align: center; margin-bottom: 48px; }
+  .section-head h2 { font-size: clamp(32px, 4.5vw, 46px); margin-bottom: 12px; }
+  .section-head p { color: var(--ink-soft); max-width: 560px; margin: 0 auto; }
+  .alt { background: var(--paper-2); }
+
+  /* Меню */
+  .menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .menu-col { background: var(--paper); border-radius: var(--radius); padding: 26px; }
+  .menu-col h3 { font-size: 22px; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px dashed var(--paper-2); }
+  .item { display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; }
+  .item b { font-weight: 700; white-space: nowrap; color: var(--coffee); }
+
+  /* Типография */
+  .services { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .card { border-radius: var(--radius); padding: 32px; background: #fff8ee; border-top: 6px solid; }
+  .card.c { border-color: var(--cyan); }
+  .card.m { border-color: var(--magenta); }
+  .card.y { border-color: var(--yellow); }
+  .card h3 { font-size: 24px; margin-bottom: 10px; }
+  .card p { color: var(--ink-soft); margin-bottom: 16px; }
+  .card ul { list-style: none; }
+  .card li { padding: 4px 0; }
+  .card li::before { content: "— "; color: var(--ink-soft); }
+
+  .combo {
+    margin-top: 40px; padding: 30px; border-radius: var(--radius);
+    background: var(--ink); color: var(--paper);
+    display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
+  .combo h3 { font-size: 26px; }
+  .combo p { opacity: .8; }
+  .combo .btn-main { background: var(--yellow); color: var(--ink); }
+
+  /* О нас */
+  .about { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+  .about h2 { font-size: clamp(32px, 4.5vw, 44px); margin-bottom: 18px; }
+  .about p { color: var(--ink-soft); margin-bottom: 14px; }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .fact { background: var(--paper-2); border-radius: var(--radius); padding: 24px; }
+  .fact strong { display: block; font-family: "Playfair Display", serif; font-size: 34px; color: var(--coffee); }
+
+  /* Контакты */
+  .contacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; }
+  .contacts div { background: var(--paper); border-radius: var(--radius); padding: 28px; }
+  .contacts h3 { font-size: 20px; margin-bottom: 8px; }
+  .contacts p { color: var(--ink-soft); }
+
+  /* Статус «открыто» */
+  .status { display: inline-flex; align-items: center; gap: 8px; margin-left: 8px; font-weight: 700; font-size: 14px; }
+  .status::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+  .status.open { color: #2f9e44; }
+  .status.open::before { animation: pulse 1.6s infinite; }
+  .status.closed { color: var(--magenta); }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(47,158,68,.5); } 50% { box-shadow: 0 0 0 6px rgba(47,158,68,0); } }
+
+  /* Наши работы */
+  .filters { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 32px; }
+  .filters button {
+    font: inherit; font-weight: 700; cursor: pointer;
+    padding: 9px 20px; border-radius: 99px; border: 2px solid var(--ink);
+    background: transparent; color: var(--ink); transition: background .2s, color .2s;
+  }
+  .filters button.active, .filters button:hover { background: var(--ink); color: var(--paper); }
+  .works { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .work { background: var(--paper); border-radius: var(--radius); overflow: hidden; transition: transform .25s, box-shadow .25s; }
+  .work:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(43,29,20,.12); }
+  .work.hide { display: none; }
+  .work .pic { height: 210px; display: grid; place-items: center; position: relative; overflow: hidden; }
+  .work .cap { padding: 16px 20px; }
+  .work .cap b { display: block; }
+  .work .cap span { color: var(--ink-soft); font-size: 14px; }
+
+  .m-cards { background: #e7d8c3; }
+  .m-cards i {
+    position: absolute; width: 150px; height: 88px; border-radius: 6px;
+    box-shadow: 0 6px 14px rgba(0,0,0,.15); display: grid; place-items: center;
+    font-family: "Playfair Display", serif; font-style: normal; font-weight: 800;
+  }
+  .m-cards i:first-child { background: var(--ink); color: var(--yellow); transform: rotate(-10deg) translate(-30px, -8px); }
+  .m-cards i:last-child { background: #fff; color: var(--ink); transform: rotate(6deg) translate(30px, 14px); font-size: 13px; }
+
+  .m-banner { background: #cfe8ef; }
+  .m-banner div {
+    width: 82%; height: 96px; background: var(--magenta); color: #fff; border-radius: 4px;
+    display: grid; place-items: center; font-family: "Playfair Display", serif; font-weight: 800; font-size: 30px;
+    box-shadow: 0 8px 18px rgba(0,0,0,.18); position: relative;
+  }
+  .m-banner div::before, .m-banner div::after { content: ""; position: absolute; top: -40px; width: 2px; height: 40px; background: var(--ink); }
+  .m-banner div::before { left: 14%; } .m-banner div::after { right: 14%; }
+
+  .m-mug { background: #fbe7b5; }
+  .m-mug div {
+    width: 110px; height: 120px; background: #fff; border-radius: 6px 6px 22px 22px; position: relative;
+    box-shadow: 0 8px 18px rgba(0,0,0,.12); display: grid; place-items: center;
+    font-family: "Playfair Display", serif; font-weight: 800; color: var(--coffee); font-size: 15px; text-align: center; line-height: 1.1;
+  }
+  .m-mug div::after { content: ""; position: absolute; right: -32px; top: 26px; width: 30px; height: 52px; border: 9px solid #fff; border-left: 0; border-radius: 0 30px 30px 0; }
+
+  .m-menu { background: #d9cbb8; }
+  .m-menu div {
+    width: 130px; height: 175px; background: var(--paper); border-radius: 4px; padding: 16px 14px;
+    box-shadow: 0 8px 18px rgba(0,0,0,.15); transform: rotate(-4deg);
+  }
+  .m-menu b { font-family: "Playfair Display", serif; display: block; text-align: center; margin-bottom: 10px; }
+  .m-menu s { display: block; height: 6px; margin: 9px 0; border-radius: 3px; background: var(--paper-2); text-decoration: none; }
+  .m-menu s:nth-child(odd) { width: 75%; }
+
+  .m-stickers { background: #f3d1dc; }
+  .m-stickers i { position: absolute; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 700; color: #fff; border: 5px solid #fff; box-shadow: 0 5px 12px rgba(0,0,0,.15); }
+  .m-stickers i:nth-child(1) { width: 96px; height: 96px; background: var(--cyan); transform: translate(-50px, -20px) rotate(-12deg); }
+  .m-stickers i:nth-child(2) { width: 80px; height: 80px; background: var(--yellow); color: var(--ink); transform: translate(45px, -30px) rotate(10deg); }
+  .m-stickers i:nth-child(3) { width: 70px; height: 70px; background: var(--ink); transform: translate(10px, 50px); }
+
+  .m-shirt { background: #d4ecdd; }
+  .m-shirt svg { width: 160px; filter: drop-shadow(0 8px 12px rgba(0,0,0,.15)); }
+
+  /* Конструктор визитки */
+  .builder { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; }
+  .form label { display: block; font-weight: 700; font-size: 14px; margin: 14px 0 6px; }
+  .form input {
+    width: 100%; font: inherit; padding: 12px 16px; border-radius: 12px;
+    border: 2px solid var(--paper-2); background: #fff8ee; color: var(--ink);
+  }
+  .form input:focus { outline: none; border-color: var(--coffee); }
+  .swatches { display: flex; gap: 10px; }
+  .swatches button {
+    width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+    border: 3px solid transparent; outline: 2px solid var(--paper-2);
+  }
+  .swatches button.active { border-color: var(--paper); outline-color: var(--ink); }
+  .form .btn { margin-top: 24px; border: 0; cursor: pointer; font: inherit; font-weight: 700; }
+
+  .bc { perspective: 1200px; width: 100%; max-width: 420px; aspect-ratio: 90 / 50; margin: 0 auto; cursor: pointer; }
+  .bc-inner { position: relative; width: 100%; height: 100%; transition: transform .7s; transform-style: preserve-3d; }
+  .bc.flipped .bc-inner { transform: rotateY(180deg); }
+  .bc-face {
+    position: absolute; inset: 0; border-radius: 14px; backface-visibility: hidden;
+    box-shadow: 0 20px 40px rgba(43,29,20,.22); padding: 8% 9%;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .bc-front { background: #fff; color: var(--ink); border-left: 12px solid var(--bc, var(--coffee)); }
+  .bc-front .n { font-family: "Playfair Display", serif; font-size: clamp(20px, 4vw, 30px); font-weight: 800; line-height: 1.1; }
+  .bc-front .r { color: var(--ink-soft); }
+  .bc-front .p { font-weight: 700; color: var(--bc, var(--coffee)); }
+  .bc-back {
+    background: var(--bc, var(--coffee)); color: #fff; transform: rotateY(180deg);
+    align-items: center; justify-content: center; text-align: center;
+    font-family: "Playfair Display", serif; font-size: clamp(24px, 5vw, 36px); font-weight: 800;
+  }
+  .hint { text-align: center; color: var(--ink-soft); font-size: 14px; margin-top: 16px; }
+
+  /* Появление при прокрутке */
+  .js .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s, transform .7s; }
+  .js .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .js .reveal { opacity: 1; transform: none; transition: none; }
+    .bc-inner, .work { transition: none; }
+  }
+
+  @media (max-width: 900px) {
+    .works { grid-template-columns: 1fr 1fr; }
+    .builder { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .works { grid-template-columns: 1fr; }
+  }
+
+  footer { padding: 30px 0; text-align: center; color: var(--ink-soft); font-size: 14px; }
+
+  /* Кнопка WhatsApp */
+  .wa {
+    position: fixed; right: 20px; bottom: 20px; z-index: 20;
+    background: #25d366; color: #fff; text-decoration: none; font-weight: 700;
+    padding: 14px 20px; border-radius: 99px; box-shadow: 0 6px 20px rgba(0,0,0,.2);
+  }
+
+  /* Телефоны */
+  @media (max-width: 900px) {
+    .menu { grid-template-columns: 1fr 1fr; }
+    .services, .contacts { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 720px) {
+    .nav ul { display: none; }
+    .hero { padding: 50px 0; }
+    .hero .wrap, .about { grid-template-columns: 1fr; }
+    .cup { max-width: 260px; }
+    .menu { grid-template-columns: 1fr; }
+    section { padding: 60px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="logo">Печать <span>&</span> Кофе</a>
+    <ul>
+      <li><a href="#menu">Меню</a></li>
+      <li><a href="#print">Типография</a></li>
+      <li><a href="#works">Работы</a></li>
+      <li><a href="#builder">Визитка</a></li>
+      <li><a href="#about">О нас</a></li>
+      <li><a href="#contacts">Контакты</a></li>
+    </ul>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="tag">Кофейня + типография · Алматы</span><span class="status" id="status"></span>
+      <h1>Пока варится кофе — <em>печатаются</em> ваши идеи</h1>
+      <p>Уютная кофейня с хорошим кофе и свежей выпечкой. А за стеной — своя типография: визитки, баннеры и сувениры без лишней суеты.</p>
+      <div class="btns">
+        <a href="#menu" class="btn btn-main">Смотреть меню</a>
+        <a href="#print" class="btn btn-ghost">Заказать печать</a>
+      </div>
+    </div>
+    <div class="cup" aria-hidden="true">
+      <span class="dot c"></span><span class="dot m"></span><span class="dot y"></span>
+      <svg viewBox="0 0 100 100" fill="none" stroke="#2b1d14" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 40h48v18a24 24 0 0 1-48 0z" fill="#f6efe4"/>
+        <path d="M70 46h6a9 9 0 0 1 0 18h-7"/>
+        <path d="M36 18c-3 5 3 8 0 13M48 15c-3 5 3 8 0 13M60 18c-3 5 3 8 0 13"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="menu" class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Меню</h2>
+      <p>Классика, которую любят все, и немного своего. Цены — ориентировочные.</p>
+    </div>
+    <div class="menu">
+      <div class="menu-col">
+        <h3>Кофе</h3>
+        <div class="item"><span>Эспрессо</span><b>800 ₸</b></div>
+        <div class="item"><span>Американо</span><b>1 000 ₸</b></div>
+        <div class="item"><span>Капучино</span><b>1 400 ₸</b></div>
+        <div class="item"><span>Латте</span><b>1 500 ₸</b></div>
+        <div class="item"><span>Раф</span><b>1 700 ₸</b></div>
+        <div class="item"><span>Флэт уайт</span><b>1 600 ₸</b></div>
+      </div>
+      <div class="menu-col">
+        <h3>Не кофе</h3>
+        <div class="item"><span>Какао</span><b>1 300 ₸</b></div>
+        <div class="item"><span>Матча латте</span><b>1 800 ₸</b></div>
+        <div class="item"><span>Чай в чайнике</span><b>1 200 ₸</b></div>
+        <div class="item"><span>Лимонад</span><b>1 400 ₸</b></div>
+        <div class="item"><span>Горячий шоколад</span><b>1 600 ₸</b></div>
+      </div>
+      <div class="menu-col">
+        <h3>Выпечка</h3>
+        <div class="item"><span>Круассан</span><b>900 ₸</b></div>
+        <div class="item"><span>Синнабон</span><b>1 300 ₸</b></div>
+        <div class="item"><span>Чизкейк</span><b>1 800 ₸</b></div>
+        <div class="item"><span>Маффин</span><b>800 ₸</b></div>
+      </div>
+      <div class="menu-col">
+        <h3>Снеки</h3>
+        <div class="item"><span>Сэндвич</span><b>1 900 ₸</b></div>
+        <div class="item"><span>Панини</span><b>2 100 ₸</b></div>
+        <div class="item"><span>Гранола</span><b>1 500 ₸</b></div>
+        <div class="item"><span>Печенье</span><b>500 ₸</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="print">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Типография</h2>
+      <p>Печатники работают в отдельном помещении — вы слышите только запах кофе, а не шум станков.</p>
+    </div>
+    <div class="services">
+      <div class="card c">
+        <h3>Печать на бумаге</h3>
+        <p>Всё, что нужно бизнесу и для себя.</p>
+        <ul>
+          <li>Визитки</li>
+          <li>Листовки и флаеры</li>
+          <li>Меню для кафе</li>
+          <li>Наклейки и бирки</li>
+        </ul>
+      </div>
+      <div class="card m">
+        <h3>Широкоформатная печать</h3>
+        <p>Большие форматы для улицы и помещений.</p>
+        <ul>
+          <li>Баннеры</li>
+          <li>Постеры</li>
+          <li>Ролл-апы</li>
+          <li>Вывески и таблички</li>
+        </ul>
+      </div>
+      <div class="card y">
+        <h3>Сувенирка</h3>
+        <p>Небольшие тиражи с вашим логотипом.</p>
+        <ul>
+          <li>Кружки</li>
+          <li>Футболки</li>
+          <li>Блокноты</li>
+          <li>Значки и магниты</li>
+        </ul>
+      </div>
+    </div>
+    <div class="combo">
+      <div>
+        <h3>Заказал печать — выпей кофе за наш счёт</h3>
+        <p>Оставьте заказ, а мы сварим вам капучино, пока обсуждаем макет.</p>
+      </div>
+      <a href="#contacts" class="btn btn-main">Оставить заказ</a>
+    </div>
+  </div>
+</section>
+
+<section id="works" class="alt">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2>Наши работы</h2>
+      <p>Немного того, что уже напечатали для кофеен, магазинов и друзей.</p>
+    </div>
+    <div class="filters" role="group" aria-label="Фильтр работ">
+      <button class="active" data-filter="all">Все</button>
+      <button data-filter="paper">Бумага</button>
+      <button data-filter="wide">ШФП</button>
+      <button data-filter="souvenir">Сувенирка</button>
+    </div>
+    <div class="works">
+      <div class="work reveal" data-cat="paper">
+        <div class="pic m-cards"><i>Барбершоп</i><i>Арман · мастер</i></div>
+        <div class="cap"><b>Визитки для барбершопа</b><span>500 шт · матовая бумага</span></div>
+      </div>
+      <div class="work reveal" data-cat="wide">
+        <div class="pic m-banner"><div>−30%</div></div>
+        <div class="cap"><b>Баннер для распродажи</b><span>3×1 м · уличный</span></div>
+      </div>
+      <div class="work reveal" data-cat="souvenir">
+        <div class="pic m-mug"><div>Цветы<br>Алматы</div></div>
+        <div class="cap"><b>Кружки для цветочного</b><span>30 шт · сублимация</span></div>
+      </div>
+      <div class="work reveal" data-cat="paper">
+        <div class="pic m-menu"><div><b>Меню</b><s></s><s></s><s></s><s></s><s></s><s></s><s></s></div></div>
+        <div class="cap"><b>Меню для кофейни</b><span>А4 · ламинация</span></div>
+      </div>
+      <div class="work reveal" data-cat="paper">
+        <div class="pic m-stickers"><i>NEW</i><i>★</i><i>-10%</i></div>
+        <div class="cap"><b>Наклейки для магазина</b><span>1000 шт · вырубка</span></div>
+      </div>
+      <div class="work reveal" data-cat="souvenir">
+        <div class="pic m-shirt">
+          <svg viewBox="0 0 100 90"><path d="M30 5l-25 15 10 18 10-5v52h50V33l10 5 10-18-25-15c-3 7-10 11-20 11S33 12 30 5z" fill="#fff"/><text x="50" y="58" text-anchor="middle" font-family="Playfair Display, serif" font-weight="800" font-size="11" fill="#d6336c">TEAM</text></svg>
+        </div>
+        <div class="cap"><b>Футболки для команды</b><span>20 шт · DTF-печать</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="builder">
+  <div class="wrap builder">
+    <div class="form reveal">
+      <h2 style="font-size: clamp(32px, 4.5vw, 44px); margin-bottom: 10px;">Соберите визитку прямо здесь</h2>
+      <p style="color: var(--ink-soft);">Впишите свои данные — и сразу увидите, как будет выглядеть ваша визитка. Понравится — отправьте нам, напечатаем за день.</p>
+      <label for="f-name">Имя</label>
+      <input id="f-name" value="Айгерим Садыкова" maxlength="40">
+      <label for="f-role">Должность</label>
+      <input id="f-role" value="Флорист" maxlength="40">
+      <label for="f-phone">Телефон</label>
+      <input id="f-phone" value="+7 (701) 123-45-67" maxlength="30">
+      <label for="f-company">Компания (на обороте)</label>
+      <input id="f-company" value="Цветы Алматы" maxlength="30">
+      <label>Цвет</label>
+      <div class="swatches">
+        <button class="active" style="background:#6f4428" data-color="#6f4428" aria-label="Кофейный"></button>
+        <button style="background:#1fa3c4" data-color="#1fa3c4" aria-label="Голубой"></button>
+        <button style="background:#d6336c" data-color="#d6336c" aria-label="Малиновый"></button>
+        <button style="background:#f2b51b" data-color="#f2b51b" aria-label="Жёлтый"></button>
+        <button style="background:#2b1d14" data-color="#2b1d14" aria-label="Чёрный"></button>
+      </div>
+      <button class="btn btn-main" id="order-card">Заказать такую визитку</button>
+    </div>
+    <div class="reveal">
+      <div class="bc" id="bc" title="Нажмите, чтобы перевернуть">
+        <div class="bc-inner">
+          <div class="bc-face bc-front">
+            <div><div class="n" id="c-name"></div><div class="r" id="c-role"></div></div>
+            <div class="p" id="c-phone"></div>
+          </div>
+          <div class="bc-face bc-back" id="c-company"></div>
+        </div>
+      </div>
+      <p class="hint">Нажмите на визитку, чтобы перевернуть</p>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="alt">
+  <div class="wrap about">
+    <div>
+      <h2>Одно место — два удовольствия</h2>
+      <p>Мы соединили то, что любим: хороший кофе и красивую печать. Здесь можно спокойно поработать за ноутбуком, встретиться с друзьями или обсудить макет визиток с печатником.</p>
+      <p>Зал для гостей и типография находятся в одном здании, но разделены — чтобы гостям было уютно, а печатникам ничто не мешало.</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><strong>1 день</strong>визитки и листовки</div>
+      <div class="fact"><strong>от 1 шт</strong>сувениры с логотипом</div>
+      <div class="fact"><strong>Wi‑Fi</strong>и розетки у каждого стола</div>
+      <div class="fact"><strong>8:00</strong>открываемся каждый день</div>
+    </div>
+  </div>
+</section>
+
+<section id="contacts">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Ждём вас в гости</h2>
+    </div>
+    <div class="contacts">
+      <div><h3>Адрес</h3><p>Алматы, адрес скоро появится</p></div>
+      <div><h3>Часы работы</h3><p>Каждый день 8:00 — 21:00<br>Типография: 9:00 — 19:00</p></div>
+      <div><h3>Связь</h3><p>+7 (700) 000-00-00<br>Instagram: @pechat.kofe</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">© 2026 Печать & Кофе · Алматы</div>
+</footer>
+
+<a class="wa" href="https://wa.me/77000000000" target="_blank" rel="noopener">Написать в WhatsApp</a>
+
+<script>
+  document.documentElement.classList.add("js");
+  const WA_NUMBER = "77000000000";
+
+  // Открыто ли сейчас (время Алматы, UTC+5)
+  const now = new Date();
+  const hour = (now.getUTCHours() + 5) % 24;
+  const status = document.getElementById("status");
+  if (hour >= 8 && hour < 21) {
+    status.textContent = "Открыто до 21:00";
+    status.className = "status open";
+  } else {
+    status.textContent = "Закрыто · откроемся в 8:00";
+    status.className = "status closed";
+  }
+
+  // Фильтр работ
+  document.querySelectorAll(".filters button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".filters button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const f = btn.dataset.filter;
+      document.querySelectorAll(".work").forEach(w => {
+        w.classList.toggle("hide", f !== "all" && w.dataset.cat !== f);
+      });
+    });
+  });
+
+  // Конструктор визитки
+  const fields = ["name", "role", "phone", "company"];
+  const bc = document.getElementById("bc");
+  function render() {
+    fields.forEach(k => {
+      document.getElementById("c-" + k).textContent = document.getElementById("f-" + k).value;
+    });
+  }
+  fields.forEach(k => document.getElementById("f-" + k).addEventListener("input", render));
+  render();
+  bc.addEventListener("click", () => bc.classList.toggle("flipped"));
+  let color = "#6f4428";
+  document.querySelectorAll(".swatches button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".swatches button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      color = btn.dataset.color;
+      bc.style.setProperty("--bc", color);
+    });
+  });
+  document.getElementById("order-card").addEventListener("click", () => {
+    const v = k => document.getElementById("f-" + k).value;
+    const text = `Здравствуйте! Хочу заказать визитки:\nИмя: ${v("name")}\nДолжность: ${v("role")}\nТелефон: ${v("phone")}\nКомпания: ${v("company")}\nЦвет: ${color}`;
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`, "_blank");
+  });
+
+  // Плавное появление блоков при прокрутке
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add("in");
+      io.unobserve(e.target);
+      // после появления убираем классы, чтобы не мешали эффектам при наведении
+      setTimeout(() => e.target.classList.remove("reveal", "in"), 800);
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
