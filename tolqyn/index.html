@@ -429,7 +429,7 @@
   // КАТАЛОГ
   // =====================================================================
   const MOODS = { energy: ["⚡", "Бодрое"], calm: ["🌿", "Спокойное"], sad: ["🌧", "Грустное"], happy: ["☀️", "Весёлое"] };
-  const GENRE_COLORS = { "Lo-fi": "#b05cc9", "Synthwave": "#d4307a", "Ambient": "#3a4a6b", "Chiptune": "#3e9e4f", "Piano": "#5d8aa8", "House": "#e0542e", "Folk": "#b8742a", "Trap": "#5b1d82", "Acoustic": "#4c8f63", "Pop": "#e8a020", "Cinematic": "#8a2c3b", "Jazz": "#2f6f8f", "Hip-hop": "#c2410c", "Electronic": "#0e7490", "Классика": "#6b5b3e", "Другое": "#666" };
+  const GENRE_COLORS = { "Lo-fi": "#b05cc9", "Synthwave": "#d4307a", "Ambient": "#3a4a6b", "Chiptune": "#3e9e4f", "Piano": "#5d8aa8", "House": "#e0542e", "Folk": "#b8742a", "Trap": "#5b1d82", "Acoustic": "#4c8f63", "Pop": "#e8a020", "Cinematic": "#8a2c3b", "Jazz": "#2f6f8f", "Hip-hop": "#c2410c", "Electronic": "#0e7490", "Классика": "#6b5b3e", "Фолк": "#9c4a2f", "Другое": "#666" };
 
   const ARTISTS = [
     { id: "dina",   name: "Dina Beats",     genre: "Lo-fi",     listeners: 48210, bio: "Битмейкер из Алматы. Lo-fi и хип-хоп с домброй и звуками города." },
@@ -484,7 +484,9 @@
   if (CC_TRACKS.length) {
     EDITORIAL.unshift({ id: "free", name: "Настоящая музыка", desc: "Реальные треки музыкантов под свободной лицензией.", tracks: CC_TRACKS.map(t => t.id) });
     EDITORIAL.find(p => p.id === "focus").tracks.push("cc-winter", "cc-windswept", "cc-sonata28", "cc-cattails");
-    EDITORIAL.find(p => p.id === "energy").tracks.push("cc-hitman", "cc-beton", "cc-lifelike", "cc-chase");
+    EDITORIAL.find(p => p.id === "energy").tracks.push("cc-hitman", "cc-beton", "cc-lifelike", "cc-chase", "cc-tetris");
+    const folk = CC_TRACKS.filter(t => t.genre === "Фолк").map(t => t.id);
+    if (folk.length) EDITORIAL.splice(1, 0, { id: "folk", name: "Русские народные", desc: "Шаляпин, Плевицкая и старые записи на 78 оборотов — всё в общественном достоянии.", tracks: folk });
   }
   // В подборках остаются только треки, которые реально есть в каталоге
   EDITORIAL.forEach(p => p.tracks = p.tracks.filter(id => TRACKS.some(t => t.id === id)));

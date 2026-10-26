@@ -65,6 +65,48 @@ window.CC_ARTISTS = [
   "name": "Eubie Blake",
   "genre": "Jazz",
   "bio": "Американский композитор и пианист, звезда регтайма и джаза начала XX века."
+ },
+ {
+  "id": "chaliapin",
+  "name": "Фёдор Шаляпин",
+  "genre": "Фолк",
+  "bio": "Великий русский оперный бас (1873–1938). Его записи народных песен начала XX века давно перешли в общественное достояние."
+ },
+ {
+  "id": "plevitskaya",
+  "name": "Надежда Плевицкая",
+  "genre": "Фолк",
+  "bio": "Знаменитая исполнительница русских народных песен (1884–1940), любимица публики начала XX века."
+ },
+ {
+  "id": "kondratyev",
+  "name": "Иван Кондратьев",
+  "genre": "Фолк",
+  "bio": "Исполнитель русских песен, архивная запись в общественном достоянии."
+ },
+ {
+  "id": "folkrec",
+  "name": "Архивные записи",
+  "genre": "Фолк",
+  "bio": "Русские народные песни в старых записях на 78 оборотов, которые перешли в общественное достояние."
+ },
+ {
+  "id": "gnosandes",
+  "name": "Gnosandes",
+  "genre": "Фолк",
+  "bio": "Современное исполнение русской народной песни под свободной лицензией."
+ },
+ {
+  "id": "fandeev",
+  "name": "Кирилл Фандеев",
+  "genre": "Фолк",
+  "bio": "Оркестровка народной песни, опубликованная под свободной лицензией."
+ },
+ {
+  "id": "wansti",
+  "name": "Wansti & ToBeFree",
+  "genre": "Electronic",
+  "bio": "Электронный ремикс на «Коробейников» — ту самую мелодию из «Тетриса». Свободная лицензия."
  }
 ];
 window.CC_TRACKS = [
@@ -340,5 +382,174 @@ window.CC_TRACKS = [
   "license": "Public domain",
   "source": "https://commons.wikimedia.org/wiki/File:Eubie_Blake_-_Just_Wild_about_Harry.ogg",
   "author": "Eubie Blake, composer (with Sissle, Noble, lyrics), performa"
+ },
+ {
+  "id": "cc-volga",
+  "file": "volga",
+  "title": "Эй, ухнем! (Песня волжских бурлаков)",
+  "artist": "chaliapin",
+  "genre": "Фолк",
+  "mood": "sad",
+  "color": "#3d4a6b",
+  "desc": "",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Feodor_Chaliapin_-_Song_of_the_Volga_Boatmen_-_Victor_14901A.ogg",
+  "author": ""
+ },
+ {
+  "id": "cc-dubinushka",
+  "file": "dubinushka",
+  "title": "Дубинушка",
+  "artist": "chaliapin",
+  "genre": "Фолк",
+  "mood": "sad",
+  "color": "#3d4a6b",
+  "desc": "",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:%D0%94%D1%83%D0%B1%D0%B8%D0%BD%D1%83%D1%88%D0%BA%D0%B0_-_%D0%A4%D1%91%D0%B4%D0%BE%D1%80_%D0%A8%D0%B0%D0%BB%D1%8F%D0%BF%D0%B8%D0%BD.ogg",
+  "author": "Фёдор Шаляпин"
+ },
+ {
+  "id": "cc-sinichka",
+  "file": "sinichka",
+  "title": "За морем синичка",
+  "artist": "plevitskaya",
+  "genre": "Фолк",
+  "mood": "calm",
+  "color": "#5f8fa6",
+  "desc": "",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Nadezhda_Plevitskaya_Za_morem_sinichka.ogg",
+  "author": "Nadezhda Plevitskaya"
+ },
+ {
+  "id": "cc-kalinka",
+  "file": "kalinka",
+  "title": "Калинка",
+  "artist": "folkrec",
+  "genre": "Фолк",
+  "mood": "happy",
+  "color": "#e8a020",
+  "desc": "",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Kalinka.ogg",
+  "author": "Pracchia-78"
+ },
+ {
+  "id": "cc-korobeiniki",
+  "file": "korobeiniki",
+  "title": "Коробейники",
+  "artist": "folkrec",
+  "genre": "Фолк",
+  "mood": "happy",
+  "color": "#e8a020",
+  "desc": "",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Nikolaj_Alekseevi%C4%8D_Nekrasov_-_Korobeiniki.ogg",
+  "author": "Pracchia-78"
+ },
+ {
+  "id": "cc-nevecher",
+  "file": "nevecher",
+  "title": "Ой, то не вечер",
+  "artist": "folkrec",
+  "genre": "Фолк",
+  "mood": "sad",
+  "color": "#3d4a6b",
+  "desc": "",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:%D0%9E%D0%B9_%D0%B4%D0%B0_%D0%BD%D0%B5_%D0%B2%D0%B5%D1%87%D0%B5%D1%80_-_Oy,_to_ne_vecher.ogg",
+  "author": "Pracchia-78"
+ },
+ {
+  "id": "cc-gorushke",
+  "file": "gorushke",
+  "title": "На горушке, на горе",
+  "artist": "folkrec",
+  "genre": "Фолк",
+  "mood": "happy",
+  "color": "#e8a020",
+  "desc": "",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Ha_%D0%93opy%D1%88ke,_Ha_%D0%93ope.flac",
+  "author": ""
+ },
+ {
+  "id": "cc-rekoyu",
+  "file": "rekoyu",
+  "title": "Выросла я за рекою",
+  "artist": "folkrec",
+  "genre": "Фолк",
+  "mood": "calm",
+  "color": "#5f8fa6",
+  "desc": "",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:B%D1%8Bpoc%D0%BBa_%D1%8F_%D0%B7a_peko%D1%8E.flac",
+  "author": ""
+ },
+ {
+  "id": "cc-zabaikalye",
+  "file": "zabaikalye",
+  "title": "По диким степям Забайкалья",
+  "artist": "kondratyev",
+  "genre": "Фолк",
+  "mood": "sad",
+  "color": "#3d4a6b",
+  "desc": "",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Po_dikim_stepyam_Zabaikalya.ogg",
+  "author": "Ivan Kondratyev"
+ },
+ {
+  "id": "cc-ochi",
+  "file": "ochi",
+  "title": "Очи чёрные",
+  "artist": "folkrec",
+  "genre": "Фолк",
+  "mood": "sad",
+  "color": "#3d4a6b",
+  "desc": "",
+  "license": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Ochi_chernie.ogg",
+  "author": "German; Grebenka"
+ },
+ {
+  "id": "cc-vorot",
+  "file": "vorot",
+  "title": "Как у наших у ворот",
+  "artist": "gnosandes",
+  "genre": "Фолк",
+  "mood": "happy",
+  "color": "#e8a020",
+  "desc": "",
+  "license": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Kak_u_nashix_u_vorot.ogg",
+  "author": "Gnosandes"
+ },
+ {
+  "id": "cc-zhuravka",
+  "file": "zhuravka",
+  "title": "Журавка",
+  "artist": "fandeev",
+  "genre": "Фолк",
+  "mood": "calm",
+  "color": "#5f8fa6",
+  "desc": "",
+  "license": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:%D0%96%D1%83%D1%80%D0%B0%D0%B2%D0%BA%D0%B0._%D0%9E%D1%80%D0%BA%D0%B5%D1%81%D1%82%D1%80%D0%BE%D0%B2%D0%BA%D0%B0_%D0%9A%D0%B8%D1%80%D0%B8%D0%BB%D0%BB%D0%B0_%D0%A4%D0%B0%D0%BD%D0%B4%D0%B5%D0%B5%D0%B2%D0%B0._%D0%98%D1%81%D0%BF%D0%BE%D0%BB%D0%BD%D1%8F%D0%B5%D1%82_%D0%AE%D0%BB%D0%B8%D1%8F_%D0%91%D1%83%D1%82-%D0%93%D1%83%D1%81%D0%B0%D0%B8%D0%BC.flac",
+  "author": "Kirill Fandeev"
+ },
+ {
+  "id": "cc-tetris",
+  "file": "tetris",
+  "title": "Коробейники (ремикс)",
+  "artist": "wansti",
+  "genre": "Electronic",
+  "mood": "energy",
+  "color": "#d4307a",
+  "desc": "",
+  "license": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Korobeiniki-wansti-tobefree.mp3",
+  "author": "Marek \"Wansti\" Möckel, discarded-ideas.org, and Tobias ToBeF"
  }
 ];
