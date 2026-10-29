@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Поиск клиентов</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#141113">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #141113;
+    --card: #1c181a;
+    --card-2: #221c1e;
+    --text: #ebe3df;
+    --muted: #a0948f;
+    --line: #2e2729;
+    --red: #b5646f;
+    --red-2: #d39aa0;
+    --green: #7fae8a;
+    --amber: #d1a35c;
+    --spike: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Inter", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; font-size: 15px; }
+  h1, h2, h3 { font-family: "Yeseva One", Georgia, serif; font-weight: 400; line-height: 1.1; }
+  a { color: var(--red-2); }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 28px 0 18px; display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
+  header h1 { font-size: clamp(30px, 5vw, 44px); }
+  header h1 em { font-style: normal; color: var(--red); }
+  header p { color: var(--muted); max-width: 520px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; font: inherit; font-weight: 700; font-size: 14px; border: 0; cursor: pointer; clip-path: var(--spike); text-decoration: none; transition: background .2s; white-space: nowrap; }
+  .btn.red { background: var(--red); color: #1a1214; }
+  .btn.red:hover { background: var(--red-2); }
+  .btn.ghost { background: rgba(255,255,255,.06); color: var(--text); box-shadow: inset 0 0 0 1px rgba(255,255,255,.16); }
+  .btn.ghost:hover { background: rgba(255,255,255,.12); }
+  .btn.wa { background: #2f6b47; color: #fff; }
+  .btn.wa:hover { background: #3b8459; }
+  .btn.sm { padding: 7px 12px; font-size: 13px; }
+  .btn[disabled] { opacity: .4; cursor: not-allowed; }
+
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 18px; }
+  .stat { background: var(--card); border: 1px solid var(--line); padding: 14px 16px; }
+  .stat b { display: block; font-family: "Yeseva One", serif; font-weight: 400; font-size: 30px; line-height: 1; color: var(--red-2); }
+  .stat span { color: var(--muted); font-size: 13px; }
+  .stat .bar { height: 4px; background: var(--line); margin-top: 8px; }
+  .stat .bar i { display: block; height: 100%; background: var(--red); width: 0; transition: width .3s; }
+
+  .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); margin-bottom: 18px; overflow-x: auto; }
+  .tabs button { background: none; border: 0; color: var(--muted); font: inherit; font-weight: 600; padding: 10px 14px; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .tabs button.on { color: var(--text); border-color: var(--red); }
+  .panel { display: none; }
+  .panel.on { display: block; }
+
+  .box { background: var(--card); border: 1px solid var(--line); padding: 18px; margin-bottom: 16px; }
+  .box h2 { font-size: 22px; margin-bottom: 12px; }
+  .box p.hint { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+  label { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; font-weight: 600; }
+  input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--text); font: inherit; padding: 9px 11px; outline: none; }
+  input:focus, select:focus, textarea:focus { border-color: var(--red); }
+  textarea { resize: vertical; min-height: 90px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .filters input { flex: 1; min-width: 180px; }
+  .filters select { width: auto; }
+
+  .lead { background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--line); padding: 14px 16px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr auto; gap: 10px 16px; }
+  .lead[data-status="new"] { border-left-color: var(--muted); }
+  .lead[data-status="sent"] { border-left-color: var(--amber); }
+  .lead[data-status="replied"], .lead[data-status="interested"] { border-left-color: var(--red-2); }
+  .lead[data-status="client"] { border-left-color: var(--green); }
+  .lead[data-status="refused"], .lead[data-status="stop"] { opacity: .55; }
+  .lead h3 { font-size: 20px; }
+  .lead .meta { color: var(--muted); font-size: 13px; display: flex; gap: 6px 12px; flex-wrap: wrap; margin-top: 2px; }
+  .lead .due { color: var(--amber); font-weight: 600; }
+  .lead .note { font-size: 13px; color: var(--muted); margin-top: 6px; }
+  .lead .side { display: flex; flex-direction: column; gap: 6px; align-items: stretch; min-width: 170px; }
+  .lead .side select { padding: 6px 8px; font-size: 13px; }
+  .lead .preview { grid-column: 1 / -1; background: var(--bg); border: 1px dashed var(--line); padding: 10px 12px; font-size: 14px; white-space: pre-wrap; display: none; }
+  .lead.open .preview { display: block; }
+  .lead .preview textarea { min-height: 120px; margin-bottom: 8px; }
+  .chip { font-size: 11px; padding: 2px 8px; border: 1px solid var(--line); text-transform: uppercase; letter-spacing: .06em; }
+
+  .empty { text-align: center; color: var(--muted); padding: 40px 10px; border: 1px dashed var(--line); }
+  .tpl { border-top: 1px solid var(--line); padding-top: 14px; margin-top: 14px; }
+  .tpl:first-of-type { border: 0; padding-top: 0; margin-top: 0; }
+  .tpl h3 { font-size: 18px; margin-bottom: 8px; }
+  .tips { color: var(--muted); font-size: 14px; display: grid; gap: 6px; padding-left: 18px; }
+  .tips b { color: var(--text); }
+
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%) translateY(100px); background: var(--red); color: #1a1214; padding: 12px 20px; font-weight: 600; z-index: 50; transition: transform .3s; clip-path: var(--spike); max-width: calc(100% - 32px); }
+  .toast.show { transform: translateX(-50%); }
+  footer { color: var(--muted); font-size: 13px; padding: 30px 0 40px; }
+
+  @media (max-width: 720px) {
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .stats .stat:first-child { grid-column: 1 / -1; }
+    .lead { grid-template-columns: 1fr; }
+    .lead .side { min-width: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Поиск <em>клиентов</em></h1>
+      <p>Компании, личное сообщение под каждую и кнопка WhatsApp. Отправляете вы сами — по одному, как живой человек.</p>
+    </div>
+    <a class="btn ghost" href="../">← На сайт</a>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><b id="s-today">0</b><span>написано сегодня из <span id="s-goal">30</span></span><div class="bar"><i id="s-bar"></i></div></div>
+    <div class="stat"><b id="s-total">0</b><span>всего компаний</span></div>
+    <div class="stat"><b id="s-sent">0</b><span>написано</span></div>
+    <div class="stat"><b id="s-replied">0</b><span>ответили</span></div>
+    <div class="stat"><b id="s-client">0</b><span>клиентов</span></div>
+  </div>
+
+  <nav class="tabs">
+    <button data-tab="list" class="on">Список</button>
+    <button data-tab="add">Добавить</button>
+    <button data-tab="templates">Шаблоны</button>
+    <button data-tab="data">Данные и советы</button>
+  </nav>
+
+  <!-- Список -->
+  <section class="panel on" id="tab-list">
+    <div class="filters">
+      <input id="q" placeholder="Поиск по названию, городу, заметке">
+      <select id="f-status"></select>
+      <select id="f-niche"></select>
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <!-- Добавление -->
+  <section class="panel" id="tab-add">
+    <div class="box">
+      <h2>Одна компания</h2>
+      <form id="add-form">
+        <div class="grid">
+          <div><label for="a-name">Название *</label><input id="a-name" required placeholder="Цветы у Айгерим"></div>
+          <div><label for="a-phone">WhatsApp *</label><input id="a-phone" required inputmode="tel" placeholder="8 707 123 45 67"></div>
+          <div><label for="a-niche">Ниша</label><select id="a-niche"></select></div>
+          <div><label for="a-city">Город</label><input id="a-city" placeholder="Алматы"></div>
+          <div><label for="a-source">Где нашли</label><input id="a-source" placeholder="2ГИС, Instagram…"></div>
+        </div>
+        <div style="margin-top:10px"><label for="a-note">Заметка</label><input id="a-note" placeholder="Нет сайта, только Instagram; 4.8 в 2ГИС"></div>
+        <div class="row"><button class="btn red" type="submit">Добавить</button></div>
+      </form>
+    </div>
+    <div class="box">
+      <h2>Списком</h2>
+      <p class="hint">Одна компания на строку: <b>Название; Телефон; Ниша; Город; Заметка</b>. Можно вставить прямо из Excel или Google Таблиц — табуляция тоже понимается. Ниша — словом: цветы, кофейня, салон, магазин, репетитор, музыка, другое.</p>
+      <textarea id="bulk" placeholder="Цветы у Айгерим; 87071234567; цветы; Алматы; нет сайта&#10;Coffee Point; +7 701 555 44 33; кофейня; Астана"></textarea>
+      <div class="row"><button class="btn red" id="bulk-add" type="button">Добавить все</button><span class="hint" id="bulk-info" style="color:var(--muted);font-size:13px"></span></div>
+    </div>
+  </section>
+
+  <!-- Шаблоны -->
+  <section class="panel" id="tab-templates">
+    <div class="box">
+      <h2>Ваши данные</h2>
+      <div class="grid">
+        <div><label for="c-me">Как подписываться</label><input id="c-me" placeholder="Имя"></div>
+        <div><label for="c-site">Ссылка на портфолио</label><input id="c-site"></div>
+        <div><label for="c-goal">Цель на день</label><input id="c-goal" type="number" min="1" max="200"></div>
+      </div>
+    </div>
+    <div class="box">
+      <h2>Сообщения по нишам</h2>
+      <p class="hint">Подстановки: <b>{название}</b>, <b>{город}</b>, <b>{демо}</b> — ссылка на подходящий пример, <b>{портфолио}</b>, <b>{я}</b>. Варианты разделяйте строкой <b>---</b> — для каждой компании выбирается свой, так сообщения не одинаковые.</p>
+      <div id="tpls"></div>
+      <div class="row"><button class="btn ghost" id="tpl-reset" type="button">Вернуть стандартные шаблоны</button></div>
+    </div>
+  </section>
+
+  <!-- Данные -->
+  <section class="panel" id="tab-data">
+    <div class="box">
+      <h2>Резервная копия</h2>
+      <p class="hint">Всё хранится только в этом браузере, на сервер ничего не уходит. Если почистить браузер или открыть страницу с другого телефона — список будет пустой. Сохраняйте копию раз в несколько дней.</p>
+      <div class="row">
+        <button class="btn red" id="export-json" type="button">Скачать копию (JSON)</button>
+        <button class="btn ghost" id="export-csv" type="button">Скачать для Excel (CSV)</button>
+        <label class="btn ghost" style="margin:0;text-transform:none;letter-spacing:0;font-size:14px;color:var(--text)">Загрузить копию<input type="file" id="import" accept=".json,application/json" hidden></label>
+      </div>
+    </div>
+    <div class="box">
+      <h2>Как писать, чтобы не забанили и отвечали</h2>
+      <ul class="tips">
+        <li><b>Только рабочие номера компаний</b> — из 2ГИС, с вывески, из шапки Instagram. Не личные номера и не купленные базы.</li>
+        <li><b>Каждое сообщение — лично.</b> Откройте профиль компании, допишите одну деталь от себя («видел ваши букеты с пионами»). Это главное отличие от спама.</li>
+        <li><b>Не больше 20–40 новых в день</b> и с перерывами. Новый номер WhatsApp — начните с 10–15.</li>
+        <li><b>Одно напоминание максимум</b> через 3–4 дня. Не ответили — больше не пишите.</li>
+        <li><b>Попросили не писать — сразу статус «Не писать»</b>, кнопка WhatsApp для них отключится.</li>
+        <li><b>Лучше WhatsApp Business</b> с фото, описанием и ссылкой на сайт — так видно, что вы реальный человек.</li>
+        <li>Ответили — переходите на <b>звонок или голосовое</b>: сделку закрывает разговор, а не переписка.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h2>Очистить</h2>
+      <p class="hint">Удаляет весь список компаний из этого браузера. Шаблоны останутся.</p>
+      <div class="row"><button class="btn ghost" id="wipe" type="button">Удалить все компании</button></div>
+    </div>
+  </section>
+
+  <footer>Страница скрыта от поисковиков и не связана с главной. Данные — только в вашем браузере.</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const SITE = "https://ixkno12-lgtm.github.io/";
+
+  const NICHES = {
+    flowers:  { name: "Цветы",            demo: "gul-studio/",  words: ["цвет", "флор", "букет"] },
+    coffee:   { name: "Кофейня, кафе",    demo: "pechat-kofe/", words: ["коф", "каф", "пекар", "ресторан", "еда"] },
+    beauty:   { name: "Салон, барбершоп", demo: "",             words: ["салон", "барбер", "маник", "красот", "космет", "парикм", "ногт", "брови"] },
+    shop:     { name: "Магазин",          demo: "gul-studio/",  words: ["магаз", "товар", "одежд", "шоп", "бутик"] },
+    tutor:    { name: "Репетитор, курсы", demo: "",             words: ["репет", "курс", "школ", "обуч", "учеб"] },
+    music:    { name: "Музыка, студия",   demo: "tolqyn/",      words: ["муз", "студ", "звук", "dj", "артист"] },
+    print:    { name: "Типография",       demo: "pechat-kofe/", words: ["печат", "типогр", "полиграф"] },
+    other:    { name: "Другое",           demo: "",             words: [] },
+  };
+
+  const STATUSES = {
+    new:        "Новый",
+    sent:       "Написал",
+    followup:   "Напомнил",
+    replied:    "Ответил",
+    interested: "Интересно",
+    client:     "Клиент 🌹",
+    refused:    "Отказ",
+    stop:       "Не писать",
+  };
+
+  const DEFAULT_TEMPLATES = {
+    flowers: `Здравствуйте! Увидел {название} в 2ГИС — у вас красивые букеты. Я делаю сайты для цветочных: клиент сам собирает букет, видит цену и отправляет заказ вам в WhatsApp. Вот пример: {демо}
+Могу сделать такой для вас за 3–5 дней. Если неинтересно — просто скажите, больше не побеспокою 🙂
+{я}
+---
+Добрый день! Пишу в {название}. Я веб-разработчик, делаю сайты для цветочных магазинов. Посмотрите пример с конструктором букета: {демо}
+Первый вариант для вас покажу бесплатно — оплата, только если понравится. Интересно?
+{я}`,
+    coffee: `Здравствуйте! Пишу в {название}. Я делаю сайты для кофеен: меню, фото, часы работы и кнопка заказа в WhatsApp — всё удобно открывается с телефона. Пример: {демо}
+Могу сделать для вас за 3–5 дней. Если неактуально — скажите, больше не напишу.
+{я}
+---
+Добрый день! Увидел {название} в 2ГИС. Сделал сайт для кофейни — посмотрите, как он выглядит: {демо}
+Хотите такой же, чтобы вас проще находили в Google? Первый вариант покажу бесплатно.
+{я}`,
+    beauty: `Здравствуйте! Пишу в {название}. Я делаю сайты для салонов: услуги с ценами, фото работ, отзывы и запись в WhatsApp в одно нажатие. Мои работы: {портфолио}
+Могу сделать для вас за 3–5 дней. Если неинтересно — скажите, больше не побеспокою.
+{я}
+---
+Добрый день! Увидел {название} в 2ГИС. Сайт помогает салону попадать в Google и 2ГИС выше и принимать записи даже ночью. Примеры: {портфолио}
+Первый вариант для вас покажу бесплатно. Интересно?
+{я}`,
+    shop: `Здравствуйте! Пишу в {название}. Я делаю сайты-каталоги: товары с ценами, фото и заказ сразу в WhatsApp — без комиссий маркетплейсов. Пример: {демо}
+Могу сделать для вас за неделю. Если неактуально — скажите, больше не напишу.
+{я}`,
+    tutor: `Здравствуйте! Пишу в {название}. Я делаю сайты для курсов и репетиторов: программы, цены, отзывы учеников и запись в WhatsApp. Мои работы: {портфолио}
+Сайт за 3–5 дней, первый вариант покажу бесплатно. Если неинтересно — скажите, больше не побеспокою.
+{я}`,
+    music: `Здравствуйте! Пишу в {название}. Я делаю сайты для музыкантов и студий — с плеером, треками и записью. Вот пример с плеером: {демо}
+Если интересно — обсудим, что нужно именно вам. Если нет — скажите, больше не напишу.
+{я}`,
+    print: `Здравствуйте! Пишу в {название}. Я делаю сайты для типографий: услуги, цены и конструктор заказа, который сразу отправляет заявку вам. Пример: {демо}
+Могу сделать для вас за 3–5 дней. Если неактуально — скажите, больше не побеспокою.
+{я}`,
+    other: `Здравствуйте! Пишу в {название}. Я делаю сайты для малого бизнеса: красиво, удобно с телефона и с заказами в WhatsApp. Мои работы: {портфолио}
+Могу сделать для вас за 3–5 дней, первый вариант покажу бесплатно. Если неинтересно — скажите, больше не побеспокою.
+{я}`,
+    followup: `Здравствуйте ещё раз! Писал вам пару дней назад про сайт для {название}. Если пока не до этого — ничего страшного, больше не буду беспокоить. Если интересно — отвечу на любые вопросы 🙂
+{я}`,
+  };
+
+  // ---------- Хранилище (только этот браузер) ----------
+  const KEY = "leads-helper-v1";
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch { toast("Не удалось сохранить — браузер запрещает хранение. Скачайте копию."); }
+  }
+  const state = Object.assign({ leads: [], templates: {}, me: "", site: SITE, goal: 30 }, load());
+  const tpl = k => state.templates[k] ?? DEFAULT_TEMPLATES[k];
+
+  // ---------- Помощники ----------
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const today = () => new Date().toISOString().slice(0, 10);
+  const daysSince = iso => iso ? Math.floor((Date.now() - new Date(iso).getTime()) / 864e5) : null;
+  let toastTimer;
+  function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), 2600); }
+
+  // Казахстанские номера: 8 707… → 7707…, +7 (707)… → 7707…
+  function normPhone(raw) {
+    let d = String(raw || "").replace(/\D/g, "");
+    if (d.length === 11 && d[0] === "8") d = "7" + d.slice(1);
+    if (d.length === 10) d = "7" + d;
+    return d.length >= 10 && d.length <= 15 ? d : "";
+  }
+  const fmtPhone = d => d.length === 11 ? `+${d[0]} ${d.slice(1, 4)} ${d.slice(4, 7)} ${d.slice(7, 9)} ${d.slice(9)}` : "+" + d;
+
+  function guessNiche(text) {
+    const t = String(text || "").toLowerCase();
+    if (NICHES[t]) return t;
+    for (const [k, n] of Object.entries(NICHES)) if (n.words.some(w => t.includes(w))) return k;
+    return "other";
+  }
+
+  // Детерминированный выбор варианта, чтобы у компании всегда был «свой» текст
+  function pick(text, seed) {
+    const parts = text.split(/\n-{3,}\n/).map(s => s.trim()).filter(Boolean);
+    let h = 0; for (const c of seed) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+    return parts[h % parts.length] || "";
+  }
+
+  function message(lead, kind) {
+    const site = (state.site || SITE).replace(/\/?$/, "/");
+    const n = NICHES[lead.niche] || NICHES.other;
+    const city = (lead.city || "").trim();
+    const raw = kind === "followup" ? tpl("followup") : tpl(lead.niche in DEFAULT_TEMPLATES ? lead.niche : "other");
+    return pick(raw, lead.id)
+      .replaceAll("{название}", lead.name)
+      .replaceAll("{город}", city)
+      .replaceAll("{демо}", site + n.demo)
+      .replaceAll("{портфолио}", site)
+      .replaceAll("{я}", state.me || "")
+      .replace(/\n+$/, "");
+  }
+
+  function addLead(d) {
+    const phone = normPhone(d.phone);
+    if (!d.name || !phone) return "bad";
+    if (state.leads.some(l => l.phone === phone)) return "dup";
+    state.leads.unshift({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+      name: d.name.trim(), phone, niche: guessNiche(d.niche), city: (d.city || "").trim(),
+      source: (d.source || "").trim(), note: (d.note || "").trim(),
+      status: "new", added: new Date().toISOString(), sentAt: null, history: [],
+    });
+    return "ok";
+  }
+
+  // ---------- Отрисовка ----------
+  function fillSelect(el, entries, first) {
+    el.innerHTML = (first ? `<option value="">${first}</option>` : "") + entries.map(([v, t]) => `<option value="${v}">${esc(t)}</option>`).join("");
+  }
+
+  function stats() {
+    const L = state.leads, t = today();
+    const sentToday = L.reduce((n, l) => n + l.history.filter(h => h.at.slice(0, 10) === t && (h.to === "sent" || h.to === "followup")).length, 0);
+    const goal = +state.goal || 30;
+    $("s-today").textContent = sentToday;
+    $("s-goal").textContent = goal;
+    $("s-bar").style.width = Math.min(100, sentToday / goal * 100) + "%";
+    $("s-total").textContent = L.length;
+    $("s-sent").textContent = L.filter(l => l.sentAt).length;
+    $("s-replied").textContent = L.filter(l => ["replied", "interested", "client"].includes(l.status)).length;
+    $("s-client").textContent = L.filter(l => l.status === "client").length;
+  }
+
+  const openIds = new Set();
+  function render() {
+    stats();
+    const q = $("q").value.trim().toLowerCase(), fs = $("f-status").value, fn = $("f-niche").value;
+    let L = state.leads.filter(l =>
+      (!fs || (fs === "due" ? isDue(l) : l.status === fs)) && (!fn || l.niche === fn) &&
+      (!q || [l.name, l.city, l.note, l.source].join(" ").toLowerCase().includes(q)));
+    if (!state.leads.length) {
+      $("list").innerHTML = `<div class="empty">Список пуст. Откройте 2ГИС, найдите цветочные, кофейни или салоны рядом с вами и добавьте их во вкладке <a href="#" data-goto="add">«Добавить»</a>.</div>`;
+      return;
+    }
+    if (!L.length) { $("list").innerHTML = `<div class="empty">Ничего не найдено по этим фильтрам.</div>`; return; }
+    // Сначала тем, кому пора напомнить, потом новые, потом остальные
+    const rank = l => isDue(l) ? 0 : l.status === "new" ? 1 : ["replied", "interested"].includes(l.status) ? 2 : 3;
+    L = L.slice().sort((a, b) => rank(a) - rank(b));
+    $("list").innerHTML = L.map(l => {
+      const n = NICHES[l.niche] || NICHES.other;
+      const blocked = l.status === "stop" || l.status === "refused" || l.status === "client";
+      const kind = isDue(l) ? "followup" : "first";
+      const days = daysSince(l.sentAt);
+      return `<article class="lead${openIds.has(l.id) ? " open" : ""}" data-id="${l.id}" data-status="${l.status}">
+        <div>
+          <h3>${esc(l.name)}</h3>
+          <div class="meta">
+            <span class="chip">${esc(n.name)}</span>
+            <span>${fmtPhone(l.phone)}</span>
+            ${l.city ? `<span>${esc(l.city)}</span>` : ""}
+            ${l.source ? `<span>из ${esc(l.source)}</span>` : ""}
+            ${days !== null ? `<span>написал ${days === 0 ? "сегодня" : days + " дн. назад"}</span>` : ""}
+            ${isDue(l) ? `<span class="due">пора напомнить</span>` : ""}
+          </div>
+          ${l.note ? `<div class="note">${esc(l.note)}</div>` : ""}
+        </div>
+        <div class="side">
+          <select data-act="status" aria-label="Статус">${Object.entries(STATUSES).map(([v, t]) => `<option value="${v}"${v === l.status ? " selected" : ""}>${t}</option>`).join("")}</select>
+          ${blocked ? "" : `<button class="btn ghost sm" data-act="toggle">${kind === "followup" ? "Напоминание" : "Сообщение"}</button>`}
+        </div>
+        <div class="preview">
+          <textarea data-act="text">${esc(l.draft ?? message(l, kind))}</textarea>
+          <div class="row" style="margin-top:0">
+            <button class="btn wa sm" data-act="send" data-kind="${kind}"${blocked ? " disabled" : ""}>Открыть WhatsApp</button>
+            <button class="btn ghost sm" data-act="copy">Копировать</button>
+            <button class="btn ghost sm" data-act="reset">Сбросить текст</button>
+            <button class="btn ghost sm" data-act="delete" style="margin-left:auto">Удалить</button>
+          </div>
+        </div>
+      </article>`;
+    }).join("");
+  }
+
+  const isDue = l => l.status === "sent" && daysSince(l.sentAt) >= 3;
+
+  function setStatus(l, to) {
+    if (l.status === to) return;
+    l.history.push({ at: new Date().toISOString(), from: l.status, to });
+    l.status = to;
+    if (to === "sent" || to === "followup") l.sentAt = new Date().toISOString();
+    if (to === "stop" || to === "refused") openIds.delete(l.id);
+  }
+
+  // ---------- События списка ----------
+  $("list").addEventListener("click", async e => {
+    const goto = e.target.closest("[data-goto]");
+    if (goto) { e.preventDefault(); switchTab(goto.dataset.goto); return; }
+    const btn = e.target.closest("[data-act]"); if (!btn || btn.tagName === "SELECT" || btn.tagName === "TEXTAREA") return;
+    const card = btn.closest(".lead"), l = state.leads.find(x => x.id === card.dataset.id); if (!l) return;
+    const text = card.querySelector("textarea").value;
+    switch (btn.dataset.act) {
+      case "toggle":
+        openIds.has(l.id) ? openIds.delete(l.id) : openIds.add(l.id);
+        card.classList.toggle("open");
+        return;
+      case "send":
+        if (l.status === "stop" || l.status === "refused") return;
+        window.open(`https://wa.me/${l.phone}?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+        setStatus(l, btn.dataset.kind === "followup" ? "followup" : "sent");
+        delete l.draft; openIds.delete(l.id);
+        save(); render();
+        toast("Отправьте сообщение в WhatsApp — статус уже отмечен");
+        return;
+      case "copy":
+        try { await navigator.clipboard.writeText(text); toast("Скопировано"); } catch { toast("Не удалось скопировать — выделите текст вручную"); }
+        return;
+      case "reset":
+        delete l.draft; save(); render(); return;
+      case "delete":
+        if (!confirm(`Удалить «${l.name}» из списка?`)) return;
+        state.leads = state.leads.filter(x => x !== l); openIds.delete(l.id); save(); render(); return;
+    }
+  });
+  $("list").addEventListener("change", e => {
+    if (e.target.dataset.act !== "status") return;
+    const l = state.leads.find(x => x.id === e.target.closest(".lead").dataset.id);
+    setStatus(l, e.target.value); save(); render();
+    if (e.target.value === "client") toast("Поздравляю с клиентом! 🌹");
+  });
+  $("list").addEventListener("input", e => {
+    if (e.target.dataset.act !== "text") return;
+    const l = state.leads.find(x => x.id === e.target.closest(".lead").dataset.id);
+    l.draft = e.target.value; save();
+  });
+  ["q", "f-status", "f-niche"].forEach(id => $(id).addEventListener("input", render));
+
+  // ---------- Вкладки ----------
+  function switchTab(name) {
+    document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
+    document.querySelectorAll(".panel").forEach(p => p.classList.toggle("on", p.id === "tab-" + name));
+    try { sessionStorage.setItem("leads-tab", name); } catch {}
+  }
+  document.querySelector(".tabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) switchTab(b.dataset.tab); });
+
+  // ---------- Добавление ----------
+  $("add-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const r = addLead({ name: $("a-name").value, phone: $("a-phone").value, niche: $("a-niche").value, city: $("a-city").value, source: $("a-source").value, note: $("a-note").value });
+    if (r === "bad") return toast("Проверьте номер — нужен номер WhatsApp с кодом страны");
+    if (r === "dup") return toast("Этот номер уже есть в списке");
+    save(); render();
+    ["a-name", "a-phone", "a-note"].forEach(id => $(id).value = "");
+    $("a-name").focus();
+    toast("Добавлено");
+  });
+  $("bulk-add").addEventListener("click", () => {
+    const res = { ok: 0, dup: 0, bad: 0 };
+    $("bulk").value.split("\n").map(s => s.trim()).filter(Boolean).forEach(line => {
+      const [name, phone, niche, city, note] = line.split(/\t|;/).map(s => s.trim());
+      res[addLead({ name, phone, niche, city, note, source: $("a-source").value })]++;
+    });
+    save(); render();
+    $("bulk-info").textContent = `Добавлено: ${res.ok}. Уже были: ${res.dup}. С ошибкой: ${res.bad}.`;
+    if (res.ok) $("bulk").value = "";
+  });
+
+  // ---------- Шаблоны ----------
+  function renderTemplates() {
+    $("c-me").value = state.me; $("c-site").value = state.site; $("c-goal").value = state.goal;
+    const keys = [...Object.keys(NICHES), "followup"];
+    $("tpls").innerHTML = keys.map(k => `<div class="tpl"><h3>${k === "followup" ? "Напоминание (через 3+ дня)" : esc(NICHES[k].name)}</h3><textarea data-tpl="${k}" rows="7">${esc(tpl(k))}</textarea></div>`).join("");
+  }
+  $("tpls").addEventListener("input", e => { const k = e.target.dataset.tpl; if (k) { state.templates[k] = e.target.value; save(); render(); } });
+  $("c-me").addEventListener("input", e => { state.me = e.target.value; save(); render(); });
+  $("c-site").addEventListener("input", e => { state.site = e.target.value.trim() || SITE; save(); render(); });
+  $("c-goal").addEventListener("input", e => { state.goal = Math.max(1, +e.target.value || 30); save(); stats(); });
+  $("tpl-reset").addEventListener("click", () => { if (confirm("Вернуть стандартные шаблоны? Ваши правки пропадут.")) { state.templates = {}; save(); renderTemplates(); } });
+
+  // ---------- Данные ----------
+  function download(name, text, type) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([text], { type }));
+    a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  $("export-json").addEventListener("click", () => download(`klienty-${today()}.json`, JSON.stringify(state, null, 2), "application/json"));
+  $("export-csv").addEventListener("click", () => {
+    const cell = v => `"${String(v ?? "").replaceAll('"', '""')}"`;
+    const rows = [["Название", "Телефон", "Ниша", "Город", "Источник", "Статус", "Написал", "Заметка"]]
+      .concat(state.leads.map(l => [l.name, "+" + l.phone, NICHES[l.niche]?.name, l.city, l.source, STATUSES[l.status], l.sentAt ? l.sentAt.slice(0, 10) : "", l.note]));
+    download(`klienty-${today()}.csv`, "﻿" + rows.map(r => r.map(cell).join(";")).join("\n"), "text/csv");
+  });
+  $("import").addEventListener("change", async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const data = JSON.parse(await f.text());
+      if (!Array.isArray(data.leads)) throw 0;
+      if (!confirm(`Загрузить копию: ${data.leads.length} компаний? Текущий список будет заменён.`)) return;
+      Object.assign(state, data); save(); renderTemplates(); render(); toast("Копия загружена");
+    } catch { toast("Это не похоже на файл копии"); }
+    e.target.value = "";
+  });
+  $("wipe").addEventListener("click", () => {
+    if (!state.leads.length || !confirm(`Удалить все ${state.leads.length} компаний? Сначала лучше скачать копию.`)) return;
+    state.leads = []; save(); render();
+  });
+
+  // ---------- Старт ----------
+  const nicheEntries = Object.entries(NICHES).map(([k, n]) => [k, n.name]);
+  fillSelect($("a-niche"), nicheEntries);
+  fillSelect($("f-niche"), nicheEntries, "Все ниши");
+  fillSelect($("f-status"), [["due", "Пора напомнить"], ...Object.entries(STATUSES)], "Все статусы");
+  renderTemplates(); render();
+  try { const t = sessionStorage.getItem("leads-tab"); if (t) switchTab(t); } catch {}
+</script>
+</body>
+</html>
