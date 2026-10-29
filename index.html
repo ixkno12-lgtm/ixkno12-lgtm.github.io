@@ -3,11 +3,42 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Сайты с характером — портфолио</title>
-<meta name="description" content="Делаю сайты, от которых невозможно оторваться: от визитки до платформы с подпиской и музыкальным плеером.">
-<meta property="og:title" content="Сайты с характером — портфолио">
-<meta property="og:description" content="Визитки, магазины, платформы с подпиской и веб-приложения.">
-<meta property="og:image" content="img/rose.jpg">
+<title>Создание сайтов под ключ в Казахстане — визитки, магазины, веб-приложения | Шипы</title>
+<meta name="description" content="Создание сайтов под ключ: сайт-визитка от 3 дней, интернет-магазин с заказами в WhatsApp, платформы с подпиской. Адаптив под телефон. Пишите в WhatsApp или Telegram.">
+<link rel="canonical" href="https://ixkno12-lgtm.github.io/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#141113">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="Шипы — сайты с характером">
+<meta property="og:url" content="https://ixkno12-lgtm.github.io/">
+<meta property="og:title" content="Создание сайтов под ключ — визитки, магазины, веб-приложения">
+<meta property="og:description" content="Сайт-визитка от 3 дней, магазин с заказами в WhatsApp, платформы с подпиской. Посмотрите живые демо.">
+<meta property="og:image" content="https://ixkno12-lgtm.github.io/img/rose.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Шипы — создание сайтов",
+  "url": "https://ixkno12-lgtm.github.io/",
+  "image": "https://ixkno12-lgtm.github.io/img/rose.jpg",
+  "description": "Создание сайтов под ключ: визитки, интернет-магазины, платформы с подпиской и веб-приложения.",
+  "telephone": "+77073222563",
+  "areaServed": "KZ",
+  "sameAs": ["https://t.me/deadmorry", "https://wa.me/77073222563"],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Услуги",
+    "itemListElement": [
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Сайт-визитка"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Интернет-магазин и каталог"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Подписки и онлайн-оплата"}},
+      {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Веб-приложения"}}
+    ]
+  }
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -180,11 +211,26 @@
   .toast { position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%) translateY(120px); background: var(--red); color: #1a1214; padding: 14px 24px; font-weight: 600; z-index: 50; transition: transform .35s; clip-path: var(--spike); }
   .toast.show { transform: translateX(-50%); }
 
+  /* Цены */
+  .prices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
+  .price { display: flex; flex-direction: column; gap: 14px; padding: 34px 30px; background: var(--card); border: 1px solid var(--line); position: relative; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 26px), calc(100% - 26px) 100%, 0 100%); }
+  .price.hot { border-color: var(--red); background: linear-gradient(160deg, #241a1d, var(--card)); }
+  .price .tag { position: absolute; top: 18px; right: 18px; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; font-weight: 700; color: #1a1214; background: var(--red); padding: 5px 12px; clip-path: var(--spike); }
+  .price h3 { font-size: 30px; }
+  .price .cost { font-family: "Yeseva One", serif; font-size: 40px; line-height: 1; color: var(--red-2); }
+  .price .cost small { font-family: "Inter", sans-serif; font-size: 15px; color: var(--muted); }
+  .price .for { color: var(--muted); font-size: 15px; }
+  .price ul { list-style: none; display: grid; gap: 8px; font-size: 15px; flex: 1; }
+  .price li { padding-left: 22px; position: relative; }
+  .price li::before { content: "◆"; position: absolute; left: 0; color: var(--red-2); font-size: 11px; top: 5px; }
+  .price .btn { justify-content: center; margin-top: 8px; }
+  .price-note { margin-top: 26px; color: var(--muted); font-size: 14px; max-width: 760px; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
     .hero h1 .w, .hero p, .hero .btns, .counters, .reveal { opacity: 1; transform: none; }
   }
   @media (max-width: 960px) {
+    .prices { grid-template-columns: 1fr; }
     .hero .wrap, .split, .order { grid-template-columns: 1fr; }
     .rose-wrap { max-width: 380px; order: -1; margin-top: 10px; }
     .projects { grid-template-columns: 1fr; }
@@ -212,7 +258,7 @@
 <header id="header">
   <div class="wrap nav">
     <a href="#" class="logo"><svg viewBox="0 0 26 26" aria-hidden="true"><path d="M13 2 L16 9 L24 9 L18 14 L20 22 L13 17 L6 22 L8 14 L2 9 L10 9 Z" fill="var(--red)"/></svg>Шипы</a>
-    <ul><li><a href="#work">Работы</a></li><li><a href="#services">Услуги</a></li><li><a href="#process">Этапы</a></li><li><a href="#order">Заявка</a></li></ul>
+    <ul><li><a href="#work">Работы</a></li><li><a href="#services">Услуги</a></li><li><a href="#prices">Цены</a></li><li><a href="#process">Этапы</a></li><li><a href="#order">Заявка</a></li></ul>
     <a href="#order" class="btn red sm" data-track="header-cta">Обсудить проект</a>
   </div>
 </header>
@@ -296,6 +342,57 @@
 </section>
 
 <div class="marquee reviews" id="reviews-wrap"><div class="track" id="reviews"></div></div>
+
+<section id="prices">
+  <div class="wrap">
+    <div class="head reveal"><h2>Цены <em>без сюрпризов</em></h2><p>Фиксированная цена до начала работы. Предоплата 50%, остальное — когда сайт вам понравится.</p></div>
+    <div class="prices">
+      <div class="price reveal">
+        <h3>Старт</h3>
+        <div class="cost"><small>от</small> 35 000 ₸</div>
+        <p class="for">Мастерам, салонам, кофейням — чтобы клиенты нашли и написали.</p>
+        <ul>
+          <li>Сайт-визитка до 5 блоков</li>
+          <li>Услуги, цены, фото, карта</li>
+          <li>Кнопки WhatsApp и Telegram</li>
+          <li>Адаптив под телефон</li>
+          <li>Помощь с доменом и хостингом</li>
+          <li>Готово за 3–5 дней</li>
+        </ul>
+        <a class="btn ghost" href="#order" data-plan="Старт" data-track="price-start">Хочу «Старт»</a>
+      </div>
+      <div class="price hot reveal">
+        <span class="tag">Чаще берут</span>
+        <h3>Бизнес</h3>
+        <div class="cost"><small>от</small> 80 000 ₸</div>
+        <p class="for">Магазинам и доставке — чтобы заказывали прямо с сайта.</p>
+        <ul>
+          <li>Всё из «Старта»</li>
+          <li>Каталог или конструктор заказа</li>
+          <li>Расчёт цены и заказ в мессенджер</li>
+          <li>Карточки в Google, 2ГИС и Яндекс</li>
+          <li>Базовое SEO и подключение к поисковикам</li>
+          <li>Аналитика посещений</li>
+        </ul>
+        <a class="btn red" href="#order" data-plan="Бизнес" data-track="price-business">Хочу «Бизнес»</a>
+      </div>
+      <div class="price reveal">
+        <h3>Сопровождение</h3>
+        <div class="cost">15 000 ₸ <small>/ мес</small></div>
+        <p class="for">Чтобы сайт работал, обновлялся и рос в поиске.</p>
+        <ul>
+          <li>Правки текстов, цен и фото</li>
+          <li>Контроль работы сайта</li>
+          <li>Отслеживание позиций в поиске</li>
+          <li>Отчёт раз в месяц</li>
+          <li>Можно отменить в любой момент</li>
+        </ul>
+        <a class="btn ghost" href="#order" data-plan="Сопровождение" data-track="price-support">Подключить</a>
+      </div>
+    </div>
+    <p class="price-note reveal">Платформы с подпиской, оплатой и личным кабинетом — от 200 000 ₸, цена зависит от задачи. Домен и хостинг оплачиваются отдельно (обычно 5–30 тыс. ₸ в год) и оформляются на вас — сайт полностью ваш.</p>
+  </div>
+</section>
 
 <section id="process">
   <div class="wrap">
@@ -411,6 +508,12 @@
   if (CONFIG.telegram) contacts.push(`<a class="btn red" href="https://t.me/${encodeURIComponent(CONFIG.telegram)}" target="_blank" rel="noopener" data-track="contact-telegram">Telegram</a>`);
   if (CONFIG.whatsapp) contacts.push(`<a class="btn ghost" href="https://wa.me/${encodeURIComponent(CONFIG.whatsapp)}" target="_blank" rel="noopener" data-track="contact-whatsapp">WhatsApp</a>`);
   $("contacts").innerHTML = contacts.join("");
+
+  // Кнопки тарифов ведут сразу в WhatsApp с готовым текстом
+  if (CONFIG.whatsapp) document.querySelectorAll("[data-plan]").forEach(a => {
+    a.href = `https://wa.me/${encodeURIComponent(CONFIG.whatsapp)}?text=${encodeURIComponent(`Здравствуйте! Интересует пакет «${a.dataset.plan}». Хочу обсудить сайт.`)}`;
+    a.target = "_blank"; a.rel = "noopener";
+  });
 
   const canSend = CONFIG.formspree || CONFIG.telegram || CONFIG.whatsapp;
   $("form-slot").innerHTML = canSend ? `<form id="order-form">
